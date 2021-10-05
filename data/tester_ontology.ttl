@@ -1,0 +1,156 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
+
+
+@prefix rdf:        <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:       <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:        <http://www.w3.org/2002/07/owl#> .
+@prefix owl2: <http://www.w3.org/2006/12/owl2#> .
+@prefix xsd:        <http://www.w3.org/2001/XMLSchema#> .
+@prefix tst:        <http://amazonaws.com/db/neptune/examples/ontology/tester#> .
+@prefix :           <http://amazonaws.com/db/neptune/examples/ontology/tester#> .
+
+<http://amazonaws.com/db/neptune/examples/ontology/tester> a owl:Ontology.
+
+tst:Man a owl:Class .
+tst:Woman a owl:Class .
+
+tst:Husband a owl:Class .
+
+tst:Parent a owl:Class .
+tst:Father a owl:Class .
+
+tst:hasSpouse a owl:ObjectProperty .
+
+tst:hasWife a owl:ObjectProperty .
+tst:hasWife rdfs:subPropertyOf tst:hasSpouse .
+tst:hasWife rdfs:domain tst:Husband .
+
+tst:manliness a owl:DatatypeProperty . 
+tst:manliness rdfs:domain tst:Man .
+
+tst:womanliness a owl:DatatypeProperty .
+tst:womanliness rdfs:domain tst:Woman .
+
+tst:fatherliness a owl:DatatypeProperty .
+tst:fatherliness rdfs:domain tst:Father .
+
+tst:motherliness a owl:DatatypeProperty .
+tst:motherliness rdfs:domain tst:Mother .
+
+tst:thatParentalQuality a owl:DatatypeProperty .
+tst:thatParentalQuality rdfs:domain tst:Mother .
+
+tst:Mother a owl:Class ;
+    owl:equivalentClass
+        [ 
+            a owl:Class;
+            owl:intersectionOf (
+                tst:Woman
+                tst:Parent
+            )
+        ]
+.
+
+tst:Parent a owl:Class ;
+    owl:equivalentClass
+        [ 
+            a owl:Class;
+            owl:unionOf (
+                tst:Mother
+                tst:Father
+            )
+        ]
+.
+
+tst:Grandpa a owl:Class;
+    rdfs:subClassOf
+        [ 
+            a owl:Class;
+            owl:intersectionOf (
+                tst:Man
+                tst:Parent
+            )
+        ]
+.
+
+# From https://www.cs.vu.nl/~guus/public/owl-restrictions/
+
+tst:RedWine
+  a owl:Class ;
+  rdfs:subClassOf
+    [ a owl:Restriction ;
+      owl:onProperty tst:color ;
+      owl:hasValue "red"
+    ]
+.
+
+
+tst:RedThing
+  a owl:Class ;
+  owl:equivalentClass
+    [ a owl:Restriction ;
+      owl:onProperty tst:color ;
+      owl:hasValue "red"
+    ]
+.
+
+tst:PhonyRedThing 
+    a tst:RedThing;
+    tst:color "blue"
+.
+
+tst:Artist
+  a owl:Class ;
+  rdfs:subClassOf tst:Person ;
+  rdfs:subClassOf
+    [ a owl:Restriction ;
+      owl:onProperty tst:creatorOf ;
+      owl:someValuesFrom tst:ArtObject
+    ] .
+
+tst:TheSoonToBeArtist a tst:Artist.
+tst:TheSoonToBeArtist tst:creatorOf tst:pizzaOrder1 . 
+tst:TheSoonToBeArtist tst:creatorOf tst:pacingAroundTheRoom1 .
+tst:TheSoonToBeArtist tst:creatorOf tst:bingeWatching1 .
+tst:pizzaOrder1 a tst:WastefulActivity .
+tst:pacingAroundTheRoom1 a tst:WastefulActivity .
+tst:bingeWatching1 a tst:WastefulActivity .
+
+tst:TheArtistWhoTried a tst:Artist.
+tst:TheArtistWhoTried tst:creatorOf tst:pizzaOrder2 . 
+tst:TheArtistWhoTried tst:creatorOf tst:bingeWatching2 .
+tst:TheArtistWhoTried tst:creatorOf tst:artScribble42 .
+tst:TheArtistWhoTried tst:creatorOf tst:beethovenRipoff9 .
+tst:pizzaOrder2 a tst:WastefulActivity .
+tst:bingeWatching2 a tst:WastefulActivity .
+tst:artScribble42 a tst:ArtObject .
+tst:beethovenRipoff9 a tst:ArtObject .
+
+tst:RealArtist
+  a owl:Class ;
+  owl:equivalentClass
+  [ a owl:Class ;
+    owl:intersectionOf 
+      ( tst:Person 
+        [ a owl:Restriction ;
+          owl:onProperty tst:creatorOf ;
+          owl:someValuesFrom tst:ArtObject
+        ])
+  ] .
+
+tst:Vegetarian 
+    a owl:Class; 
+    owl:equivalentClass  
+      [
+        a owl:Restriction ;
+            owl:onProperty tst:eats ;
+            owl:allValuesFrom tst:NonMeat
+      ] 
+.  
+
+tst:TheVegNot 
+    a tst:Vegetarian;
+    tst:eats tst:bacon;
+.
+

@@ -1,0 +1,1772 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
+
+@base <http://amazonaws.com/db/neptune/examples/ontology/org/> .
+@prefix ex: <http://amazonaws.com/db/neptune/examples/ontology/org/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix org: <http://www.w3.org/ns/org#> .
+
+#
+# org structure
+#
+ex:Org-MegaGroup
+   rdf:type org:Organization ;
+   rdfs:label "The Mega Group" ;
+   org:identifier ex:NotAStringyIdentifier;
+   org:hasSubOrganization ex:Org-MegaSystems ;
+   org:hasSubOrganization ex:Org-MegaFinancial;
+.
+ex:Org-MegaSystems
+   rdf:type org:Organization ;
+   rdfs:label "MegaSystems" ;
+   org:subOrganizationOf ex:Org-MegaGroup ;
+   org:hasUnit ex:Org-MegaSystems-RD;
+   org:hasUnit ex:Org-MegaSystems-Sales;
+.
+ex:Org-MegaFinancial
+   rdf:type org:Organization ;
+   rdfs:label "MegaFinancial" ;
+   org:subOrganizationOf ex:Org-MegaGroup ;
+.
+
+ex:Org-MegaSystems-RD
+   rdf:type org:OrganizationalUnit ;
+   rdfs:label "MegaSystems R&D" ;
+   org:unitOf ex:Org-MegaSystems ;
+.
+
+ex:Org-MegaSystems-Sales
+   rdf:type org:OrganizationalUnit ;
+   rdfs:label "MegaSystems Sales" ;
+   org:unitOf ex:Org-MegaSystems ;
+.
+
+#
+# org history
+# 
+# More advanced examples might use PROVO, as shown in org spec
+#
+ex:Org-MegaFinancial
+   org:resultedFrom ex:Org-MoneyAcqusition;
+.
+
+ex:Org-MoneyDotOrg
+   rdf:type org:Organization ;
+   rdfs:label "MoneyDotOrg" ;
+   org:changedBy ex:Org-MoneyAcqusition;
+.
+ex:Org-MoneyAcqusition
+   rdf:type org:ChangeEvent;
+   rdfs:comment "Mega acquires money.org";
+   org:originalOrganization ex:Org-MoneyDotOrg;
+   org:resultingOrganization ex:Org-MegaFinancial;
+.
+
+ex:Org-AnInvalidEvent
+   rdf:type org:ChangeEvent;
+   org:originalOrganization "an org of some sort";
+   org:resultingOoooorganization ex:Org-MegaFinancial;
+.
+
+#
+# org location
+#
+ex:Site-Pembroke
+   rdf:type org:Site;
+   rdfs:label "Pembroke HQ";
+   org:siteOf ex:Org-MegaGroup;
+   org:siteOf ex:Org-MegaSystems;
+.
+
+ex:Site-ElPaso
+   rdf:type org:Site;
+   rdfs:label "El Paso Office";
+   org:siteOf ex:Org-MegaFinancial;
+   org:siteOf ex:Org-MoneyDotOrg;
+.
+
+ex:Org-MegaGroup
+   org:hasPrimarySite ex:Site-Pembroke;
+   org:hasSite ex:Site-Pembroke;
+.
+ex:Org-MegaSystems
+   org:hasSite ex:Site-Pembroke;
+.
+ex:Org-MegaFinancial
+   org:hasSite ex:Site-ElPaso;
+.
+ex:Org-MoneyDotOrg
+   org:hasSite ex:Site-ElPaso;
+.
+
+#
+# roles, membership and reporting structure
+#
+
+ex:Role-Tech-President 
+   rdf:type org:Role;
+   rdfs:label "President";
+
+.
+
+ex:Role-Tech-VP-Sales 
+   rdf:type org:Role;
+   rdfs:label "VP Sales";
+.
+
+ex:Role-Tech-VP-RD 
+   rdf:type org:Role;
+   rdfs:label "VP RD";
+.
+
+ex:Post-TechEvangelist
+   rdf:type org:Post;
+   rdfs:label "Evangelist Post";
+   org:postIn ex:Org-MegaSystems;
+.
+ex:Org-MegaSystems 
+   org:hasPost ex:Post-TechEvangelist;
+.
+
+ex:Person-McElmurray-Kerstin
+   org:holds ex:Post-TechEvangelist;
+.
+
+ex:Membership-Tech-President
+   rdf:type org:Membership;
+   org:member ex:Person-Michel-Urban;
+   org:member ex:Person-ImposterOf-Michel-Urban;
+   org:organization ex:Org-MegaSystems;
+   org:role ex:Role-Tech-President;
+.
+ex:Membership-Tech-VP-Sales
+   rdf:type org:Membership;
+   org:member ex:Person-Michel-Urban;
+   org:organization ex:Org-MegaSystems;
+   org:role ex:Role-Tech-VP-Sales;
+.
+ex:Membership-Tech-VP-RD
+   rdf:type org:Membership;
+   org:member ex:Person-Rockhill-Oneida;
+   org:organization ex:Org-MegaSystems;
+   org:role ex:Role-Tech-VP-RD;
+.
+ex:Person-Sylett-Ilyssa
+   org:headOf ex:Org-MegaFinancial;
+   org:memberOf ex:Org-MegaFinancial;
+.
+ex:Person-Laborda-Andromache
+   org:memberOf ex:Org-MegaFinancial;
+   org:reportsTo ex:Person-Sylett-Ilyssa;
+.
+ex:Person-Valenta-Bonnibelle
+   org:memberOf ex:Org-MegaFinancial;
+   org:reportsTo ex:Person-Laborda-Andromache;
+.
+ex:Person-Ionnisian-Curtis
+   org:memberOf ex:Org-MegaFinancial;
+   org:reportsTo ex:Person-Laborda-Andromache;
+.
+
+#
+# Persons in the org, type foaf:Person
+#
+ex:Person-Angell-Luce
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Luce Angell";
+   foaf:family_name "Angell";
+   foaf:firstName "Luce";
+.
+ex:Person-McElmurray-Kerstin
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Kerstin McElmurray";
+   foaf:family_name "McElmurray";
+   foaf:firstName "Kerstin";
+.
+ex:Person-Michel-Urban
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Urban Michel";
+   foaf:family_name "Michel";
+   foaf:firstName "Urban";
+.
+ex:Person-Ackerman-Bellina
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Bellina Ackerman";
+   foaf:family_name "Ackerman";
+   foaf:firstName "Bellina";
+.
+ex:Person-Rockhill-Oneida
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Oneida Rockhill";
+   foaf:family_name "Rockhill";
+   foaf:firstName "Oneida";
+.
+ex:Person-Leger-Tyler
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Tyler Leger";
+   foaf:family_name "Leger";
+   foaf:firstName "Tyler";
+.
+ex:Person-Bluck-Heall
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Heall Bluck";
+   foaf:family_name "Bluck";
+   foaf:firstName "Heall";
+.
+ex:Person-Orris-Tore
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Tore Orris";
+   foaf:family_name "Orris";
+   foaf:firstName "Tore";
+.
+ex:Person-Attawell-Mei
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Mei Attawell";
+   foaf:family_name "Attawell";
+   foaf:firstName "Mei";
+.
+ex:Person-Sandy-Manda
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Manda Sandy";
+   foaf:family_name "Sandy";
+   foaf:firstName "Manda";
+.
+ex:Person-Bentjens-Katheryn
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Katheryn Bentjens";
+   foaf:family_name "Bentjens";
+   foaf:firstName "Katheryn";
+.
+ex:Person-Kiera-Alie
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Alie Kiera";
+   foaf:family_name "Kiera";
+   foaf:firstName "Alie";
+.
+ex:Person-Sweett-William
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "William Sweett";
+   foaf:family_name "Sweett";
+   foaf:firstName "William";
+.
+ex:Person-Bushby-Andy
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Andy Bushby";
+   foaf:family_name "Bushby";
+   foaf:firstName "Andy";
+.
+ex:Person-Rothery-Athena
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Athena Rothery";
+   foaf:family_name "Rothery";
+   foaf:firstName "Athena";
+.
+ex:Person-Chillingworth-Brooks
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Brooks Chillingworth";
+   foaf:family_name "Chillingworth";
+   foaf:firstName "Brooks";
+.
+ex:Person-Roughley-Orbadiah
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Orbadiah Roughley";
+   foaf:family_name "Roughley";
+   foaf:firstName "Orbadiah";
+.
+ex:Person-Sebley-Remington
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Remington Sebley";
+   foaf:family_name "Sebley";
+   foaf:firstName "Remington";
+.
+ex:Person-Pearman-Nelle
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Nelle Pearman";
+   foaf:family_name "Pearman";
+   foaf:firstName "Nelle";
+.
+ex:Person-Vowles-Margarethe
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Margarethe Vowles";
+   foaf:family_name "Vowles";
+   foaf:firstName "Margarethe";
+.
+ex:Person-Royan-Aila
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Aila Royan";
+   foaf:family_name "Royan";
+   foaf:firstName "Aila";
+.
+ex:Person-Lilloe-Berthe
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Berthe Lilloe";
+   foaf:family_name "Lilloe";
+   foaf:firstName "Berthe";
+.
+ex:Person-Huett-Gunilla
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Gunilla Huett";
+   foaf:family_name "Huett";
+   foaf:firstName "Gunilla";
+.
+ex:Person-Adlem-Scotty
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Scotty Adlem";
+   foaf:family_name "Adlem";
+   foaf:firstName "Scotty";
+.
+ex:Person-Turri-Auria
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Auria Turri";
+   foaf:family_name "Turri";
+   foaf:firstName "Auria";
+.
+ex:Person-Benda-Clare
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Clare Benda";
+   foaf:family_name "Benda";
+   foaf:firstName "Clare";
+.
+ex:Person-LePine-Hube
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Hube Le Pine";
+   foaf:family_name "Le Pine";
+   foaf:firstName "Hube";
+.
+ex:Person-DeBruijne-Leslie
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Leslie De Bruijne";
+   foaf:family_name "De Bruijne";
+   foaf:firstName "Leslie";
+.
+ex:Person-Beniesh-Konstantin
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Konstantin Beniesh";
+   foaf:family_name "Beniesh";
+   foaf:firstName "Konstantin";
+.
+ex:Person-Labden-Julie
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Julie Labden";
+   foaf:family_name "Labden";
+   foaf:firstName "Julie";
+.
+ex:Person-Paddle-Ephrayim
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Ephrayim Paddle";
+   foaf:family_name "Paddle";
+   foaf:firstName "Ephrayim";
+.
+ex:Person-OFinan-Reine
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Reine O' Finan";
+   foaf:family_name "O' Finan";
+   foaf:firstName "Reine";
+.
+ex:Person-Kentish-Tomaso
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Tomaso Kentish";
+   foaf:family_name "Kentish";
+   foaf:firstName "Tomaso";
+.
+ex:Person-Povey-Lemmy
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Lemmy Povey";
+   foaf:family_name "Povey";
+   foaf:firstName "Lemmy";
+.
+ex:Person-Bennedsen-Creight
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Creight Bennedsen";
+   foaf:family_name "Bennedsen";
+   foaf:firstName "Creight";
+.
+ex:Person-Snarr-Gardner
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Gardner Snarr";
+   foaf:family_name "Snarr";
+   foaf:firstName "Gardner";
+.
+ex:Person-Seaking-Liana
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Liana Seaking";
+   foaf:family_name "Seaking";
+   foaf:firstName "Liana";
+.
+ex:Person-Macer-Mufinella
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Mufinella Macer";
+   foaf:family_name "Macer";
+   foaf:firstName "Mufinella";
+.
+ex:Person-Maestro-Liuka
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Liuka Maestro";
+   foaf:family_name "Maestro";
+   foaf:firstName "Liuka";
+.
+ex:Person-Guthrum-Elka
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Elka Guthrum";
+   foaf:family_name "Guthrum";
+   foaf:firstName "Elka";
+.
+ex:Person-Osmund-Meris
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Meris Osmund";
+   foaf:family_name "Osmund";
+   foaf:firstName "Meris";
+.
+ex:Person-Lampkin-Esteban
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Esteban Lampkin";
+   foaf:family_name "Lampkin";
+   foaf:firstName "Esteban";
+.
+ex:Person-Gready-Julius
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Julius Gready";
+   foaf:family_name "Gready";
+   foaf:firstName "Julius";
+.
+ex:Person-Maes-Ajay
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Ajay Maes";
+   foaf:family_name "Maes";
+   foaf:firstName "Ajay";
+.
+ex:Person-Cridlan-Peri
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Peri Cridlan";
+   foaf:family_name "Cridlan";
+   foaf:firstName "Peri";
+.
+ex:Person-How-Selene
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Selene How";
+   foaf:family_name "How";
+   foaf:firstName "Selene";
+.
+ex:Person-Millott-Arney
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Arney Millott";
+   foaf:family_name "Millott";
+   foaf:firstName "Arney";
+.
+ex:Person-Sampey-Fredrick
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Fredrick Sampey";
+   foaf:family_name "Sampey";
+   foaf:firstName "Fredrick";
+.
+ex:Person-Archdeacon-Elvyn
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Elvyn Archdeacon";
+   foaf:family_name "Archdeacon";
+   foaf:firstName "Elvyn";
+.
+ex:Person-Skoate-Marcelle
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Marcelle Skoate";
+   foaf:family_name "Skoate";
+   foaf:firstName "Marcelle";
+.
+ex:Person-Peinke-Tanhya
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Tanhya Peinke";
+   foaf:family_name "Peinke";
+   foaf:firstName "Tanhya";
+.
+ex:Person-McCrillis-Curry
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Curry McCrillis";
+   foaf:family_name "McCrillis";
+   foaf:firstName "Curry";
+.
+ex:Person-Corns-Margi
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Margi Corns";
+   foaf:family_name "Corns";
+   foaf:firstName "Margi";
+.
+ex:Person-Chatterton-Aliza
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Aliza Chatterton";
+   foaf:family_name "Chatterton";
+   foaf:firstName "Aliza";
+.
+ex:Person-Spawton-Yorker
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Yorker Spawton";
+   foaf:family_name "Spawton";
+   foaf:firstName "Yorker";
+.
+ex:Person-Pancast-Olive
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Olive Pancast";
+   foaf:family_name "Pancast";
+   foaf:firstName "Olive";
+.
+ex:Person-Manes-Corliss
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Corliss Manes";
+   foaf:family_name "Manes";
+   foaf:firstName "Corliss";
+.
+ex:Person-Martins-Tripp
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Tripp Martins";
+   foaf:family_name "Martins";
+   foaf:firstName "Tripp";
+.
+ex:Person-Janiak-Yorgos
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Yorgos Janiak";
+   foaf:family_name "Janiak";
+   foaf:firstName "Yorgos";
+.
+ex:Person-Ramelet-Sibelle
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Sibelle Ramelet";
+   foaf:family_name "Ramelet";
+   foaf:firstName "Sibelle";
+.
+ex:Person-Sandells-Lennie
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Lennie Sandells";
+   foaf:family_name "Sandells";
+   foaf:firstName "Lennie";
+.
+ex:Person-MacVay-Lillis
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Lillis MacVay";
+   foaf:family_name "MacVay";
+   foaf:firstName "Lillis";
+.
+ex:Person-Cockling-Marlin
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Marlin Cockling";
+   foaf:family_name "Cockling";
+   foaf:firstName "Marlin";
+.
+ex:Person-Gerge-Robinett
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Robinett Gerge";
+   foaf:family_name "Gerge";
+   foaf:firstName "Robinett";
+.
+ex:Person-Astlet-Darla
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Darla Astlet";
+   foaf:family_name "Astlet";
+   foaf:firstName "Darla";
+.
+ex:Person-Blasoni-Merrilee
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Merrilee Blasoni";
+   foaf:family_name "Blasoni";
+   foaf:firstName "Merrilee";
+.
+ex:Person-Rochewell-Garnette
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Garnette Rochewell";
+   foaf:family_name "Rochewell";
+   foaf:firstName "Garnette";
+.
+ex:Person-Guiett-Aldric
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Aldric Guiett";
+   foaf:family_name "Guiett";
+   foaf:firstName "Aldric";
+.
+ex:Person-Treweela-Fancy
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Fancy Treweela";
+   foaf:family_name "Treweela";
+   foaf:firstName "Fancy";
+.
+ex:Person-McGeever-Guilbert
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Guilbert McGeever";
+   foaf:family_name "McGeever";
+   foaf:firstName "Guilbert";
+.
+ex:Person-Normadell-Dermot
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Dermot Normadell";
+   foaf:family_name "Normadell";
+   foaf:firstName "Dermot";
+.
+ex:Person-Zimmermanns-Clayborne
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Clayborne Zimmermanns";
+   foaf:family_name "Zimmermanns";
+   foaf:firstName "Clayborne";
+.
+ex:Person-Snelle-Colin
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Colin Snelle";
+   foaf:family_name "Snelle";
+   foaf:firstName "Colin";
+.
+ex:Person-Freear-Davin
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Davin Freear";
+   foaf:family_name "Freear";
+   foaf:firstName "Davin";
+.
+ex:Person-Coat-Zora
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Zora Coat";
+   foaf:family_name "Coat";
+   foaf:firstName "Zora";
+.
+ex:Person-Impson-Clarisse
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Clarisse Impson";
+   foaf:family_name "Impson";
+   foaf:firstName "Clarisse";
+.
+ex:Person-Seeks-Koral
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Koral Seeks";
+   foaf:family_name "Seeks";
+   foaf:firstName "Koral";
+.
+ex:Person-Cardno-Hedwiga
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Hedwiga Cardno";
+   foaf:family_name "Cardno";
+   foaf:firstName "Hedwiga";
+.
+ex:Person-Hobbema-Nicholas
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Nicholas Hobbema";
+   foaf:family_name "Hobbema";
+   foaf:firstName "Nicholas";
+.
+ex:Person-Simla-Georas
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Georas Simla";
+   foaf:family_name "Simla";
+   foaf:firstName "Georas";
+.
+ex:Person-Smallcomb-Cass
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Cass Smallcomb";
+   foaf:family_name "Smallcomb";
+   foaf:firstName "Cass";
+.
+ex:Person-Karmel-Leigh
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Leigh Karmel";
+   foaf:family_name "Karmel";
+   foaf:firstName "Leigh";
+.
+ex:Person-Edbrooke-Willi
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Willi Edbrooke";
+   foaf:family_name "Edbrooke";
+   foaf:firstName "Willi";
+.
+ex:Person-Samwyse-Marlyn
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Marlyn Samwyse";
+   foaf:family_name "Samwyse";
+   foaf:firstName "Marlyn";
+.
+ex:Person-Langlais-Pauly
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Pauly Langlais";
+   foaf:family_name "Langlais";
+   foaf:firstName "Pauly";
+.
+ex:Person-Dickey-Minna
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Minna Dickey";
+   foaf:family_name "Dickey";
+   foaf:firstName "Minna";
+.
+ex:Person-Siegertsz-Filberto
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Filberto Siegertsz";
+   foaf:family_name "Siegertsz";
+   foaf:firstName "Filberto";
+.
+ex:Person-Bucknell-Frederica
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Frederica Bucknell";
+   foaf:family_name "Bucknell";
+   foaf:firstName "Frederica";
+.
+ex:Person-Lockyear-Vivie
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Vivie Lockyear";
+   foaf:family_name "Lockyear";
+   foaf:firstName "Vivie";
+.
+ex:Person-Tangye-Jewel
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Jewel Tangye";
+   foaf:family_name "Tangye";
+   foaf:firstName "Jewel";
+.
+ex:Person-Biswell-Nerita
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Nerita Biswell";
+   foaf:family_name "Biswell";
+   foaf:firstName "Nerita";
+.
+ex:Person-Collier-Vernon
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Vernon Collier";
+   foaf:family_name "Collier";
+   foaf:firstName "Vernon";
+.
+ex:Person-Ingliby-Norry
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Norry Ingliby";
+   foaf:family_name "Ingliby";
+   foaf:firstName "Norry";
+.
+ex:Person-Stansall-Katie
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Katie Stansall";
+   foaf:family_name "Stansall";
+   foaf:firstName "Katie";
+.
+ex:Person-Yurasov-Magdalena
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Magdalena Yurasov";
+   foaf:family_name "Yurasov";
+   foaf:firstName "Magdalena";
+.
+ex:Person-Leadstone-Hendrika
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Hendrika Leadstone";
+   foaf:family_name "Leadstone";
+   foaf:firstName "Hendrika";
+.
+ex:Person-Wolfit-Kirstin
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Kirstin Wolfit";
+   foaf:family_name "Wolfit";
+   foaf:firstName "Kirstin";
+.
+ex:Person-Pummery-Erastus
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Erastus Pummery";
+   foaf:family_name "Pummery";
+   foaf:firstName "Erastus";
+.
+ex:Person-Sambiedge-Anne-corinne
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Anne-corinne Sambiedge";
+   foaf:family_name "Sambiedge";
+   foaf:firstName "Anne-corinne";
+.
+ex:Person-MacAne-Coleen
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Coleen MacAne";
+   foaf:family_name "MacAne";
+   foaf:firstName "Coleen";
+.
+ex:Person-Calbert-Nathanael
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Nathanael Calbert";
+   foaf:family_name "Calbert";
+   foaf:firstName "Nathanael";
+.
+ex:Person-Dmytryk-Gabrielle
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Gabrielle Dmytryk";
+   foaf:family_name "Dmytryk";
+   foaf:firstName "Gabrielle";
+.
+ex:Person-Broseman-Rafa
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Rafa Broseman";
+   foaf:family_name "Broseman";
+   foaf:firstName "Rafa";
+.
+ex:Person-Chad-Truda
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Truda Chad";
+   foaf:family_name "Chad";
+   foaf:firstName "Truda";
+.
+ex:Person-Summerlee-Johannah
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Johannah Summerlee";
+   foaf:family_name "Summerlee";
+   foaf:firstName "Johannah";
+.
+ex:Person-Castella-Lenette
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Lenette Castella";
+   foaf:family_name "Castella";
+   foaf:firstName "Lenette";
+.
+ex:Person-Glanister-Justinian
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Justinian Glanister";
+   foaf:family_name "Glanister";
+   foaf:firstName "Justinian";
+.
+ex:Person-Rendall-Pate
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Pate Rendall";
+   foaf:family_name "Rendall";
+   foaf:firstName "Pate";
+.
+ex:Person-Carless-Renado
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Renado Carless";
+   foaf:family_name "Carless";
+   foaf:firstName "Renado";
+.
+ex:Person-Andryunin-Justus
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Justus Andryunin";
+   foaf:family_name "Andryunin";
+   foaf:firstName "Justus";
+.
+ex:Person-Labrow-Cindy
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Cindy Labrow";
+   foaf:family_name "Labrow";
+   foaf:firstName "Cindy";
+.
+ex:Person-Gledstane-Anjela
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Anjela Gledstane";
+   foaf:family_name "Gledstane";
+   foaf:firstName "Anjela";
+.
+ex:Person-Parmeter-Phylys
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Phylys Parmeter";
+   foaf:family_name "Parmeter";
+   foaf:firstName "Phylys";
+.
+ex:Person-McNirlan-Sergio
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Sergio McNirlan";
+   foaf:family_name "McNirlan";
+   foaf:firstName "Sergio";
+.
+ex:Person-Saller-Meg
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Meg Saller";
+   foaf:family_name "Saller";
+   foaf:firstName "Meg";
+.
+ex:Person-Muncie-Dacie
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Dacie Muncie";
+   foaf:family_name "Muncie";
+   foaf:firstName "Dacie";
+.
+ex:Person-Andrioli-Diarmid
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Diarmid Andrioli";
+   foaf:family_name "Andrioli";
+   foaf:firstName "Diarmid";
+.
+ex:Person-Fayerbrother-Luigi
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Luigi Fayerbrother";
+   foaf:family_name "Fayerbrother";
+   foaf:firstName "Luigi";
+.
+ex:Person-Hakonsen-Roanne
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Roanne Hakonsen";
+   foaf:family_name "Hakonsen";
+   foaf:firstName "Roanne";
+.
+ex:Person-Lelande-Cornelia
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Cornelia Lelande";
+   foaf:family_name "Lelande";
+   foaf:firstName "Cornelia";
+.
+ex:Person-Spuner-Dorelle
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Dorelle Spuner";
+   foaf:family_name "Spuner";
+   foaf:firstName "Dorelle";
+.
+ex:Person-Kiely-Jasper
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Jasper Kiely";
+   foaf:family_name "Kiely";
+   foaf:firstName "Jasper";
+.
+ex:Person-Blackey-Nerissa
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Nerissa Blackey";
+   foaf:family_name "Blackey";
+   foaf:firstName "Nerissa";
+.
+ex:Person-Pol-Kristien
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Kristien Pol";
+   foaf:family_name "Pol";
+   foaf:firstName "Kristien";
+.
+ex:Person-Wife-Neville
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Neville Wife";
+   foaf:family_name "Wife";
+   foaf:firstName "Neville";
+.
+ex:Person-Flooks-Elspeth
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Elspeth Flooks";
+   foaf:family_name "Flooks";
+   foaf:firstName "Elspeth";
+.
+ex:Person-Minister-Harlan
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Harlan Minister";
+   foaf:family_name "Minister";
+   foaf:firstName "Harlan";
+.
+ex:Person-Thorpe-Kaspar
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Kaspar Thorpe";
+   foaf:family_name "Thorpe";
+   foaf:firstName "Kaspar";
+.
+ex:Person-Picardo-Leesa
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Leesa Picardo";
+   foaf:family_name "Picardo";
+   foaf:firstName "Leesa";
+.
+ex:Person-Leebetter-Mandi
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Mandi Leebetter";
+   foaf:family_name "Leebetter";
+   foaf:firstName "Mandi";
+.
+ex:Person-Heller-Shea
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Shea Heller";
+   foaf:family_name "Heller";
+   foaf:firstName "Shea";
+.
+ex:Person-Braitling-Brett
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Brett Braitling";
+   foaf:family_name "Braitling";
+   foaf:firstName "Brett";
+.
+ex:Person-Arrault-Pamella
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Pamella Arrault";
+   foaf:family_name "Arrault";
+   foaf:firstName "Pamella";
+.
+ex:Person-Swedeland-Mandy
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Mandy Swedeland";
+   foaf:family_name "Swedeland";
+   foaf:firstName "Mandy";
+.
+ex:Person-Marsham-Freda
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Freda Marsham";
+   foaf:family_name "Marsham";
+   foaf:firstName "Freda";
+.
+ex:Person-Jarrard-Emanuel
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Emanuel Jarrard";
+   foaf:family_name "Jarrard";
+   foaf:firstName "Emanuel";
+.
+ex:Person-Geri-Bambi
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Bambi Geri";
+   foaf:family_name "Geri";
+   foaf:firstName "Bambi";
+.
+ex:Person-Ruperto-Cilka
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Cilka Ruperto";
+   foaf:family_name "Ruperto";
+   foaf:firstName "Cilka";
+.
+ex:Person-deClerq-Rudolfo
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Rudolfo de Clerq";
+   foaf:family_name "de Clerq";
+   foaf:firstName "Rudolfo";
+.
+ex:Person-Greson-Dulciana
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Dulciana Greson";
+   foaf:family_name "Greson";
+   foaf:firstName "Dulciana";
+.
+ex:Person-Birdsall-Jennee
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Jennee Birdsall";
+   foaf:family_name "Birdsall";
+   foaf:firstName "Jennee";
+.
+ex:Person-Maskall-Fedora
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Fedora Maskall";
+   foaf:family_name "Maskall";
+   foaf:firstName "Fedora";
+.
+ex:Person-Piatkowski-Derril
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Derril Piatkowski";
+   foaf:family_name "Piatkowski";
+   foaf:firstName "Derril";
+.
+ex:Person-Cutchey-Kean
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Kean Cutchey";
+   foaf:family_name "Cutchey";
+   foaf:firstName "Kean";
+.
+ex:Person-Vennart-Gertrudis
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Gertrudis Vennart";
+   foaf:family_name "Vennart";
+   foaf:firstName "Gertrudis";
+.
+ex:Person-Devoy-Willyt
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Willyt Devoy";
+   foaf:family_name "Devoy";
+   foaf:firstName "Willyt";
+.
+ex:Person-Whopples-Benedicta
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Benedicta Whopples";
+   foaf:family_name "Whopples";
+   foaf:firstName "Benedicta";
+.
+ex:Person-MacQueen-Cari
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Cari MacQueen";
+   foaf:family_name "MacQueen";
+   foaf:firstName "Cari";
+.
+ex:Person-Merring-Lancelot
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Lancelot Merring";
+   foaf:family_name "Merring";
+   foaf:firstName "Lancelot";
+.
+ex:Person-Braybrooks-Barty
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Barty Braybrooks";
+   foaf:family_name "Braybrooks";
+   foaf:firstName "Barty";
+.
+ex:Person-Klauber-Blaire
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Blaire Klauber";
+   foaf:family_name "Klauber";
+   foaf:firstName "Blaire";
+.
+ex:Person-Walter-Martina
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Martina Walter";
+   foaf:family_name "Walter";
+   foaf:firstName "Martina";
+.
+ex:Person-Bernardinelli-Cesar
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Cesar Bernardinelli";
+   foaf:family_name "Bernardinelli";
+   foaf:firstName "Cesar";
+.
+ex:Person-Faudrie-Clemens
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Clemens Faudrie";
+   foaf:family_name "Faudrie";
+   foaf:firstName "Clemens";
+.
+ex:Person-Alcido-Ladonna
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Ladonna Alcido";
+   foaf:family_name "Alcido";
+   foaf:firstName "Ladonna";
+.
+ex:Person-Yackiminie-Wilfrid
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Wilfrid Yackiminie";
+   foaf:family_name "Yackiminie";
+   foaf:firstName "Wilfrid";
+.
+ex:Person-Dy-Elnore
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Elnore Dy";
+   foaf:family_name "Dy";
+   foaf:firstName "Elnore";
+.
+ex:Person-Brightling-Lynsey
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Lynsey Brightling";
+   foaf:family_name "Brightling";
+   foaf:firstName "Lynsey";
+.
+ex:Person-Jeanel-Ardis
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Ardis Jeanel";
+   foaf:family_name "Jeanel";
+   foaf:firstName "Ardis";
+.
+ex:Person-Stolworthy-Aurel
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Aurel Stolworthy";
+   foaf:family_name "Stolworthy";
+   foaf:firstName "Aurel";
+.
+ex:Person-Peacocke-Marjie
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Marjie Peacocke";
+   foaf:family_name "Peacocke";
+   foaf:firstName "Marjie";
+.
+ex:Person-Pollastrone-Dorice
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Dorice Pollastrone";
+   foaf:family_name "Pollastrone";
+   foaf:firstName "Dorice";
+.
+ex:Person-Terrey-Corby
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Corby Terrey";
+   foaf:family_name "Terrey";
+   foaf:firstName "Corby";
+.
+ex:Person-Chelam-Bryn
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Bryn Chelam";
+   foaf:family_name "Chelam";
+   foaf:firstName "Bryn";
+.
+ex:Person-Blackaller-Nettle
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Nettle Blackaller";
+   foaf:family_name "Blackaller";
+   foaf:firstName "Nettle";
+.
+ex:Person-Pay-Shem
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Shem Pay";
+   foaf:family_name "Pay";
+   foaf:firstName "Shem";
+.
+ex:Person-Handlin-Torry
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Torry Handlin";
+   foaf:family_name "Handlin";
+   foaf:firstName "Torry";
+.
+ex:Person-Sabey-Conway
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Conway Sabey";
+   foaf:family_name "Sabey";
+   foaf:firstName "Conway";
+.
+ex:Person-Crowcombe-Obadiah
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Obadiah Crowcombe";
+   foaf:family_name "Crowcombe";
+   foaf:firstName "Obadiah";
+.
+ex:Person-Ridger-Katleen
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Katleen Ridger";
+   foaf:family_name "Ridger";
+   foaf:firstName "Katleen";
+.
+ex:Person-Catonnet-Nora
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Nora Catonnet";
+   foaf:family_name "Catonnet";
+   foaf:firstName "Nora";
+.
+ex:Person-Dearing-Pru
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Pru Dearing";
+   foaf:family_name "Dearing";
+   foaf:firstName "Pru";
+.
+ex:Person-Merit-Rozalie
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Rozalie Merit";
+   foaf:family_name "Merit";
+   foaf:firstName "Rozalie";
+.
+ex:Person-Anan-Nonnah
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Nonnah Anan";
+   foaf:family_name "Anan";
+   foaf:firstName "Nonnah";
+.
+ex:Person-Coppen-Sutherland
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Sutherland Coppen";
+   foaf:family_name "Coppen";
+   foaf:firstName "Sutherland";
+.
+ex:Person-Stodart-Goldina
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Goldina Stodart";
+   foaf:family_name "Stodart";
+   foaf:firstName "Goldina";
+.
+ex:Person-Meyer-Christian
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Christian Meyer";
+   foaf:family_name "Meyer";
+   foaf:firstName "Christian";
+.
+ex:Person-Nesbeth-Olympia
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Olympia Nesbeth";
+   foaf:family_name "Nesbeth";
+   foaf:firstName "Olympia";
+.
+ex:Person-Bakeup-Fawnia
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Fawnia Bakeup";
+   foaf:family_name "Bakeup";
+   foaf:firstName "Fawnia";
+.
+ex:Person-Etherson-Luise
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Luise Etherson";
+   foaf:family_name "Etherson";
+   foaf:firstName "Luise";
+.
+ex:Person-Tiptaft-Lyman
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Lyman Tiptaft";
+   foaf:family_name "Tiptaft";
+   foaf:firstName "Lyman";
+.
+ex:Person-Dovermann-Alric
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Alric Dovermann";
+   foaf:family_name "Dovermann";
+   foaf:firstName "Alric";
+.
+ex:Person-Janca-Catlin
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Catlin Janca";
+   foaf:family_name "Janca";
+   foaf:firstName "Catlin";
+.
+ex:Person-Shilvock-Birk
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Birk Shilvock";
+   foaf:family_name "Shilvock";
+   foaf:firstName "Birk";
+.
+ex:Person-Blaisdale-Sibyl
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Sibyl Blaisdale";
+   foaf:family_name "Blaisdale";
+   foaf:firstName "Sibyl";
+.
+ex:Person-Sherwill-Dalston
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Dalston Sherwill";
+   foaf:family_name "Sherwill";
+   foaf:firstName "Dalston";
+.
+ex:Person-Sclanders-Brear
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Brear Sclanders";
+   foaf:family_name "Sclanders";
+   foaf:firstName "Brear";
+.
+ex:Person-Custed-Molly
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Molly Custed";
+   foaf:family_name "Custed";
+   foaf:firstName "Molly";
+.
+ex:Person-Taylot-Dominik
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Dominik Taylot";
+   foaf:family_name "Taylot";
+   foaf:firstName "Dominik";
+.
+ex:Person-Edridge-Jarrid
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Jarrid Edridge";
+   foaf:family_name "Edridge";
+   foaf:firstName "Jarrid";
+.
+ex:Person-Marian-Sawyer
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Sawyer Marian";
+   foaf:family_name "Marian";
+   foaf:firstName "Sawyer";
+.
+ex:Person-Necolds-Werner
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Werner Necolds";
+   foaf:family_name "Necolds";
+   foaf:firstName "Werner";
+.
+ex:Person-MacSporran-Harriett
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Harriett MacSporran";
+   foaf:family_name "MacSporran";
+   foaf:firstName "Harriett";
+.
+ex:Person-Feltham-Lesly
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Lesly Feltham";
+   foaf:family_name "Feltham";
+   foaf:firstName "Lesly";
+.
+ex:Person-Blazej-Luce
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Luce Blazej";
+   foaf:family_name "Blazej";
+   foaf:firstName "Luce";
+.
+ex:Person-Reyna-Chelsie
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-Pembroke;
+   org:memberOf ex:Org-MegaSystems;
+   rdfs:label "Chelsie Reyna";
+   foaf:family_name "Reyna";
+   foaf:firstName "Chelsie";
+.
+ex:Person-Sylett-Ilyssa
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-ElPaso;
+   rdfs:label "Ilyssa Sylett";
+   foaf:family_name "Sylett";
+   foaf:firstName "Ilyssa";
+.
+ex:Person-Laborda-Andromache
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-ElPaso;
+   rdfs:label "Andromache Laborda";
+   foaf:family_name "Laborda";
+   foaf:firstName "Andromache";
+.
+ex:Person-Valenta-Bonnibelle
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-ElPaso;
+   rdfs:label "Bonnibelle Valenta";
+   foaf:family_name "Valenta";
+   foaf:firstName "Bonnibelle";
+.
+ex:Person-Ionnisian-Curtis
+   rdf:type foaf:Person ;
+   org:basedAt ex:Site-ElPaso;
+   rdfs:label "Curtis Ionnisian";
+   foaf:family_name "Ionnisian";
+   foaf:firstName "Curtis";
+.
