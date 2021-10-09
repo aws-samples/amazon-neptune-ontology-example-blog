@@ -205,7 +205,7 @@ Resources:
             "neptune_ontology_db.yml": "cfn",
             "neptune_ontology_workbench.yml": "cfn",
             "Neptune_Ontology_Example.ipynb": "notebook",
-            "example_org.ttl": "data"
+            "example_org.ttl": "data",
             "tester_ontology.ttl": "data"
           }
 
