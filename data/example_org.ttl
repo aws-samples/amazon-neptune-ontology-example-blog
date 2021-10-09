@@ -182,7 +182,8 @@ ex:NotAnOrg rdf:type ex:NonOrg .
 ex:Person-Unlucky-Joe:
    rdf:type foaf:Person ;
    # validation - object not in range
-   org:memberOf ex:NotAnOrg;
+   org:memberOf ex:NotAnOrg
+.
 
 ex:Person-Angell-Luce
    rdf:type foaf:Person ;
