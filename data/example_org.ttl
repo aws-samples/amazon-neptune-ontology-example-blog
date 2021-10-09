@@ -23,6 +23,7 @@ ex:Org-MegaSystems
    rdf:type org:Organization ;
    rdfs:label "MegaSystems" ;
    org:subOrganizationOf ex:Org-MegaGroup ;
+   # validation - hasUnit for formalorg only
    org:hasUnit ex:Org-MegaSystems-RD;
    org:hasUnit ex:Org-MegaSystems-Sales;
 .
@@ -67,7 +68,9 @@ ex:Org-MoneyAcqusition
 
 ex:Org-AnInvalidEvent
    rdf:type org:ChangeEvent;
+   # validation - literal but object expected
    org:originalOrganization "an org of some sort";
+   # validation - bad prop
    org:resultingOoooorganization ex:Org-MegaFinancial;
 .
 
@@ -138,6 +141,7 @@ ex:Person-McElmurray-Kerstin
 ex:Membership-Tech-President
    rdf:type org:Membership;
    org:member ex:Person-Michel-Urban;
+   # validation issue - second member
    org:member ex:Person-ImposterOf-Michel-Urban;
    org:organization ex:Org-MegaSystems;
    org:role ex:Role-Tech-President;
@@ -174,6 +178,12 @@ ex:Person-Ionnisian-Curtis
 #
 # Persons in the org, type foaf:Person
 #
+ex:NotAnOrg rdf:type ex:NonOrg
+ex:Person-Unlucky-Joe:
+   rdf:type foaf:Person ;
+   # validation - object not in range
+   org:memberOf ex:NotAnOrg;
+
 ex:Person-Angell-Luce
    rdf:type foaf:Person ;
    org:basedAt ex:Site-Pembroke;
