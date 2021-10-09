@@ -178,7 +178,7 @@ ex:Person-Ionnisian-Curtis
 #
 # Persons in the org, type foaf:Person
 #
-ex:NotAnOrg rdf:type ex:NonOrg
+ex:NotAnOrg rdf:type ex:NonOrg .
 ex:Person-Unlucky-Joe:
    rdf:type foaf:Person ;
    # validation - object not in range
