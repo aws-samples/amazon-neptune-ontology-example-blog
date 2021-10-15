@@ -3,8 +3,8 @@
 ## Setup 
 Use CloudFormation to setup Neptune DB, Neptune notebook, and S3 bulk loader bucket. Create a stack based on template in cfn/neptune_ontology_main.yml. It has two nested stacks using templates cfn/neptune_ontology_db.yml and cfn/neptune_ontology_workbench.yml. To setup:
 
-1. *INTERIM - THE FOLLOWING STEP IS REQUIRED UNTIL THIS REPO IS MADE PUBLIC* Clone this repo. Create an S3 bucket. Add to the bucket the following files: example_org.ttl, tester_ontology.ttl, Neptune_Ontology_Example.ipynb, neptune_ontology_main.yml, neptune-ontology-db.yml, neptune-ontology-workbench.yml. The structure of the S3 bucket should be flat: no folders! TODO - show ls 
-2. *INTERIM - THE FOLLOWING STEP IS REQUIRED UNTIL THIS REPO IS MADE PUBLIC* Edit your local copy of neptune_ontology_main.yml. Do a search and replace, replacing neptune-ontology-example-haveym with the name of your S3 bucket. Save.
+1. (INTERIM - THE FOLLOWING STEP IS REQUIRED UNTIL THIS REPO IS MADE PUBLIC) Clone this repo. Create an S3 bucket. Add to the bucket the following files: example_org.ttl, tester_ontology.ttl, Neptune_Ontology_Example.ipynb, neptune_ontology_main.yml, neptune-ontology-db.yml, neptune-ontology-workbench.yml. The structure of the S3 bucket should be flat: no folders! TODO - show ls 
+2. (INTERIM - THE FOLLOWING STEP IS REQUIRED UNTIL THIS REPO IS MADE PUBLIC) Edit your local copy of neptune_ontology_main.yml. Do a search and replace, replacing neptune-ontology-example-haveym with the name of your S3 bucket. Save.
 3. In CloudFormation console, create a stack. For the template, upload your local copy of neptune_ontology_main.yml. Name your stack and override parameters if necessary.
 4. Create! Check it succeeds!
 
