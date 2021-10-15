@@ -1,14 +1,5 @@
 # Amazon Neptune Ontology Blog Example
 
-## Setup (Use this! Will remove this once this repo becomes public)
-Use CloudFormation to setup Neptune DB, Neptune notebook, and S3 bulk loader bucket. Create a stack based on template in cfn/neptune_ontology_main.yml. It has two nested stacks using templates cfn/neptune_ontology_db.yml and cfn/neptune_ontology_workbench.yml. To setup:
-
-- Copy to S3... 
-- In CloudFormation console, create a stack based on template cfn/neptune_ontology_main.yml. You will need a local copy of this file. You will be uploading it when creating the stack.
-- Name your stack and override parameters if necessary.
-- Create! The stack download the nested templates and other artifacts from this Git repo.
-
-
 ## Setup 
 Use CloudFormation to setup Neptune DB, Neptune notebook, and S3 bulk loader bucket. Create a stack based on template in cfn/neptune_ontology_main.yml. It has two nested stacks using templates cfn/neptune_ontology_db.yml and cfn/neptune_ontology_workbench.yml. To setup:
 
