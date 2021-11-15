@@ -68,28 +68,50 @@ Parameters:
       ARN of the IAM Role that allows Amazon Neptune to access Amazon S3
       resources.
     Type: String
-  StartupScript:
-    Description: 'OPTIONAL: Startup script additions for the notebook instance.'
-    Type: String
-    Default: ''
   BulkLoadS3BucketName:
     Description: >-
       The S3 Bucket copied to from the Notebook instance for uploading to Neptune.
     Type: String
+  IamAuthEnabled:
+    Type: String
+    Default: 'true'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Description: Enable IAM Auth for Neptune.
+  NeptuneDBClusterResourceId:
+    Type: String
+    Description: Neptune cluster resource ID
+  KMSKeyId: 
+    Description: Key for instance enc
+    Type: String
+    Default: ""
 Conditions:
   AddNeptuneClientSecurityGroup: !Not 
     - !Equals 
       - Ref: NeptuneClientSecurityGroup
       - ''
+  UseIAMAuth: !Equals 
+    - Ref: IamAuthEnabled
+    - 'true'
 Resources:
   SageMakerSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
       GroupDescription: Allow Access
       VpcId: !Ref NeptuneClusterVpc
+      SecurityGroupEgress:
+        - FromPort: '0'
+          ToPort: '0'
+          IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+          Description: outbound anywhere
   NeptuneNotebookInstance:
     Type: 'AWS::SageMaker::NotebookInstance'
     Properties:
+      RootAccess: Disabled
+      DirectInternetAccess: Enabled
+      KmsKeyId: !Ref KMSKeyId
       InstanceType: !Ref NotebookInstanceType
       NotebookInstanceName: !Join 
         - ''
@@ -143,7 +165,17 @@ Resources:
                   sudo -u ec2-user -i <<'EOF'
 
                 - |
-                  echo "export GRAPH_NOTEBOOK_AUTH_MODE=DEFAULT" >> ~/.bashrc
+                  echo Setting Auth
+
+                - 'Fn::If':
+                  - UseIAMAuth
+                  - echo "export GRAPH_NOTEBOOK_AUTH_MODE=IAM" >> ~/.bashrc
+                  - echo "export GRAPH_NOTEBOOK_AUTH_MODE=DEFAULT" >> ~/.bashrc
+
+                - |
+                 ; echo "export GRAPH_NOTEBOOK_IAM_PROVIDER=ROLE" >> ~/.bashrc
+                 
+
                 - echo "export GRAPH_NOTEBOOK_HOST=
                 - !Ref NeptuneClusterEndpoint
                 - |
@@ -185,6 +217,7 @@ Resources:
                   
                 - |
                   EOF
+
   ExecutionRole:
     Type: 'AWS::IAM::Role'
     Properties:
@@ -204,6 +237,11 @@ Resources:
       PolicyName: NeptuneWorkbenchPolicy
       PolicyDocument:
         Statement:
+          - Effect: Allow
+            Action:
+              - 'kms:Encrypt'
+              - 'kms:Decrypt'
+            Resource: !Sub arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KMSKeyId}
           - Effect: Allow
             Action:
               - 's3:Get*'
@@ -231,7 +269,23 @@ Resources:
               - 'logs:PutLogEvents'
               - 'logs:PutResourcePolicy'
               - 'logs:UpdateLogDelivery'
-            Resource: '*'
+            Resource: 
+              - !Sub arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:*
+          - Effect: Allow
+            Action:
+              - 'cloudwatch:PutMetricData'
+            Resource:
+              - !Sub arn:${AWS::Partition}:cloudwatch:${AWS::Region}:${AWS::AccountId}:*
+          - Effect: Allow
+            Action: 
+              - 'neptune-db:*'
+            Resource:
+              - !Sub arn:${AWS::Partition}:neptune-db:${AWS::Region}:${AWS::AccountId}:${NeptuneDBClusterResourceId}/*
+          - Effect: Allow
+            Action: 
+              - 'execute-api:Invoke'
+            Resource:
+              - !Sub arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:*/*
       Roles:
         - !Ref ExecutionRole
 Outputs:
