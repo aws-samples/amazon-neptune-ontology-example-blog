@@ -40,19 +40,23 @@ Parameters:
     Type: Number
     Default: 20000
     Description: Neptune Query Time out (in milliseconds)
-  KMSKeyId: 
-    Description: The Amazon KMS key identifier for enc of cluster and for S3
+  NeptuneEnableAuditLog:
+    Type: Number
+    Default: 0
+    AllowedValues:
+      - 0
+      - 1
+    Description: Enable Audit Log. 0 means disable and 1 means enable.
+  IamAuthEnabled:
     Type: String
+    Default: 'false'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Description: Enable IAM Auth for Neptune.
   NeptuneBulkLoadBucket:
     Type: String
     Description: S3 Bucket for bulk loading files.
-  IamAuthEnabled:
-    Type: String
-    Default: "true"
-    AllowedValues:
-      - "true"
-      - "false"
-    Description: Enable IAM Auth for Neptune.
 Conditions:
   CreateDBReplicaInstance: !Not 
     - !Equals 
@@ -110,34 +114,22 @@ Resources:
               - 's3:*'
             Resource:
               - '*'
-          - Effect: Allow
-            Principal: '*'
-            Action:
-              - 'kms:Encrypt'
-              - 'kms:Decrypt'
-              - 'kms:ReEncrypt*'
-              - 'kms:GenerateDataKey*'
-              - 'kms:DescribeKey'
-            Resource:
-              - !Sub arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KMSKeyId}
-
   NeptuneSG:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
       VpcId: !Ref VPC
       GroupDescription: Allow Access
       SecurityGroupIngress:
+        - FromPort: '22'
+          ToPort: '22'
+          IpProtocol: tcp
+          CidrIp: 0.0.0.0/0
+          Description: ssh from anywhere
         - FromPort: !Ref DBClusterPort
           ToPort: !Ref DBClusterPort
           IpProtocol: tcp
           CidrIp: 0.0.0.0/0
           Description: http access
-      SecurityGroupEgress:
-        - FromPort: '0'
-          ToPort: '0'
-          IpProtocol: -1
-          CidrIp: 0.0.0.0/0
-          Description: outbound anywhere
       Tags:
         - Key: Name
           Value: !Sub 'Neptune-${Env}'
@@ -168,8 +160,8 @@ Resources:
         Statement:
           - Effect: Allow
             Action:
-              - 's3:GetObject'
-              - 's3:ListBucket'
+              - 's3:Get*'
+              - 's3:List*'
             Resource: 
               - !Join
                 - ''
@@ -180,14 +172,6 @@ Resources:
                 - ''
                 - - 'arn:aws:s3:::'
                   - !Ref NeptuneBulkLoadBucket
-          - Effect: Allow
-            Action:
-              - "kms:Encrypt"
-              - "kms:Decrypt"
-              - "kms:ReEncrypt*"
-              - "kms:GenerateDataKey*"
-              - "kms:DescribeKey"
-            Resource: !Sub arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KMSKeyId}
       Roles:
         - !Ref NeptuneLoadFromS3Role
   NeptuneDBClusterParameterGroup:
@@ -196,7 +180,7 @@ Resources:
       Family: neptune1
       Description: test-cfn-neptune-db-cluster-parameter-group-description
       Parameters:
-        neptune_enable_audit_log: 1
+        neptune_enable_audit_log: !Ref NeptuneEnableAuditLog
       Tags:
         - Key: Name
           Value: !Sub 'Neptune-${Env}'
@@ -224,8 +208,6 @@ Resources:
           Value: NeptuneCloudformation
   NeptuneDBCluster:
     Type: 'AWS::Neptune::DBCluster'
-    DeletionPolicy: Snapshot
-    UpdateReplacePolicy: Snapshot
     Properties:
       AssociatedRoles: 
         - RoleArn: !GetAtt
@@ -240,10 +222,6 @@ Resources:
       DBClusterParameterGroupName: !Ref NeptuneDBClusterParameterGroup
       Port: !Ref DBClusterPort
       IamAuthEnabled: !Ref IamAuthEnabled
-      StorageEncrypted: true
-      KmsKeyId: !Ref KMSKeyId
-      EnableCloudwatchLogsExports: 
-        - audit
       Tags:
         - Key: Name
           Value: !Sub 'Neptune-${Env}'
@@ -312,18 +290,6 @@ Resources:
           Value: !Sub '${AWS::Region}-${AWS::StackName}'
         - Key: Application
           Value: NeptuneCloudformation
-  FlowLogsGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      RetentionInDays: 10
-  VPCFlowLogs:
-    Type: AWS::EC2::FlowLog
-    Properties:
-      DeliverLogsPermissionArn: !GetAtt FlowLogRole.Arn
-      LogGroupName: FlowLogsGroup
-      ResourceId: !Ref VPC
-      ResourceType: VPC
-      TrafficType: ALL
   PrivateRouteTable:
     Type: 'AWS::EC2::RouteTable'
     Properties:
