@@ -179,65 +179,12 @@ Resources:
                 Fn::Sub: "arn:aws:iam::${AWS::AccountId}:root"
             Action: "kms:*"
             Resource: "*"
-  LoggingKMSKey:
-    Type: AWS::KMS::Key
-    Properties:
-      Enabled: true
-      EnableKeyRotation: true
-      KeyPolicy:
-        Version: "2012-10-17"
-        Id: !Sub enclogkey-${AWS::StackName}-kms
-        Statement:
-          - Effect: Allow
-            Principal:
-              AWS:
-                Fn::Sub: "arn:aws:iam::${AWS::AccountId}:root"
-            Action: "kms:*"
-            Resource: "*"
-          - Effect: Allow
-            Principal:
-              Service: cloudtrail.amazonaws.com
-            Action:
-              - "kms:Encrypt"
-              - "kms:Decrypt"
-              - "kms:ReEncrypt*"
-              - "kms:GenerateDataKey*"
-              - "kms:DescribeKey"
-            Resource: "*"
-
   DataKMSKeyAlias:
     Type: AWS::KMS::Alias
     Properties:
       AliasName: !Sub alias/enc-${AWS::StackName}
       TargetKeyId:
         Ref: KMSKey
-  KMSKeyAlias:
-    Type: AWS::KMS::Alias
-    Properties:
-      AliasName: !Sub alias/enclog-${AWS::StackName}
-      TargetKeyId:
-        Ref: LoggingKMSKey
-
-  LoggingBucket:
-    Type: AWS::S3::Bucket
-    DeletionPolicy: Retain
-    Properties:
-      AccessControl: LogDeliveryWrite
-      VersioningConfiguration:
-        Status: Enabled
-      LifecycleConfiguration:
-        Rules:
-          - Id: Retain10Years
-            Status: Enabled
-            ExpirationInDays: 3653
-            Transition:
-              TransitionInDays: 90
-              StorageClass: STANDARD_IA
-      BucketEncryption:
-        ServerSideEncryptionConfiguration:
-          - ServerSideEncryptionByDefault:
-              SSEAlgorithm: aws:kms
-              KMSMasterKeyID: !Ref LoggingKMSKey
 
   S3WorkingBucket:
     Type: AWS::S3::Bucket
@@ -246,160 +193,11 @@ Resources:
       AccessControl: BucketOwnerFullControl
       VersioningConfiguration:
         Status: Enabled
-      LoggingConfiguration:
-        DestinationBucketName: !Ref LoggingBucket
       BucketEncryption:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: aws:kms
               KMSMasterKeyID: !Ref KMSKey
-
-  LoggingBucketPolicy:
-    Type: AWS::S3::BucketPolicy
-    Properties:
-      Bucket:
-        Ref: LoggingBucket
-      PolicyDocument:
-        Statement:
-          - Sid: Deny non-HTTPS access
-            Action: "s3:*"
-            Effect: Deny
-            Principal: "*"
-            Resource:
-              - Fn::Sub: "arn:aws:s3:::${LoggingBucket}/*"
-              - Fn::Sub: "arn:aws:s3:::${LoggingBucket}"
-            Condition:
-              Bool:
-                "aws:SecureTransport": false
-          - Sid: "AWSCloudTrailAclCheck20150319"
-            Effect: Allow
-            Principal:
-              Service: cloudtrail.amazonaws.com
-            Action: "s3:GetBucketAcl"
-            Resource:
-              - Fn::Sub: "arn:aws:s3:::${LoggingBucket}"
-          - Sid: "AWSCloudTrailWrite20150319"
-            Effect: Allow
-            Principal:
-              Service: cloudtrail.amazonaws.com
-            Action: "s3:PutObject"
-            Resource:
-              - Fn::Sub: "arn:aws:s3:::${LoggingBucket}/ctlogs/AWSLogs/${AWS::AccountId}/*"
-            Condition:
-              StringEquals:
-                "s3:x-amz-acl": "bucket-owner-full-control"
-          - Sid: "DenyDelete"
-            Effect: Deny
-            Principal: "*"
-            Action: "s3:Delete*"
-            Resource:
-              - Fn::Sub: "arn:aws:s3:::${LoggingBucket}/*"
-
-  S3BucketPolicy:
-    Type: AWS::S3::BucketPolicy
-    Properties:
-      Bucket:
-        Ref: S3WorkingBucket
-      PolicyDocument:
-        Statement:
-          - Sid: Deny non-HTTPS access
-            Action: "s3:*"
-            Effect: Deny
-            Principal: "*"
-            Resource:
-              - Fn::Sub: "arn:aws:s3:::${S3WorkingBucket}/*"
-              - Fn::Sub: "arn:aws:s3:::${S3WorkingBucket}"
-            Condition:
-              Bool:
-                "aws:SecureTransport": false
-          - Sid: Deny incorrect encryption header
-            Action: "s3:PutObject*"
-            Effect: Deny
-            Principal: "*"
-            Resource:
-              Fn::Sub: "arn:aws:s3:::${S3WorkingBucket}/*"
-            Condition:
-              StringNotEquals:
-                "s3:x-amz-server-side-encryption-aws-kms-key-id":
-                  Fn::GetAtt:
-                    - KMSKey
-                    - Arn
-          - Sid: Deny unencrypted object uploads
-            Action: "s3:PutObject*"
-            Effect: Deny
-            Principal: "*"
-            Resource:
-              Fn::Sub: "arn:aws:s3:::${S3WorkingBucket}/*"
-            Condition:
-              StringNotEquals:
-                "s3:x-amz-server-side-encryption": "aws:kms"
-
-  CloudTrailLogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      RetentionInDays: 1
-  CloudTrailIAMRole:
-    Type: AWS::IAM::Role
-    Properties:
-      Path: /
-      AssumeRolePolicyDocument:
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: cloudtrail.amazonaws.com
-            Action: "sts:AssumeRole"
-
-  CloudTrailIAMPolicy:
-    Type: AWS::IAM::Policy
-    DependsOn: CloudTrailLogGroup
-    Properties:
-      PolicyName: AllowCTLogDeliveryToCWL
-      Roles:
-        - Ref: CloudTrailIAMRole
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Sid: "AWSCloudTrailCreateLogStream20141101"
-            Effect: Allow
-            Action: "logs:CreateLogStream"
-            Resource:
-              - Fn::Sub: "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:${CloudTrailLogGroup}:log-stream:${AWS::AccountId}_CloudTrail_${AWS::Region}*"
-          - Sid: "AWSCloudTrailPutLogEvents20141101"
-            Effect: Allow
-            Action: "logs:PutLogEvents"
-            Resource:
-              - Fn::Sub: "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:${CloudTrailLogGroup}:log-stream:${AWS::AccountId}_CloudTrail_${AWS::Region}*"
-
-  CloudTrailLogs:
-    Type: AWS::CloudTrail::Trail
-    DependsOn:
-      - CloudTrailIAMPolicy
-      - LoggingBucketPolicy
-    Properties:
-      IsLogging: true
-      S3BucketName:
-        Ref: LoggingBucket
-      S3KeyPrefix: "ctlogs"
-      KMSKeyId:
-        Fn::GetAtt:
-          - LoggingKMSKey
-          - Arn
-      EnableLogFileValidation: true
-      IsMultiRegionTrail: true
-      IncludeGlobalServiceEvents: true
-      CloudWatchLogsLogGroupArn:
-        Fn::GetAtt:
-          - CloudTrailLogGroup
-          - Arn
-      CloudWatchLogsRoleArn:
-        Fn::GetAtt:
-          - CloudTrailIAMRole
-          - Arn
-      EventSelectors:
-        - DataResources:
-          - Type: AWS::S3::Object
-            Values:
-              - !Sub arn:aws:s3:::${S3WorkingBucket}/
 
   Repo2S3:
     Type: Custom::S3CustomResource
@@ -630,18 +428,10 @@ Outputs:
   KMSKey:
     Description: KMS Key
     Value: !Ref KMSKey
-  LoggingKMSKey:
-    Description: Logging KMS Key
-    Value: !Ref LoggingKMSKey
   BulkLoadS3BucketName:
     Condition: CreateSagemakerNotebook
     Description: Arn of the Working S3 Bucket
     Value: !Ref S3WorkingBucket
-  LoggingBucketName:
-    Condition: CreateSagemakerNotebook
-    Description: Arn of the Working S3 Bucket
-    Value: !Ref LoggingBucket
-
   DBClusterId:
     Description: Neptune Cluster Identifier
     Value: !GetAtt

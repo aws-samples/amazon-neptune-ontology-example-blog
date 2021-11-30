@@ -109,7 +109,15 @@ Resources:
             Action:
               - 's3:*'
             Resource:
-              - '*'
+              - !Join
+                - ''
+                - - 'arn:aws:s3:::'
+                  - !Ref NeptuneBulkLoadBucket
+                  - /*
+              - !Join
+                - ''
+                - - 'arn:aws:s3:::'
+                  - !Ref NeptuneBulkLoadBucket
           - Effect: Allow
             Principal: '*'
             Action:
@@ -312,18 +320,6 @@ Resources:
           Value: !Sub '${AWS::Region}-${AWS::StackName}'
         - Key: Application
           Value: NeptuneCloudformation
-  FlowLogsGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      RetentionInDays: 10
-  VPCFlowLogs:
-    Type: AWS::EC2::FlowLog
-    Properties:
-      DeliverLogsPermissionArn: !GetAtt FlowLogRole.Arn
-      LogGroupName: FlowLogsGroup
-      ResourceId: !Ref VPC
-      ResourceType: VPC
-      TrafficType: ALL
   PrivateRouteTable:
     Type: 'AWS::EC2::RouteTable'
     Properties:
