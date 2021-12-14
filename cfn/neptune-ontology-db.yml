@@ -14,7 +14,7 @@ Parameters:
     Default: db.r5.large
     AllowedValues:
       - db.t3.medium
-      - db.r4.large
+      - db.r4.large 
       - db.r4.xlarge
       - db.r4.2xlarge
       - db.r4.4xlarge
@@ -128,6 +128,17 @@ Resources:
               - 'kms:DescribeKey'
             Resource:
               - !Sub arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KMSKeyId}
+  SageMakerSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Allow Access
+      VpcId: !Ref VPC
+      SecurityGroupEgress:
+        - FromPort: '0'
+          ToPort: '0'
+          IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+          Description: outbound anywhere
 
   NeptuneSG:
     Type: 'AWS::EC2::SecurityGroup'
@@ -138,8 +149,8 @@ Resources:
         - FromPort: !Ref DBClusterPort
           ToPort: !Ref DBClusterPort
           IpProtocol: tcp
-          CidrIp: 0.0.0.0/0
-          Description: http access
+          SourceSecurityGroupId: !Ref SageMakerSecurityGroup
+          Description: http access from sagemaker only
       SecurityGroupEgress:
         - FromPort: '0'
           ToPort: '0'
@@ -241,9 +252,9 @@ Resources:
           - Arn
       DBSubnetGroupName: !Ref NeptuneDBSubnetGroup
       VpcSecurityGroupIds:
-        - !GetAtt 
-          - VPC
-          - DefaultSecurityGroup
+#        - !GetAtt 
+#          - VPC
+#          - DefaultSecurityGroup
         - !Ref NeptuneSG
       DBClusterParameterGroupName: !Ref NeptuneDBClusterParameterGroup
       Port: !Ref DBClusterPort
@@ -474,3 +485,6 @@ Outputs:
   NeptuneSG:
     Description: Neptune Security Group
     Value: !Ref NeptuneSG
+  SageMakerSecurityGroup:
+    Description: SageMaker Security Group
+    Value: !Ref SageMakerSecurityGroup

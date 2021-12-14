@@ -413,9 +413,9 @@ Resources:
         NeptuneDBClusterResourceId: !GetAtt
           - NeptuneStack
           - Outputs.DBClusterResourceId
-        NeptuneClientSecurityGroup: !GetAtt
+        SageMakerSecurityGroup: !GetAtt
           - NeptuneStack
-          - Outputs.NeptuneSG
+          - Outputs.SageMakerSecurityGroup
         NeptuneLoadFromS3RoleArn: !GetAtt
           - NeptuneStack
           - Outputs.NeptuneLoadFromS3IAMRoleArn

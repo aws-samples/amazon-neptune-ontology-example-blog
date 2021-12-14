@@ -58,11 +58,6 @@ Parameters:
   NeptuneClusterSubnetId:
     Description: Id of one of the subnets in which your Neptune cluster is running.
     Type: 'AWS::EC2::Subnet::Id'
-  NeptuneClientSecurityGroup:
-    Description: >-
-      OPTIONAL: A VPC security group with access to your Neptune cluster. Leave
-      empty only if the Neptune cluster allows access from anywhere.
-    Type: String
   NeptuneLoadFromS3RoleArn:
     Description: >-
       ARN of the IAM Role that allows Amazon Neptune to access Amazon S3
@@ -86,26 +81,16 @@ Parameters:
     Description: Key for instance enc
     Type: String
     Default: ""
+  SageMakerSecurityGroup:
+    Description: SageMaker security group
+    Type: String
+    Default: AWS::EC2::SecurityGroup
+
 Conditions:
-  AddNeptuneClientSecurityGroup: !Not 
-    - !Equals 
-      - Ref: NeptuneClientSecurityGroup
-      - ''
   UseIAMAuth: !Equals 
     - Ref: IamAuthEnabled
     - 'true'
 Resources:
-  SageMakerSecurityGroup:
-    Type: 'AWS::EC2::SecurityGroup'
-    Properties:
-      GroupDescription: Allow Access
-      VpcId: !Ref NeptuneClusterVpc
-      SecurityGroupEgress:
-        - FromPort: '0'
-          ToPort: '0'
-          IpProtocol: -1
-          CidrIp: 0.0.0.0/0
-          Description: outbound anywhere
   NeptuneNotebookInstance:
     Type: 'AWS::SageMaker::NotebookInstance'
     Properties:
@@ -124,9 +109,7 @@ Resources:
           - '-'
           - !Ref Env
       SubnetId: !Ref NeptuneClusterSubnetId
-      SecurityGroupIds: !If 
-        - AddNeptuneClientSecurityGroup
-        - - !Ref NeptuneClientSecurityGroup
+      SecurityGroupIds: 
         - - !GetAtt 
             - SageMakerSecurityGroup
             - GroupId
