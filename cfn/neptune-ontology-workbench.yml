@@ -52,9 +52,6 @@ Parameters:
     Description: 'OPTIONAL: Port of an existing Neptune cluster (default 8182).'
     Type: String
     Default: '8182'
-  NeptuneClusterVpc:
-    Description: VPC Id of the VPC in which your Neptune cluster is running.
-    Type: 'AWS::EC2::VPC::Id'
   NeptuneClusterSubnetId:
     Description: Id of one of the subnets in which your Neptune cluster is running.
     Type: 'AWS::EC2::Subnet::Id'
@@ -81,10 +78,9 @@ Parameters:
     Description: Key for instance enc
     Type: String
     Default: ""
-  SageMakerSecurityGroup:
+  SageMakerSecurityGroupId:
     Description: SageMaker security group
-    Type: String
-    Default: AWS::EC2::SecurityGroup
+    Type: AWS::EC2::SecurityGroup::Id
 
 Conditions:
   UseIAMAuth: !Equals 
@@ -110,9 +106,7 @@ Resources:
           - !Ref Env
       SubnetId: !Ref NeptuneClusterSubnetId
       SecurityGroupIds: 
-        - - !GetAtt 
-            - SageMakerSecurityGroup
-            - GroupId
+          - !Ref SageMakerSecurityGroupId
       RoleArn: !GetAtt 
         - ExecutionRole
         - Arn

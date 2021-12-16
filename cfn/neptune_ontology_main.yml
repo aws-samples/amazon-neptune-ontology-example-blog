@@ -404,16 +404,13 @@ Resources:
         NeptuneClusterPort: !GetAtt
           - NeptuneStack
           - Outputs.DBClusterPort
-        NeptuneClusterVpc: !GetAtt
-          - NeptuneStack
-          - Outputs.VPC
         NeptuneClusterSubnetId: !GetAtt
           - NeptuneStack
           - Outputs.PrivateSubnet1
         NeptuneDBClusterResourceId: !GetAtt
           - NeptuneStack
           - Outputs.DBClusterResourceId
-        SageMakerSecurityGroup: !GetAtt
+        SageMakerSecurityGroupId: !GetAtt
           - NeptuneStack
           - Outputs.SageMakerSecurityGroup
         NeptuneLoadFromS3RoleArn: !GetAtt
