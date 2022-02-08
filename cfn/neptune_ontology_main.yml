@@ -204,9 +204,7 @@ Resources:
     Properties:
       ServiceToken: !GetAtt Repo2S3Func.Arn
       s3_bucket: !Ref S3WorkingBucket
-      # TODO - source repo should be https://github.com/aws-samples/amazon-neptune-ontology-example-blog
-      # Once that is made public, modify this implementation to get files from there
-      source_repo: "s3://neptune-ontology-example-haveym"
+      source_repo: "https://github.com/aws-samples/amazon-neptune-ontology-example-blog"
       kms_key: !Ref KMSKey
 
   Repo2S3Func:
@@ -360,18 +358,6 @@ Resources:
                 Resource: !Sub arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KMSKey}
             Version: "2012-10-17"
           PolicyName: !Sub "Repo2S3pol-KMS-${AWS::StackName}"
-        - PolicyDocument:
-            # THIS POLICY IS NEEDED IF SOURCE REPO IS S3. If it turns out to be git, remove this policy
-            Statement:
-              - Action:
-                  - s3:GetObject
-                  - s3:List*
-                Effect: Allow
-                Resource:
-                  - arn:aws:s3:::neptune-ontology-example-haveym/*
-                  - arn:aws:s3:::neptune-ontology-example-haveym
-            Version: "2012-10-17"
-          PolicyName: !Sub "Repo2S3pol-S3Repo-TestOnly-${AWS::StackName}"
       RoleName: !Sub "Repo2S3role-${AWS::StackName}"
 
   NeptuneStack:
