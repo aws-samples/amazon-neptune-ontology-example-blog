@@ -278,7 +278,7 @@ Resources:
                   print("Using repo from http")
                   for key in REPO_CONTENTS:
                     path = source_repo + REPO_CONTENTS[key] + "/" + key
-                    copy_web_s3(path, s3c, s3_bucket,key)
+                    copy_web_s3(path, s3c, s3_bucket, kms_key)
                   response_data['Data'] = 'git success'
                   cfnresponse.send(event, context, cfnresponse.SUCCESS, response_data)
                 elif source_repo.startswith("s3"):
