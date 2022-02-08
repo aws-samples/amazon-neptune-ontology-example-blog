@@ -227,8 +227,8 @@ Resources:
 
           ORG_URL = "http://www.w3.org/ns/org.ttl"
           REPO_CONTENTS = {
-            "neptune_ontology_db.yml": "cfn",
-            "neptune_ontology_workbench.yml": "cfn",
+            "neptune-ontology-db.yml": "cfn",
+            "neptune-ontology-workbench.yml": "cfn",
             "Neptune_Ontology_Example.ipynb": "notebook",
             "example_org.ttl": "data",
             "tester_ontology.ttl": "data"
