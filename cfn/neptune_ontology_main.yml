@@ -204,7 +204,7 @@ Resources:
     Properties:
       ServiceToken: !GetAtt Repo2S3Func.Arn
       s3_bucket: !Ref S3WorkingBucket
-      source_repo: "https://github.com/aws-samples/amazon-neptune-ontology-example-blog"
+      source_repo: "https://raw.githubusercontent.com/aws-samples/amazon-neptune-ontology-example-blog/main/"
       kms_key: !Ref KMSKey
 
   Repo2S3Func:
@@ -235,8 +235,9 @@ Resources:
           }
 
           def copy_web_s3(url, s3_client, bucket, key, kms_key):
+            print("Downloading file " + url)
             the_file = http.request('GET', url, preload_content=False)
-            print("Got file")
+            print("Got file " + url)
             local_file_name = '/tmp/' + key
             print("local file " + local_file_name)
             local_file = open(local_file_name, 'wb')
@@ -273,12 +274,12 @@ Resources:
                 source_repo= event['ResourceProperties']['source_repo']
                 s3c = boto3.client('s3')
                 print("Creating/Updating")
-                copy_web_s3(ORG_URL, s3c, s3_bucket, "org.ttl", kms_key)
+                copy_web_s3(ORG_URL, s3c, s3_bucket, "org.ttl", str(kms_key))
                 if source_repo.startswith("http"):
                   print("Using repo from http")
                   for key in REPO_CONTENTS:
                     path = source_repo + REPO_CONTENTS[key] + "/" + key
-                    copy_web_s3(path, s3c, s3_bucket, kms_key)
+                    copy_web_s3(path, s3c, s3_bucket,  str(kms_key))
                   response_data['Data'] = 'git success'
                   cfnresponse.send(event, context, cfnresponse.SUCCESS, response_data)
                 elif source_repo.startswith("s3"):
