@@ -14,5 +14,5 @@ Your notebook instance sneeds read/write access to that S3 bucket.
 3. Open the MultiModel.ipynb notebook in Jupyter.
 4. Follow the steps described in the notebook. You need to make one edit. In the code cell under "Set the name of an S3 bucket in the same region that Neptune has access to", edit your S3 bucket name as the value of S3_BUCKET.
 
-##License
+## License
 The ontology and notebook are licensed under the MIT-0 License. See the LICENSE file.
