@@ -3,10 +3,9 @@
 This is an example accompanying my talk/blog post on multi modeling. It shows how an ontology to model data products in a multi-model solution. It also shows the use of Knowledge Graph as one model within the multimodel. 
 
 ## Pre-requisite
-- You need an AWS account.
-- You need an Amazon Neptune cluster with a Neptune Workbench notebook instance.
-- You need an S3 bucket in the same region as your Neptune cluster. Your Neptune cluster needs an IAM role with read access to the bucket.
-- Your notebook instance sneeds read/write access to that S3 bucket.
+- You need an Amazon Neptune cluster with a Neptune Workbench notebook instance.  See https://docs.aws.amazon.com/neptune/latest/userguide/neptune-setup.html. 
+- You need an S3 bucket in the same region as your Neptune cluster. Your Neptune cluster needs an IAM role with read access to the bucket. See https://docs.aws.amazon.com/neptune/latest/userguide/bulk-load-tutorial-IAM.html. 
+- Your notebook instance needs read/write access to that S3 bucket. Find the IAM role for your notebook instance and add a policy to enable that S3 access.  See https://docs.aws.amazon.com/sagemaker/latest/dg/gs-setup-working-env.html.
 
 ## Steps to setup:
 1. Clone this repo.
