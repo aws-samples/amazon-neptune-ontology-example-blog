@@ -1,6 +1,6 @@
 # Using Amazon Neptune to Model a Multimodel Database Solution
 
-This is an example accompanying my talk/blog post on multi modeling. It shows how an ontology to model data products in a multi-model solution. It also shows the use of Knowledge Graph as one model within the multimodel. 
+This is an example accompanying my talk/blog post on multi modeling. It shows how to use ontology to model data products in a multi-model solution. It also shows the use of Knowledge Graph as one model within the multimodel. 
 
 ## Pre-requisite
 - You need an Amazon Neptune cluster with a Neptune Workbench notebook instance.  See https://docs.aws.amazon.com/neptune/latest/userguide/neptune-setup.html. 
