@@ -14,35 +14,35 @@ mcperson:JonyIve a :Person ;
     skos:altLabel "Johnny Ive" ;
     :mypred "from my data sources on subject";
     :hasWikidataRef <https://www.wikidata.org/entity/Q164750>;
-    :hasRole [ a :Role;  mcrole:hasRoleType :VP_IndustrialDesign; mcorg:hasRoleOrg mcorg:Apple  ] ;
+    :hasRole [ a :Role;  :hasRoleType :VP_IndustrialDesign; :hasRoleOrg mcorg:Apple  ] ;
 .
 
 mcperson:ElonMusk a :Person ;
     rdfs:label "Elon Musk";
     :mypred "from my data sources on subject";
     :hasWikidataRef <https://www.wikidata.org/entity/Q317521>;
-    :hasRole [ a :Role;  mcrole:hasRoleType :CEO;  mcorg:hasRoleOrg mcorg:Tesla  ] ;
+    :hasRole [ a :Role;  :hasRoleType :CEO;  :hasRoleOrg mcorg:Tesla  ] ;
 .
 
 mcperson:SteveJobs a :Person ;
     rdfs:label "Steve Jobs";
     :mypred "from my data sources on subject";
     :hasWikidataRef <https://www.wikidata.org/entity/Q19837>;
-    :hasRole [ a :Role;  mcrole:hasRoleType :CEO;  mcorg:hasRoleOrg mcorg:Apple  ] ;
+    :hasRole [ a :Role;  :hasRoleType :CEO;  :hasRoleOrg mcorg:Apple  ] ;
 .
 
 mcperson:TimCook a :Person ;
     rdfs:label "Tim Cook";
     :mypred "from my data sources on subject";
     :hasWikidataRef <https://www.wikidata.org/entity/Q265852>;
-    :hasRole [ a :Role;  mcrole:hasRoleType :CEO;  mcorg:hasRoleOrg mcorg:Apple  ] ;
+    :hasRole [ a :Role;  :hasRoleType :CEO;  :hasRoleOrg mcorg:Apple  ] ;
 .
 
 mcperson:JohnSculley a :Person ;
     rdfs:label "John Sculley";
     :mypred "from my data sources on subject";
     :hasWikidataRef <https://www.wikidata.org/entity/Q337024>; 
-    :hasRole [ a :Role;  mcrole:hasRoleType :CEO;  mcorg:hasRoleOrg mcorg:Apple  ] ;
+    :hasRole [ a :Role;  :hasRoleType :CEO;  :hasRoleOrg mcorg:Apple  ] ;
 .
 
 mcorg:Tesla a :Organization;
