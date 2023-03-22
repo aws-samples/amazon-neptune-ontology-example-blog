@@ -1,0 +1,126 @@
+@prefix : <http://amazon.com/aws/wwso/neptune/demo/m2c/> .
+@prefix mcperson: <http://amazon.com/aws/wwso/neptune/demo/m2c/person/> .
+@prefix mcorg: <http://amazon.com/aws/wwso/neptune/demo/m2c/org/> .
+@prefix mcrole: <http://amazon.com/aws/wwso/neptune/demo/m2c/role/> .
+@prefix mcproduct: <http://amazon.com/aws/wwso/neptune/demo/m2c/product/> .
+@prefix rdf:        <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:       <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:        <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:        <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos:       <http://www.w3.org/2004/02/skos/core#> .
+
+mcperson:JonyIve a :Person ;
+    rdfs:label "Jony Ive";
+    skos:altLabel "Johnny Ive" ;
+    :mypred "from my data sources on subject";
+    :hasWikidataRef <https://www.wikidata.org/entity/Q164750>;
+    :hasRole [ a :Role;  mcrole:hasRoleType :VP_IndustrialDesign; mcorg:hasRoleOrg mcorg:Apple . ] ;
+.
+
+mcperson:ElonMusk a :Person ;
+    rdfs:label "Elon Musk";
+    :mypred "from my data sources on subject";
+    :hasWikidataRef <https://www.wikidata.org/entity/Q317521>;
+    :hasRole [ a :Role;  mcrole:hasRoleType :CEO;  mcorg:hasRoleOrg mcorg:Tesla . ] ;
+.
+
+mcperson:SteveJobs a :Person ;
+    rdfs:label "Steve Jobs";
+    :mypred "from my data sources on subject";
+    :hasWikidataRef <https://www.wikidata.org/entity/Q19837>;
+    :hasRole [ a :Role;  mcrole:hasRoleType :CEO;  mcorg:hasRoleOrg mcorg:Apple . ] ;
+.
+
+mcperson:TimCook a :Person ;
+    rdfs:label "Tim Cook";
+    :mypred "from my data sources on subject";
+    :hasWikidataRef <https://www.wikidata.org/entity/Q265852>;
+    :hasRole [ a :Role;  mcrole:hasRoleType :CEO;  mcorg:hasRoleOrg mcorg:Apple . ] ;
+.
+
+mcperson:JohnSculley a :Person ;
+    rdfs:label "John Sculley";
+    :mypred "from my data sources on subject";
+    :hasWikidataRef <https://www.wikidata.org/entity/Q337024>; 
+    :hasRole [ a :Role;  mcrole:hasRoleType :CEO;  mcorg:hasRoleOrg mcorg:Apple . ] ;
+.
+
+mcorg:Tesla a :Organization;
+    rdfs:label "Tesla";
+    :mypred "from my data sources on subject";
+    skos:altLabel "Tesla, Inc";
+    skos:altLabel "Tesla Motors";
+    hasWikidataRef <https://www.wikidata.org/entity/Q478214>
+.
+
+mcorg:Apple a :Organization;
+    rdfs:label "Apple";
+    :mypred "from my data sources on subject";
+    skos:altLabel "Apple Computer";
+    hasWikidataRef <https://www.wikidata.org/entity/Q312>;
+.
+
+mcproduct:TeslaRoadster a :Product;
+    rdfs:label "Tesla Roadster";
+    :mypred "from my data sources on subject";
+    :producedBy mcorg:Tesla;
+    hasWikidataRef <https://www.wikidata.org/entity/Q210893>; 
+.
+
+mcproduct:AppleNewton a :Product;
+    rdfs:label "Apple Newton";
+    :mypred "from my data sources on subject";
+    :producedBy mcorg:Apple;
+    hasWikidataRef <https://www.wikidata.org/entity/Q420772>;
+.
+
+mcproduct:AppleTV a :Product;
+    rdfs:label "Apple TV";
+    :mypred "from my data sources on subject";
+    :producedBy mcorg:Apple;
+    hasWikidataRef <https://www.wikidata.org/entity/Q270285>; 
+.
+
+mcproduct:AppleWatch a :Product;
+    rdfs:label "Apple Watch";
+    :mypred "from my data sources on subject";
+    :producedBy mcorg:Apple;
+    hasWikidataRef <https://www.wikidata.org/entity/Q18010946>; 
+.
+
+mcproduct:AppleIPAD a :Product;
+    rdfs:label "iPad";
+    :mypred "from my data sources on subject";
+    :producedBy mcorg:Apple;
+    hasWikidataRef <https://www.wikidata.org/entity/Q2796>; 
+.
+
+mcproduct:AppleIPOD a :Product;
+    rdfs:label "iPod";
+    :mypred "from my data sources on subject";
+    :producedBy mcorg:Apple;
+    hasWikidataRef <https://www.wikidata.org/entity/Q9479>; 
+.
+
+mcproduct:AppleIMAC a :Product;
+    rdfs:label "iMac";
+    :mypred "from my data sources on subject";
+    :producedBy mcorg:Apple;
+    hasWikidataRef <https://www.wikidata.org/entity/Q140912>; 
+.
+
+mcproduct:AppleMAC a :Product;
+    rdfs:label "Mac";
+    skos:altLabel "Mackintosh";
+    skos:altLabel "Apple Mackintosh";
+    :mypred "from my data sources on subject";
+    :producedBy mcorg:Apple;
+    hasWikidataRef <https://www.wikidata.org/entity/Q75687>; 
+.
+
+mcproduct:AppleIPHONE a :Product;
+    rdfs:label "iPhone";
+    :mypred "from my data sources on subject";
+    :producedBy mcorg:Apple;
+    hasWikidataRef <https://www.wikidata.org/entity/Q2766>; 
+.
