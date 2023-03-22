@@ -9,8 +9,87 @@
 @prefix xsd:        <http://www.w3.org/2001/XMLSchema#> .
 @prefix skos:       <http://www.w3.org/2004/02/skos/core#> .
 
+#
+# A quick and dirty ontology across seed and m2c
+#
+
+# M2C classes
+:Appearance a owl:Class .
+:Celebrity a owl:Class .
+:Emotion a owl:Class .
+:Entity a owl:Class .
+:Label a owl:Class .
+:Sentiment a owl:Class .
+:Gender a owl:Class .
+:VideoAnalysis a owl:Class .
+
+# Seed classes
+:Person a owl:Class . 
+:Organization a owl:Class .
+:Role a owl:Class .
+:Product a owl:Class .
+:RoleType a owl:Class .
+
+# common properties
+:id a owl:DatatypeProperty .
+:name a owl:DatatypeProperty .
+:count a owl:DatatypeProperty .
+:hasExternalURL a owl:ObjectProperty .
+:hasWikidataRef a owl:ObjectProperty .
+:hasGender a owl:ObjectProperty ;
+    rdfs:range :Gender.
+
+# M2C datatype properties
+:filename a owl:DatatypeProperty .
+:appearance a owl:DatatypeProperty ;   
+    rdfs:domain :Appearance .
+:appearancePct a owl:DatatypeProperty  ;  
+    rdfs:domain :Appearance .
+:extractedKeyphrase a owl:DatatypeProperty ;
+    rdfs:domain :VideoAnalysis .
+:observedText  a owl:DatatypeProperty ;
+    rdfs:domain :VideoAnalysis .
+:personCount a owl:DatatypeProperty .
+:subtype a owl:DatatypeProperty .
+:sentimentCount a owl:DatatypeProperty ;
+    rdfs:domain :VideoAnalysis .
+:sentimentCountMixed a owl:DatatypeProperty;
+    rdfs:subPropertyOf :hasSentiment .
+:sentimentCountNeutral a owl:DatatypeProperty;
+    rdfs:subPropertyOf :hasSentiment .
+:sentimentCountPositive a owl:DatatypeProperty;
+    rdfs:subPropertyOf :hasSentiment .
+:sentimentCountNegative a owl:DatatypeProperty;
+    rdfs:subPropertyOf :hasSentiment .
+
+# M2C object properties
+:hasAppearanceSubject a owl:ObjectProperty  ; 
+    rdfs:domain :Appearance .
+:hasAppearance a owl:ObjectProperty ;
+    rdfs:domain :VideoAnalysis ;
+    rdfs:range :Appearance .
+:hasCelebAppearance a owl:ObjectProperty ;
+    rdfs:subPropertyOf :hasAppearance .
+:hasLabelAppearance a owl:ObjectProperty ;
+    rdfs:subPropertyOf :hasAppearance .
+:hasEmotion a owl:ObjectProperty ;
+    rdfs:domain :VideoAnalysis .
+:hasExtractedEntity a owl:ObjectProperty ;
+    rdfs:domain :VideoAnalysis ;
+    rdfs:range :Entity .
+
+# seed object properties
+:hasRole a owl:ObjectProperty ;
+    rdfs:range :Role .
+:hasRoleType a owl:ObjectProperty ;
+    rdfs:range :RoleType .
+:hasRoleOrg a owl:ObjectProperty ;
+    rdfs:range :Organization.
+:producedBy a owl:ObjectProperty ;
+    rdfs:domain :Product.
+ 
 mcperson:JonyIve a :Person ;
-    rdfs:label "Jony Ive";
+    :name "Jony Ive";
     skos:altLabel "Johnny Ive" ;
     :mypred "from my data sources on subject";
     :hasWikidataRef <http://www.wikidata.org/entity/Q164750>;
@@ -18,35 +97,35 @@ mcperson:JonyIve a :Person ;
 .
 
 mcperson:ElonMusk a :Person ;
-    rdfs:label "Elon Musk";
+    :name "Elon Musk";
     :mypred "from my data sources on subject";
     :hasWikidataRef <http://www.wikidata.org/entity/Q317521>;
     :hasRole [ a :Role;  :hasRoleType :CEO;  :hasRoleOrg mcorg:Tesla  ] ;
 .
 
 mcperson:SteveJobs a :Person ;
-    rdfs:label "Steve Jobs";
+    :name "Steve Jobs";
     :mypred "from my data sources on subject";
     :hasWikidataRef <http://www.wikidata.org/entity/Q19837>;
     :hasRole [ a :Role;  :hasRoleType :CEO;  :hasRoleOrg mcorg:Apple  ] ;
 .
 
 mcperson:TimCook a :Person ;
-    rdfs:label "Tim Cook";
+    :name "Tim Cook";
     :mypred "from my data sources on subject";
     :hasWikidataRef <http://www.wikidata.org/entity/Q265852>;
     :hasRole [ a :Role;  :hasRoleType :CEO;  :hasRoleOrg mcorg:Apple  ] ;
 .
 
 mcperson:JohnSculley a :Person ;
-    rdfs:label "John Sculley";
+    :name "John Sculley";
     :mypred "from my data sources on subject";
     :hasWikidataRef <http://www.wikidata.org/entity/Q337024>; 
     :hasRole [ a :Role;  :hasRoleType :CEO;  :hasRoleOrg mcorg:Apple  ] ;
 .
 
 mcorg:Tesla a :Organization;
-    rdfs:label "Tesla";
+    :name "Tesla";
     :mypred "from my data sources on subject";
     skos:altLabel "Tesla, Inc";
     skos:altLabel "Tesla Motors";
@@ -54,63 +133,63 @@ mcorg:Tesla a :Organization;
 .
 
 mcorg:Apple a :Organization;
-    rdfs:label "Apple";
+    :name "Apple";
     :mypred "from my data sources on subject";
     skos:altLabel "Apple Computer";
     :hasWikidataRef <http://www.wikidata.org/entity/Q312>;
 .
 
 mcproduct:TeslaRoadster a :Product;
-    rdfs:label "Tesla Roadster";
+    :name "Tesla Roadster";
     :mypred "from my data sources on subject";
     :producedBy mcorg:Tesla;
     :hasWikidataRef <http://www.wikidata.org/entity/Q210893>; 
 .
 
 mcproduct:AppleNewton a :Product;
-    rdfs:label "Apple Newton";
+    :name "Apple Newton";
     :mypred "from my data sources on subject";
     :producedBy mcorg:Apple;
     :hasWikidataRef <http://www.wikidata.org/entity/Q420772>;
 .
 
 mcproduct:AppleTV a :Product;
-    rdfs:label "Apple TV";
+    :name "Apple TV";
     :mypred "from my data sources on subject";
     :producedBy mcorg:Apple;
     :hasWikidataRef <http://www.wikidata.org/entity/Q270285>; 
 .
 
 mcproduct:AppleWatch a :Product;
-    rdfs:label "Apple Watch";
+    :name "Apple Watch";
     :mypred "from my data sources on subject";
     :producedBy mcorg:Apple;
     :hasWikidataRef <http://www.wikidata.org/entity/Q18010946>; 
 .
 
 mcproduct:AppleIPAD a :Product;
-    rdfs:label "iPad";
+    :name  "iPad";
     :mypred "from my data sources on subject";
     :producedBy mcorg:Apple;
     :hasWikidataRef <http://www.wikidata.org/entity/Q2796>; 
 .
 
 mcproduct:AppleIPOD a :Product;
-    rdfs:label "iPod";
+    :name  "iPod";
     :mypred "from my data sources on subject";
     :producedBy mcorg:Apple;
     :hasWikidataRef <http://www.wikidata.org/entity/Q9479>; 
 .
 
 mcproduct:AppleIMAC a :Product;
-    rdfs:label "iMac";
+    :name  "iMac";
     :mypred "from my data sources on subject";
     :producedBy mcorg:Apple;
     :hasWikidataRef <http://www.wikidata.org/entity/Q140912>; 
 .
 
 mcproduct:AppleMAC a :Product;
-    rdfs:label "Mac";
+    :name  "Mac";
     skos:altLabel "Mackintosh";
     skos:altLabel "Apple Mackintosh";
     :mypred "from my data sources on subject";
@@ -119,7 +198,7 @@ mcproduct:AppleMAC a :Product;
 .
 
 mcproduct:AppleIPHONE a :Product;
-    rdfs:label "iPhone";
+    :name  "iPhone";
     :mypred "from my data sources on subject";
     :producedBy mcorg:Apple;
     :hasWikidataRef <http://www.wikidata.org/entity/Q2766>; 
