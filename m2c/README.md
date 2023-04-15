@@ -1,5 +1,7 @@
 # Bringing Media2Cloud Video Analysis into Amazon Neptune Knowledge Graph
 
+... THIS IS BEING MOVED SOON ....
+
 This is an example accompanying my blog post on linking AI video analysis of the AWS Media2Cloud solution (https://aws.amazon.com/solutions/implementations/media2cloud/) with an Amazon Neptune knowledge graph. Refer to the blog post for a full step-to-step setup and exploration.
 
 We refer to Media2Cloud as M2C throughout.
