@@ -2,6 +2,8 @@
 
 This is an example accompanying my talk/blog post on multi modeling. It shows how to use ontology to model data products in a multi-model solution. It also shows the use of Knowledge Graph as one model within the multimodel. 
 
+NOTE: This setup will be simplified soon using CloudFormation.
+
 ## Pre-requisite
 - You need an Amazon Neptune cluster with a Neptune Workbench notebook instance.  See https://docs.aws.amazon.com/neptune/latest/userguide/neptune-setup.html. 
 - You need an S3 bucket in the same region as your Neptune cluster. Your Neptune cluster needs an IAM role with read access to the bucket. See https://docs.aws.amazon.com/neptune/latest/userguide/bulk-load-tutorial-IAM.html. 
