@@ -22,7 +22,7 @@ So how to model this? The data architect pretends they have a data mesh, even if
 - A profile containing common stereotypes of data products and their relationships. [XMI](uml/MMProfile.xml), [Diagram](uml/MMProfile.png).  
 - A model of the document store products. [XMI](uml/MovieDoc.xml), [Diagram](uml/MovieDoc.png).
 - A model of the lake products. [XMI](uml/DataLake.xml), [Diagram](uml/DataLake.png).
-- A model of the KG products. [XMI](uml/KnowledgeGraph.xml), [Diagram](uml/KG.png).
+- A model of the KG products. The KG serves two purposes. It has all product definitions plus their relationships. It also is one of the models, it offers its own products, and those products have many instances in the graph! [XMI](uml/KnowledgeGraph.xml), [Diagram](uml/KG.png).
 - A model of the video analysis products. [XMI](uml/VideoAnalysis.xml), [Diagram](uml/VideoAnalysis.png).
 - A model of the story analysis products. [XMI](uml/StoryAnalysis.xml), [Diagram](uml/StoryAnalysis.png).
 
@@ -32,7 +32,7 @@ UML is easy to generate code from. It is represented in XML, or more particularl
 
 The demo has three main parts:
 1. Drawing the UML models. Done! Try the UML links above.
-2. Converting UML to RDF. Coming soon!
+2. Converting UML to RDF. Coming soon! 
 3. Ingesting the RDF to Amazon Neptune and asking questions via SPARQL questions about products and their relationships. Follow the instructions below.
 
 ## Pre-requisite
@@ -45,6 +45,46 @@ The demo has three main parts:
 2. In your notebook instance, select the Jupyter files tab. Upload your local cloned copy of MultiModel.ipynb (in the multimodel folder).
 3. Open the MultiModel.ipynb notebook in Jupyter.
 4. Follow the steps described in the notebook. You need to make one edit. In the code cell under "Set the name of an S3 bucket in the same region that Neptune has access to", edit your S3 bucket name as the value of S3_BUCKET.
+
+## Representing the products in UML and RDF
+This demo shows both UML and RDF representations of data products. The UML representation is based on a profile of product stereotypes
+
+!(Profile)[images/MMProfile.png]
+
+The RDF representation is a (data product ontology)[mm_movie.ttl]. It is held in the KG. As mentioned above, the KG has both products definitions plus its own products! The ontology file, for convenience, contains both. 
+
+The following chart describes how products and relationships are represented.
+
+Thing to represent|UML|Ontology|Params|
+|:----|:----|:----|:----|
+|Product|Stereotype DataProduct on class|Class that is subclass of :DataProduct| |
+|Implementation|Stereotype DataProductImpl on class|Class that is subclass of :DataProduct| |
+| | | | |
+| |Stereotype hasImpl on usage rel from product or impl class to impl class|Annotation property :hasImpl from product/impl class to impl class| |
+|Caches, copies, located in|Stereotype on usage rel from product/ impl class to product/impl class|Annotation property :hasImpl from product/impl class to product/impl class| |
+|Usage pattern|Stereotype usagePattern on product class or its package. Each pattern is a pattern tag|Annotation property :usagePattern on product class.|UML tag: pattern (1..*): string. In RDF, a string object.|
+|Federates|Stereotype federates on product/impl class.|Annotation property :federates on product/ impl class.|UML tag fedURI (1..*): string. In RDF, a string or URI object.|
+|Joins|Stereotype joins on usage rel from product/impl class to product/impl class.|Annotation property :joins on product/ impl class.|UML: joinAttib(*) to specify prop names in target class. Use myAttrib(*) if source class props are named differently. Match up one for one.|
+| | | | |
+| | | |In RDF, the object is a Join individual with :hasNeighbor and :hasNeighborAttribute triples pointing to neighbor.|
+|Refer To|Similar to joins|Similar to joins|UML: similar. Use refersAttrib and myAttrib.|
+| | | | |
+| | | |RDF: similar. The object is a Ref individual.|
+|Product Key|Stereotype productKey on property of product/impl class|owl:hasKey of product/impl class| |
+|AWS Service|Stereotype awsService on impl class.|Annotation property :awsService on impl class|UML: service[1]: string.|
+| | | | |
+| | | |RDF: string or URI of AWS service name.|
+|AWS Resource|Similar to AWS Service|Similar to AWS Service|UML: resource[1]: string.|
+| | | | |
+| | | |RDF: string or URI of AWS resource name.|
+|Has source|Stereotype hasSource at multiple levels. Can be on product/impl class. Can be a package level, indicating all products in the package have the source. Can be on usage rel, indicating that the source class/package is sourced from the target class/package|Annotation property :hasSource on product/impl class.|UML: integrationType[0,1], sourceDataSet[*], sourceEventType[0,1]|
+| | | | |
+| | | |In RDF, the object is a Source individual with triples like the above. If the target is a product/impl, it uses hasNeighbor.|
+|Similar to|Stereotype similarTo on usage rel from product class to product class.|Annotation property :similarTo on product class|UML simReason[0,1], simAlgorithm[0,1]|
+| | | | |
+| | | |In RDF, the object is a Similarity individual with triples like the above.|
+|Config|Stereotype config on any element|RDF is looser. Individual annotation properties, such as awss3:Tier are used.|UML: configKV[1..*]. Express as string of form K,V|
+
 
 ## License
 The ontology and notebook are licensed under the MIT-0 License. See the LICENSE file.
