@@ -62,9 +62,11 @@ Thing to represent|UML|Ontology|Params|
 | | | | |
 | |Stereotype hasImpl on usage rel from product or impl class to impl class|Annotation property :hasImpl from product/impl class to impl class| |
 |Caches, copies, located in|Stereotype on usage rel from product/ impl class to product/impl class|Annotation property :hasImpl from product/impl class to product/impl class| |
-|Usage pattern|Stereotype usagePattern on product class or its package. Each pattern is a pattern tag|Annotation property :usagePattern on product class.|UML tag: pattern (1..*): string. In RDF, a string object.|
-|Federates|Stereotype federates on product/impl class.|Annotation property :federates on product/ impl class.|UML tag fedURI (1..*): string. In RDF, a string or URI object.|
-|Joins|Stereotype joins on usage rel from product/impl class to product/impl class.|Annotation property :joins on product/ impl class.|UML: joinAttib(*) to specify prop names in target class. Use myAttrib(*) if source class props are named differently. Match up one for one.|
+|Usage pattern|Stereotype usagePattern on product class or its package. Each pattern is a pattern tag|Annotation property :usagePattern on product class.|UML tag: pattern (1..*): string. 
+In RDF, a string object.|
+|Federates|Stereotype federates on product/impl class.|Annotation property :federates on product/ impl class.|UML tag fedURI (1..*): string. 
+In RDF, a string or URI object.|
+|Joins|Stereotype joins on usage rel from product/impl class to product/impl class.|Annotation property :joins on product/ impl class.|UML: joinAttib to specify prop names in target class. Use myAttrib if source class props are named differently. Match up one for one.|
 | | | | |
 | | | |In RDF, the object is a Join individual with :hasNeighbor and :hasNeighborAttribute triples pointing to neighbor.|
 |Refer To|Similar to joins|Similar to joins|UML: similar. Use refersAttrib and myAttrib.|
