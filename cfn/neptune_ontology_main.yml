@@ -36,6 +36,10 @@ Parameters:
     Type: String
     Default: ml.t3.medium
     ConstraintDescription: Must be a valid SageMaker instance type.
+  Branch:
+    Type: String
+    Default: main
+    Description: TODO remove
 
 Resources:
   S3Bucket:
@@ -72,6 +76,7 @@ Resources:
     Properties:
       ServiceToken: !GetAtt Repo2S3Func.Arn
       staging_bucket: !Ref S3Bucket
+      branch: !Ref Branch
 
   Repo2S3Func:
     Type: "AWS::Lambda::Function"
@@ -120,13 +125,15 @@ Resources:
             response_data = {}
             try:
               staging_bucket = event['ResourceProperties']['staging_bucket']
+              branch = event['ResourceProperties']['branch']
+              webfolder = ""https://raw.githubusercontent.com/aws-samples/amazon-neptune-ontology-example-blog" + branch
               if the_event in ('Create', 'Update'):
                 s3c = boto3.client('s3')
                 print("Creating/Updating")
                 copy_web_s3(ORG_URL, s3c, staging_bucket, "org.ttl", "data", "org.ttl")
                 for folder in DATA_FILES:
                   for filename in DATA_FILES[folder]:
-                    copy_web_s3("https://raw.githubusercontent.com/aws-samples/amazon-neptune-ontology-example-blog/main", s3c, staging_bucket, folder, filename)
+                    copy_web_s3(webfolder, s3c, staging_bucket, folder, filename)
 
                 response_data['Data'] = 'git success'
                 response_data['NotebookAddScript'] =  f'echo "export STAGE_BUCKET={staging_bucket}" >> ~/.bashrc\n'
