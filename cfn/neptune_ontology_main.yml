@@ -137,9 +137,13 @@ Resources:
 
                 response_data['Data'] = 'git success'
                 response_data['NotebookAddScript'] =  f'echo "export STAGE_BUCKET={staging_bucket}" >> ~/.bashrc\n'
-                response_data['NotebookAddScript'] +=  f"if [ ! -f /home/ec2-user/SageMaker/M2CForKnowledgeGraph.ipynb  ]\n"
+                response_data['NotebookAddScript'] += f"if [ ! -f /home/ec2-user/SageMaker/Neptune_Ontology_Example.ipynb  ]\n"
                 response_data['NotebookAddScript'] += f"then\n"
-                response_data['NotebookAddScript'] += f"  aws s3 cp s3://{staging_bucket}/notebook/M2CForKnowledgeGraph.ipynb /home/ec2-user/SageMaker/M2CForKnowledgeGraph.ipynb\n"
+                response_data['NotebookAddScript'] += f"  aws s3 cp s3://{staging_bucket}/notebook/Neptune_Ontology_Example.ipynb /home/ec2-user/SageMaker/Neptune_Ontology_Example.ipynb\n"
+                response_data['NotebookAddScript'] += f"fi\n"
+                response_data['NotebookAddScript'] += f"if [ ! -f /home/ec2-user/SageMaker/Neptune_Multimodel.ipynb  ]\n"
+                response_data['NotebookAddScript'] += f"then\n"
+                response_data['NotebookAddScript'] += f"  aws s3 cp s3://{staging_bucket}/notebook/Neptune_Multimodel.ipynb /home/ec2-user/SageMaker/Neptune_Multimodel.ipynb\n"
                 response_data['NotebookAddScript'] += f"fi\n"
                 response_data['Data'] = 'git success'
                 cfnresponse.send(event, context, cfnresponse.SUCCESS, response_data)
