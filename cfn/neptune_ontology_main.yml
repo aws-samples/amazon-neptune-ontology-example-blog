@@ -130,7 +130,7 @@ Resources:
               if the_event in ('Create', 'Update'):
                 s3c = boto3.client('s3')
                 print("Creating/Updating")
-                copy_web_s3(ORG_URL, s3c, staging_bucket, "org.ttl", "data", "org.ttl")
+                copy_web_s3(ORG_URL, s3c, staging_bucket, "data", "org.ttl")
                 for folder in DATA_FILES:
                   for filename in DATA_FILES[folder]:
                     copy_web_s3(webfolder, s3c, staging_bucket, folder, filename)
