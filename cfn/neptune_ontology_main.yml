@@ -1,5 +1,7 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
 AWSTemplateFormatVersion: 2010-09-09
-Description: Companion infrastructure for the "Neptune ontology" blog post
+Description: Companion infrastructure for Neptune ontology and multimodel blog
 Parameters:
   Env:
     Description: "Environment tag, e.g. prod, nonprod."
@@ -10,37 +12,7 @@ Parameters:
   DbInstanceType:
     Description: Neptune DB instance type
     Type: String
-    Default: db.r5.large
-    AllowedValues:
-      - db.t3.medium
-      - db.r4.large
-      - db.r4.xlarge
-      - db.r4.2xlarge
-      - db.r4.4xlarge
-      - db.r4.8xlarge
-      - db.r5.large
-      - db.r5.xlarge
-      - db.r5.2xlarge
-      - db.r5.4xlarge
-      - db.r5.8xlarge
-      - db.r5.12xlarge
-    ConstraintDescription: >-
-      Must be a valid Neptune instance type. Note that for Stockholm and OSU
-      only R5 and T3 instances are available.
-  DBReplicaIdentifierSuffix:
-    Description: >-
-      OPTIONAL: The ID for the Neptune Replica to use. Empty means no read
-      replica.
-    Type: String
-    Default: ""
-  DBClusterPort:
-    Type: String
-    Default: "8182"
-    Description: Enter the port of your Neptune cluster
-  NeptuneQueryTimeout:
-    Type: Number
-    Default: 120000
-    Description: Neptune Query Time out (in milliseconds)
+    Default: db.r5.xlarge
   IamAuthEnabled:
     Type: String
     Default: "true"
@@ -48,6 +20,13 @@ Parameters:
       - "true"
       - "false"
     Description: Enable IAM Auth for Neptune.
+  NeptuneEnableAuditLog: 
+    Type: Number
+    Default: 0
+    AllowedValues:
+      - 0
+      - 1
+    Description: Enable Audit Log. 0 means disable and 1 means enable.
   NotebookInstanceType:
     Description: >-
       SageMaker Notebook instance type. Please refer
@@ -56,156 +35,43 @@ Parameters:
       pricing.
     Type: String
     Default: ml.t3.medium
-    AllowedValues:
-      - ml.t2.medium
-      - ml.t2.large
-      - ml.t2.xlarge
-      - ml.t2.2xlarge
-      - ml.t3.medium
-      - ml.m4.xlarge
-      - ml.m4.2xlarge
-      - ml.m4.4xlarge
-      - ml.m4.10xlarge
-      - ml.m4.16xlarge
-      - ml.m5.large
-      - ml.m5.xlarge
-      - ml.m5.2xlarge
-      - ml.m5.4xlarge
-      - ml.m5.12xlarge
-      - ml.m5.24xlarge
-      - ml.m5d.large
-      - ml.m5d.xlarge
-      - ml.m5d.2xlarge
-      - ml.m5d.4xlarge
-      - ml.m5d.12xlarge
-      - ml.m5d.24xlarge
-      - ml.c4.large
-      - ml.c4.xlarge
-      - ml.c4.2xlarge
-      - ml.c4.4xlarge
-      - ml.c4.8xlarge
     ConstraintDescription: Must be a valid SageMaker instance type.
-Rules:
-  DBInstanceTypeVsRegion:
-    RuleCondition: !Or
-      - !Equals
-        - !Ref "AWS::Region"
-        - eu-north-1
-      - !Equals
-        - !Ref "AWS::Region"
-        - us-gov-east-1
-      - !Equals
-        - !Ref "AWS::Region"
-        - us-west-1
-      - !Equals
-        - !Ref "AWS::Region"
-        - sa-east-1
-      - !Equals
-        - !Ref "AWS::Region"
-        - ap-east-1
-      - !Equals
-        - !Ref "AWS::Region"
-        - ca-central-1
-      - !Equals
-        - !Ref "AWS::Region"
-        - me-south-1
-      - !Equals
-        - !Ref "AWS::Region"
-        - cn-northwest-1
-    Assertions:
-      - Assert:
-          "Fn::Contains":
-            - - db.t3.medium
-              - db.r5.large
-              - db.r5.xlarge
-              - db.r5.2xlarge
-              - db.r5.4xlarge
-              - db.r5.12xlarge
-            - !Ref DbInstanceType
-        AssertDescription: >-
-          Only R5 and T3 Instances are available in eu-north-1 (ARN),
-          us-gov-east-1 (OSU), ca-central-1 (YUL), us-west-1 (SFO), me-south-1
-          (BAH), ap-east-1 (HKG), sa-east-1 (GRU) and cn-northwest-1 (ZHY)
-  SagemakerNotebookInstanceTypeVsRegion:
-    RuleCondition: !Or
-      - !Equals
-        - !Ref "AWS::Region"
-        - us-gov-east-1
-      - !Equals
-        - !Ref "AWS::Region"
-        - us-gov-west-1
-      - !Equals
-        - !Ref "AWS::Region"
-        - cn-northwest-1
-    Assertions:
-      - Assert:
-          "Fn::Contains":
-            - - none
-            - !Ref NotebookInstanceType
-        AssertDescription: >-
-          Neptune Sagemaker notebooks are not available in us-gov-east-1 (OSU),
-          us-gov-west-1 (PDT) and cn-northwest-1 (ZHY)
-Conditions:
-  CreateDBReplicaInstance: !Not
-    - !Equals
-      - !Ref DBReplicaIdentifierSuffix
-      - ""
-  AZ3NotPresent: !Or
-    - !Equals
-      - !Ref "AWS::Region"
-      - ca-central-1
-    - !Equals
-      - !Ref "AWS::Region"
-      - us-west-1
-  AZ3Present: !Not
-    - !Condition AZ3NotPresent
-  CreateSagemakerNotebook: !Not
-    - !Equals
-      - !Ref NotebookInstanceType
-      - none
-Resources:
-  KMSKey:
-    Type: AWS::KMS::Key
-    Properties:
-      Enabled: true
-      EnableKeyRotation: true
-      KeyPolicy:
-        Version: "2012-10-17"
-        Id: !Sub enckey-${AWS::StackName}-kms
-        Statement:
-          - Effect: Allow
-            Principal:
-              AWS:
-                Fn::Sub: "arn:aws:iam::${AWS::AccountId}:root"
-            Action: "kms:*"
-            Resource: "*"
-  DataKMSKeyAlias:
-    Type: AWS::KMS::Alias
-    Properties:
-      AliasName: !Sub alias/enc-${AWS::StackName}
-      TargetKeyId:
-        Ref: KMSKey
 
-  S3WorkingBucket:
+Resources:
+  S3Bucket:
     Type: AWS::S3::Bucket
-    DeletionPolicy: Retain
+    DeletionPolicy: Delete
     Properties:
-      AccessControl: BucketOwnerFullControl
-      VersioningConfiguration:
-        Status: Enabled
       BucketEncryption:
         ServerSideEncryptionConfiguration:
-          - ServerSideEncryptionByDefault:
-              SSEAlgorithm: aws:kms
-              KMSMasterKeyID: !Ref KMSKey
+        - ServerSideEncryptionByDefault:
+            SSEAlgorithm: 'AES256' 
+      Tags:
+          - Key: demoname
+            Value: neptune-ontology
+
+  NeptuneStack:
+    Type: "AWS::CloudFormation::Stack"
+    Properties:
+      TemplateURL: "https://aws-neptune-customer-samples.s3.amazonaws.com/v2/cloudformation-templates/neptune-full-stack-nested-template.json"
+      TimeoutInMinutes: "60"
+      Parameters:
+        DBClusterId: !Join [ "-", ["m2ckg", !Join [ "", !Split [ "-", !Select [ 2,  !Split [ "/", !Ref AWS::StackId ] ] ] ] ] ]
+        DbInstanceType: !Ref DbInstanceType
+        Env: !Ref Env
+        IamAuthEnabled: !Ref IamAuthEnabled
+        EC2ClientInstanceType: none
+        NotebookInstanceType: !Ref NotebookInstanceType
+        NeptuneEnableAuditLog: !Ref NeptuneEnableAuditLog
+        NeptuneSagemakerNotebookStartupScript:  !GetAtt Repo2S3.NotebookAddScript 
+    DependsOn: Repo2S3
 
   Repo2S3:
-    Type: Custom::S3CustomResource
+    Type: 'Custom::EnvSetup'
+    DependsOn: AWSLambdaExecutionRole
     Properties:
       ServiceToken: !GetAtt Repo2S3Func.Arn
-      s3_bucket: !Ref S3WorkingBucket
-      source_repo: "https://raw.githubusercontent.com/aws-samples/amazon-neptune-ontology-example-blog/main/"
-      kms_key: !Ref KMSKey
+      staging_bucket: !Ref S3Bucket
 
   Repo2S3Func:
     Type: "AWS::Lambda::Function"
@@ -215,7 +81,10 @@ Resources:
       Handler: index.lambda_handler
       Role: !GetAtt AWSLambdaExecutionRole.Arn
       Timeout: 360
-      Runtime: python3.6
+      Tags:
+          - Key: demoname
+            Value: neptune-ontology
+      Runtime: python3.9
       Code:
         ZipFile: |
           import json
@@ -224,43 +93,25 @@ Resources:
           import cfnresponse
 
           http = urllib3.PoolManager()
-
-          ORG_URL = "http://www.w3.org/ns/org.ttl"
-          REPO_CONTENTS = {
-            "neptune-ontology-db.yml": "cfn",
-            "neptune-ontology-workbench.yml": "cfn",
-            "Neptune_Ontology_Example.ipynb": "notebook",
-            "example_org.ttl": "data",
-            "tester_ontology.ttl": "data"
+          DATA_FILES = {
+            "data": ["example_org.ttl", "tester_ontology.ttl", "mm.ttl", "movkg.ttl"],
+            "uml": ["MMProfile.xml", "KnowledgeGraph.xml", "DataLake.xml", "MovieDoc.xml", "StoryAnalysis.xml", "VideoAnalysis.xml"],
+            "notebook": ["Neptune_Ontology_Example.ipynb", "Neptune_Multimodel.ipynb"] 
           }
+          ORG_URL = "http://www.w3.org/ns/org.ttl"
 
-          def copy_web_s3(url, s3_client, bucket, key, kms_key):
-            print("Downloading file " + url)
-            the_file = http.request('GET', url, preload_content=False)
-            print("Got file " + url)
-            local_file_name = '/tmp/' + key
-            print("local file " + local_file_name)
-            local_file = open(local_file_name, 'wb')
+          def copy_web_s3(url, s3_client, bucket, folder, key):
+            s3_path = folder+"/"+key
+            local_path = "/tmp/" + key
+            fileurl = url + "/" + folder + "/" + key
+            print("loading web file *" + fileurl + "*")
+            the_file = http.request('GET',fileurl, preload_content=False)
+            print("Got file")
+            local_file = open(local_path, 'wb')
             local_file.write(the_file.data)
             local_file.close()
-            s3_client.upload_file(Bucket = bucket, Key = key, Filename = local_file_name, ExtraArgs={"ServerSideEncryption": "aws:kms", "SSEKMSKeyId": kms_key})
-            print("S3 done " + url + " " + bucket + " " + key )
-
-          def copy_s3_s3(s3_resource, src_bucket, dst_bucket, kms_key ):
-            print("S3 copy *" + src_bucket + "*" + dst_bucket + "*")
-
-            dbucket = s3_resource.Bucket(str(dst_bucket))
-            sbucket = s3_resource.Bucket(str(src_bucket))
-            print(sbucket)
-            for obj in sbucket.objects.all():
-                print(obj.key)
-                copy_source = {
-                  'Bucket': str(src_bucket),
-                  'Key': obj.key
-                }
-                dbucket.copy(copy_source, obj.key, ExtraArgs={"ServerSideEncryption": "aws:kms", "SSEKMSKeyId": kms_key})
-            print("S3 copy done *" + src_bucket + "*" + dst_bucket + "*")
-
+            print("upload *" + s3_path + "*" + local_path + "*")
+            s3_client.upload_file(Bucket = bucket, Key = s3_path, Filename = local_path, ExtraArgs={"ServerSideEncryption": "AES256"})
 
           def lambda_handler(event, context):
             the_event = event['RequestType']
@@ -268,37 +119,27 @@ Resources:
             print("The event type is: ", str(the_event))
             response_data = {}
             try:
-              s3_bucket = event['ResourceProperties']['s3_bucket']
-              kms_key = event['ResourceProperties']['kms_key']
+              staging_bucket = event['ResourceProperties']['staging_bucket']
               if the_event in ('Create', 'Update'):
-                source_repo= event['ResourceProperties']['source_repo']
                 s3c = boto3.client('s3')
                 print("Creating/Updating")
-                copy_web_s3(ORG_URL, s3c, s3_bucket, "org.ttl", str(kms_key))
-                if source_repo.startswith("http"):
-                  print("Using repo from http")
-                  for key in REPO_CONTENTS:
-                    path = source_repo + REPO_CONTENTS[key] + "/" + key
-                    copy_web_s3(path, s3c, s3_bucket, key,  str(kms_key))
-                  response_data['Data'] = 'git success'
-                  cfnresponse.send(event, context, cfnresponse.SUCCESS, response_data)
-                elif source_repo.startswith("s3"):
-                  print("Using repo from s3")
-                  s3r = boto3.resource('s3')
-                  s3_path = source_repo.split("s3://")[1]
-                  src_bucket = s3_path.split("/")[0]
-                  print(" and it is " + src_bucket)
-                  # TODO - what if it's a folder inside
-                  copy_s3_s3(s3r, str(src_bucket), str(s3_bucket), str(kms_key))
-                  response_data['Data'] = 'git success'
-                  cfnresponse.send(event, context, cfnresponse.SUCCESS, response_data)
-                else:   
-                  response_data['Data'] = "Illegal repo " + source_repo
-                  #cfnresponse.send(event, context, cfnresponse.SUCCESS, response_data)
+                copy_web_s3(ORG_URL, s3c, staging_bucket, "org.ttl", "data", "org.ttl")
+                for folder in DATA_FILES:
+                  for filename in DATA_FILES[folder]:
+                    copy_web_s3("https://raw.githubusercontent.com/aws-samples/amazon-neptune-ontology-example-blog/main", s3c, staging_bucket, folder, filename)
+
+                response_data['Data'] = 'git success'
+                response_data['NotebookAddScript'] =  f'echo "export STAGE_BUCKET={staging_bucket}" >> ~/.bashrc\n'
+                response_data['NotebookAddScript'] +=  f"if [ ! -f /home/ec2-user/SageMaker/M2CForKnowledgeGraph.ipynb  ]\n"
+                response_data['NotebookAddScript'] += f"then\n"
+                response_data['NotebookAddScript'] += f"  aws s3 cp s3://{staging_bucket}/notebook/M2CForKnowledgeGraph.ipynb /home/ec2-user/SageMaker/M2CForKnowledgeGraph.ipynb\n"
+                response_data['NotebookAddScript'] += f"fi\n"
+                response_data['Data'] = 'git success'
+                cfnresponse.send(event, context, cfnresponse.SUCCESS, response_data)
               elif the_event in ('Delete'):
                 print("Deleting")
                 s3r = boto3.resource('s3')
-                s3r.Bucket(str(s3_bucket)).objects.all().delete()
+                s3r.Bucket(str(staging_bucket)).objects.all().delete()
                 cfnresponse.send(event, context, cfnresponse.SUCCESS, response_data)
               else:
                 response_data['Data'] = "Illegal event " + the_event
@@ -308,7 +149,6 @@ Resources:
               print(str(e))
               response_data['Data'] = str(e)
               cfnresponse.send(event, context, cfnresponse.FAILED, response_data)
-
 
   AWSLambdaExecutionRole:
     Type: AWS::IAM::Role
@@ -343,170 +183,52 @@ Resources:
                   - s3:List*
                 Effect: Allow
                 Resource:
-                  - !Sub arn:aws:s3:::${S3WorkingBucket}/*
-                  - !Sub arn:aws:s3:::${S3WorkingBucket}
+                  - !Sub arn:aws:s3:::${S3Bucket}/*
+                  - !Sub arn:aws:s3:::${S3Bucket}
             Version: "2012-10-17"
           PolicyName: !Sub "Repo2S3pol-S3-${AWS::StackName}"
-        - PolicyDocument:
-            Statement:
-              - Action:
-                - kms:Encrypt
-                - kms:Decrypt
-                - kms:ReEncrypt*
-                - kms:GenerateDataKey*
-                - kms:DescribeKey
-                Effect: Allow
-                Resource: !Sub arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KMSKey}
-            Version: "2012-10-17"
-          PolicyName: !Sub "Repo2S3pol-KMS-${AWS::StackName}"
       RoleName: !Sub "Repo2S3role-${AWS::StackName}"
 
-  NeptuneStack:
-    Type: "AWS::CloudFormation::Stack"
-    Properties:
-      TemplateURL: !Sub "https://s3.amazonaws.com/${S3WorkingBucket}/neptune-ontology-db.yml"
-      TimeoutInMinutes: "60"
-      Parameters:
-        Env: !Ref Env
-        DBReplicaIdentifierSuffix: !Ref DBReplicaIdentifierSuffix
-        DBClusterPort: !Ref DBClusterPort
-        DbInstanceType: !Ref DbInstanceType
-        NeptuneQueryTimeout: !Ref NeptuneQueryTimeout
-        IamAuthEnabled: !Ref IamAuthEnabled
-        NeptuneBulkLoadBucket: !Ref S3WorkingBucket
-        KMSKeyId: !Ref KMSKey
-    DependsOn: Repo2S3
-  NeptuneSagemakerNotebook:
-    Type: "AWS::CloudFormation::Stack"
-    Condition: CreateSagemakerNotebook
-    Properties:
-      TemplateURL: !Sub "https://s3.amazonaws.com/${S3WorkingBucket}/neptune-ontology-workbench.yml"
-      TimeoutInMinutes: "30"
-      Parameters:
-        Env: !Ref Env
-        NotebookInstanceType: !Ref NotebookInstanceType
-        NeptuneClusterEndpoint: !GetAtt
-          - NeptuneStack
-          - Outputs.DBClusterEndpoint
-        NeptuneClusterPort: !GetAtt
-          - NeptuneStack
-          - Outputs.DBClusterPort
-        NeptuneClusterSubnetId: !GetAtt
-          - NeptuneStack
-          - Outputs.PrivateSubnet1
-        NeptuneDBClusterResourceId: !GetAtt
-          - NeptuneStack
-          - Outputs.DBClusterResourceId
-        SageMakerSecurityGroupId: !GetAtt
-          - NeptuneStack
-          - Outputs.SageMakerSecurityGroup
-        NeptuneLoadFromS3RoleArn: !GetAtt
-          - NeptuneStack
-          - Outputs.NeptuneLoadFromS3IAMRoleArn
-        BulkLoadS3BucketName: !Ref S3WorkingBucket
-        IamAuthEnabled: !Ref IamAuthEnabled
-        KMSKeyId: !Ref KMSKey
-
-    DependsOn: Repo2S3
 Outputs:
-  KMSKey:
-    Description: KMS Key
-    Value: !Ref KMSKey
-  BulkLoadS3BucketName:
-    Condition: CreateSagemakerNotebook
-    Description: Arn of the Working S3 Bucket
-    Value: !Ref S3WorkingBucket
-  DBClusterId:
-    Description: Neptune Cluster Identifier
-    Value: !GetAtt
-      - NeptuneStack
-      - Outputs.DBClusterId
-  DBSubnetGroupId:
-    Description: Neptune DBSubnetGroup Identifier
-    Value: !GetAtt
-      - NeptuneStack
-      - Outputs.DBSubnetGroupId
-  DBClusterResourceId:
-    Description: Neptune Cluster Resource Identifier
-    Value: !GetAtt
-      - NeptuneStack
-      - Outputs.DBClusterResourceId
+  S3Bucket:
+    Value: !Ref S3Bucket
   DBClusterEndpoint:
-    Description: Master Endpoint for Neptune Cluster
     Value: !GetAtt
       - NeptuneStack
       - Outputs.DBClusterEndpoint
-  DBInstanceEndpoint:
-    Description: Master Instance Endpoint
+  DBClusterId:
     Value: !GetAtt
       - NeptuneStack
-      - Outputs.DBInstanceEndpoint
-  DBReplicaInstanceEndpoint:
-    Description: ReadReplica Instance Endpoint
-    Condition: CreateDBReplicaInstance
-    Value: !GetAtt
-      - NeptuneStack
-      - Outputs.DBReplicaInstanceEndpoint
-  SparqlEndpoint:
-    Description: Sparql Endpoint for Neptune
-    Value: !GetAtt
-      - NeptuneStack
-      - Outputs.SparqlEndpoint
-  GremlinEndpoint:
-    Description: Gremlin Endpoint for Neptune
-    Value: !GetAtt
-      - NeptuneStack
-      - Outputs.GremlinEndpoint
-  LoaderEndpoint:
-    Description: Loader Endpoint for Neptune
-    Value: !GetAtt
-      - NeptuneStack
-      - Outputs.LoaderEndpoint
-  DBClusterReadEndpoint:
-    Description: DB cluster Read Endpoint
-    Value: !GetAtt
-      - NeptuneStack
-      - Outputs.DBClusterReadEndpoint
+      - Outputs.DBClusterId
   DBClusterPort:
-    Description: Port for the Neptune Cluster
     Value: !GetAtt
       - NeptuneStack
       - Outputs.DBClusterPort
+  DBClusterResourceId:
+    Value: !GetAtt
+      - NeptuneStack
+      - Outputs.DBClusterResourceId
   NeptuneLoadFromS3IAMRoleArn:
-    Description: IAM Role for loading data in Neptune
     Value: !GetAtt
       - NeptuneStack
       - Outputs.NeptuneLoadFromS3IAMRoleArn
+  NeptuneSagemakerNotebook:
+    Value: !GetAtt
+      - NeptuneStack
+      - Outputs.NeptuneSagemakerNotebook
+  Subnet1:
+    Value: !GetAtt
+      - NeptuneStack
+      - Outputs.Subnet1
+  Subnet2:
+    Value: !GetAtt
+      - NeptuneStack
+      - Outputs.Subnet2
+  Subnet4:
+    Value: !GetAtt
+      - NeptuneStack
+      - Outputs.Subnet4
   VPC:
-    Description: VPC
     Value: !GetAtt
       - NeptuneStack
       - Outputs.VPC
-  Subnet1:
-    Description: Private Subnet1
-    Value: !GetAtt
-      - NeptuneStack
-      - Outputs.PrivateSubnet1
-  Subnet2:
-    Description: Private Subnet2
-    Value: !GetAtt
-      - NeptuneStack
-      - Outputs.PrivateSubnet2
-  Subnet3:
-    Description: Private Subnet3
-    Condition: AZ3Present
-    Value: !GetAtt
-      - NeptuneStack
-      - Outputs.PrivateSubnet3
-  NeptuneSagemakerNotebook:
-    Condition: CreateSagemakerNotebook
-    Description: Neptune Sagemaker Notebook Name
-    Value: !GetAtt
-      - NeptuneSagemakerNotebook
-      - Outputs.NeptuneSagemakerNotebook
-  NeptuneNotebookInstanceLifecycleConfigId:
-    Condition: CreateSagemakerNotebook
-    Description: Neptune Sagemaker Notebook Instance Lifecycle ConfigId
-    Value: !GetAtt
-      - NeptuneSagemakerNotebook
-      - Outputs.NeptuneNotebookInstanceLifecycleConfigId

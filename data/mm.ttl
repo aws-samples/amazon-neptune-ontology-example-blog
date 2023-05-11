@@ -1,0 +1,168 @@
+@prefix : <http://amazon.com/aws/wwso/neptune/demo/multimodel/> .
+@prefix aws: <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://amazon.com/aws/wwso/neptune/demo/multimodel/ontology> .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/ontology> rdf:type owl:Ontology .
+
+#################################################################
+#    Annotation properties
+#################################################################
+
+###  http://amazon.com/aws/wwso/neptune/demo/multimodel/awsResource
+:awsResource rdf:type owl:AnnotationProperty ;
+             rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/ontology>.
+
+###  http://amazon.com/aws/wwso/neptune/demo/multimodel/awsService
+:awsService rdf:type owl:AnnotationProperty ;
+            rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/ontology> .
+
+###  http://amazon.com/aws/wwso/neptune/demo/multimodel/caches
+:caches rdf:type owl:AnnotationProperty ;
+        rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/ontology> .
+
+
+###  http://amazon.com/aws/wwso/neptune/demo/multimodel/config
+:config rdf:type owl:AnnotationProperty ;
+        rdfs:comment "define you own subprops like config-additionalIndex" ;
+        rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/ontology> .
+
+
+###  http://amazon.com/aws/wwso/neptune/demo/multimodel/copies
+:copies rdf:type owl:AnnotationProperty ;
+        rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/ontology> .
+
+
+###  http://amazon.com/aws/wwso/neptune/demo/multimodel/federates
+:federates rdf:type owl:AnnotationProperty ;
+           rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/ontology> .
+
+###  http://amazon.com/aws/wwso/neptune/demo/multimodel/hasImpl
+:hasImpl rdf:type owl:AnnotationProperty ;
+         rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/ontology>  .
+
+
+###  http://amazon.com/aws/wwso/neptune/demo/multimodel/hasMyAttribute
+:hasMyAttribute rdf:type owl:AnnotationProperty ;
+                rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/ontology> ;
+                rdfs:domain :Ref .
+
+
+###  http://amazon.com/aws/wwso/neptune/demo/multimodel/hasNeighbor
+:hasNeighbor rdf:type owl:AnnotationProperty ;
+             rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/ontology>  .
+
+
+###  http://amazon.com/aws/wwso/neptune/demo/multimodel/hasNeighborAttribute
+:hasNeighborAttribute rdf:type owl:AnnotationProperty ;
+                      rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/ontology> ;
+                      rdfs:domain :Ref .
+
+###  http://amazon.com/aws/wwso/neptune/demo/multimodel/hasSource
+:hasSource rdf:type owl:AnnotationProperty ;
+           rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/ontology> ;
+           rdfs:range :Source .
+
+
+###  http://amazon.com/aws/wwso/neptune/demo/multimodel/integrationType
+:integrationType rdf:type owl:AnnotationProperty ;
+                 rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/ontology> ;
+                 rdfs:domain :Source .
+
+
+###  http://amazon.com/aws/wwso/neptune/demo/multimodel/joins
+:joins rdf:type owl:AnnotationProperty ;
+       rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/ontology> ;
+       rdfs:range :Ref  .
+
+
+###  http://amazon.com/aws/wwso/neptune/demo/multimodel/locatedIn
+:locatedIn rdf:type owl:AnnotationProperty ;
+           rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/ontology> .
+
+
+###  http://amazon.com/aws/wwso/neptune/demo/multimodel/refersTo
+:refersTo rdf:type owl:AnnotationProperty ;
+          rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/ontology> ;
+          rdfs:range :Ref .
+
+
+###  http://amazon.com/aws/wwso/neptune/demo/multimodel/simAlgorithm
+:simAlgorithm rdf:type owl:AnnotationProperty ;
+              rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/ontology> ;
+              rdfs:domain :Similarity .
+
+
+###  http://amazon.com/aws/wwso/neptune/demo/multimodel/simReason
+:simReason rdf:type owl:AnnotationProperty ;
+           rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/ontology> ;
+           rdfs:domain :Similarity .
+
+
+###  http://amazon.com/aws/wwso/neptune/demo/multimodel/similarTo
+:similarTo rdf:type owl:AnnotationProperty ;
+           rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/ontology> ;
+           rdfs:range :Similarity .
+
+###  http://amazon.com/aws/wwso/neptune/demo/multimodel/sourceDataSet
+:sourceDataSet rdf:type owl:AnnotationProperty ;
+               rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/ontology> ;
+               rdfs:domain :Source .
+
+
+###  http://amazon.com/aws/wwso/neptune/demo/multimodel/sourceEventType
+:sourceEventType rdf:type owl:AnnotationProperty ;
+                 rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/ontology> ;
+                 rdfs:domain :Source .
+
+
+###  http://amazon.com/aws/wwso/neptune/demo/multimodel/usagePattern
+:usagePattern rdf:type owl:AnnotationProperty ;
+              rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/ontology> .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://amazon.com/aws/wwso/neptune/demo/multimodel/DataProduct
+:DataProduct rdf:type owl:Class ;
+             rdfs:subClassOf :MMClass ;
+             rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/ontology> ;
+             rdfs:label "DataProduct"@en .
+
+###  http://amazon.com/aws/wwso/neptune/demo/multimodel/DataProductImpl
+:DataProductImpl rdf:type owl:Class ;
+                 rdfs:subClassOf :MMClass ;
+                 rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/ontology> ;
+                 rdfs:label "DataProductImpl"@en .
+
+###  http://amazon.com/aws/wwso/neptune/demo/multimodel/MMClass
+:MMClass rdf:type owl:Class ;
+         rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/ontology> ;
+         rdfs:label "MMClass"@en .
+
+
+###  http://amazon.com/aws/wwso/neptune/demo/multimodel/Ref
+:Ref rdf:type owl:Class ;
+     rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/ontology> ;
+     rdfs:label "Ref"@en .
+
+
+###  http://amazon.com/aws/wwso/neptune/demo/multimodel/Similarity
+:Similarity rdf:type owl:Class ;
+            rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/ontology> ;
+            rdfs:label "Similarity"@en .
+
+###  http://amazon.com/aws/wwso/neptune/demo/multimodel/Source
+:Source rdf:type owl:Class ;
+        rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/ontology> ;
+        rdfs:label "Source"@en .
+
+
+###  Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi
