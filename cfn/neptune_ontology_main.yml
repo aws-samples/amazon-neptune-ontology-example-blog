@@ -126,7 +126,7 @@ Resources:
             try:
               staging_bucket = event['ResourceProperties']['staging_bucket']
               branch = event['ResourceProperties']['branch']
-              webfolder = ""https://raw.githubusercontent.com/aws-samples/amazon-neptune-ontology-example-blog" + branch
+              webfolder = "https://raw.githubusercontent.com/aws-samples/amazon-neptune-ontology-example-blog" + branch
               if the_event in ('Create', 'Update'):
                 s3c = boto3.client('s3')
                 print("Creating/Updating")
