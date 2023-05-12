@@ -2,34 +2,21 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: MIT-0
 
-@prefix dct: <http://purl.org/dc/terms/> .
-@prefix mov: <http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/> .
-@prefix org: <http://www.w3.org/ns/org#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-@prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
 @prefix : <http://amazon.com/aws/wwso/neptune/demo/multimodel/> .
-@prefix movkg: <http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/kg/> .
-
-@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
-@prefix movdoc: <http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/doc/> .
-@prefix movlake: <http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/lake/> .
-@prefix owlTime: <http://www.w3.org/2006/time#> .
-@prefix movstory: <http://amazon.com/movaws/wwso/neptune/demo/multimodel/movmm/story/> .
-@prefix movvideo: <http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/video/> .
+@prefix movkg: <http://amazon.com/aws/wwso/neptune/demo/multimodel/kg/> .
+@prefix movdoc: <http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/> .
+@prefix movlake: <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/> .
+@prefix movstory: <http://amazon.com/movaws/wwso/neptune/demo/multimodel/story/> .
+@prefix movvideo: <http://amazon.com/aws/wwso/neptune/demo/multimodel/video/> .
 @base <http://amazon.com/aws/wwso/neptune/demo/multimodel/> .
-@prefix aws:           <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/> .
-@prefix awsS3:           <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/s3/> .
 
 <http://amazon.com/aws/wwso/neptune/demo/multimodel/kg> rdf:type owl:Ontology .
-
-TODO
-are these resources named the same as gen
-more datatype properties....
 
 
 # We need a role resource. It's not a data product, but we do need it as an OWL class.
@@ -101,6 +88,15 @@ movkg:mentions rdf:type owl:ObjectProperty ;
                rdfs:label "mentions"@en .
 
 
+
+# some data properties linked to resources
+movdoc:MovieID :domainIncludes movkg:MovieResource, movkg:RoleResource .
+movdoc:ContribID :domainIncludes movkg:ContributorResource, movkg:RoleResource, movkg:CelebResource .
+movstory:StoryTitle :domainIncludes movkg:StoryResource .
+movvideo:VideoID :domainIncludes movkg:VideoAnalysisResource .
+movvideo:S3IngestLocation :domainIncludes movkg:VideoAnalysisResource .
+movvideo:S3AnalysisLocation :domainIncludes movkg:VideoAnalysisResource .
+movvideo:MP4FileName :domainIncludes movkg:VideoAnalysisResource .
 
 
 
