@@ -2,7 +2,6 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: MIT-0
 
-@prefix : <http://amazon.com/aws/wwso/neptune/demo/multimodel/> .
 @prefix dct: <http://purl.org/dc/terms/> .
 @prefix mov: <http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/> .
 @prefix org: <http://www.w3.org/ns/org#> .
@@ -12,7 +11,10 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+@prefix : <http://amazon.com/aws/wwso/neptune/demo/multimodel/> .
 @prefix movkg: <http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/kg/> .
+
 @prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
 @prefix movdoc: <http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/doc/> .
 @prefix movlake: <http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/lake/> .
@@ -23,32 +25,42 @@
 @prefix aws:           <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/> .
 @prefix awsS3:           <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/s3/> .
 
-<http://amazon.com/aws/wwso/neptune/demo/multimodel/kg/> rdf:type owl:Ontology .
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/kg> rdf:type owl:Ontology .
+
+TODO
+are these resources named the same as gen
+more datatype properties....
 
 
-#################################################################
-#    Object Properties
-#################################################################
+# We need a role resource. It's not a data product, but we do need it as an OWL class.
+movkg:RoleResource rdf:type owl:Class ;
+                   rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/kg> ;
+                   rdfs:label "RoleResource"@en .
+
+# A product whose loneliness stems from lack of connectedness. In a graph of all places!
+:LonelyProduct rdf:type owl:Class ;
+                   rdfs:subClassOf :DataProduct ;
+                   rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/kg> ;
+                   rdfs:label "LonelyProduct"@en .
+
 
 movkg:hasContrib rdf:type owl:ObjectProperty ;
                  rdfs:domain movkg:RoleResource ;
                  rdfs:range movkg:ContributorResource ;
-                 rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/kg/> ;
+                   rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/kg> ;
                  rdfs:label "hasContrib"@en .
 
 
 ###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/kg/hasContribClass
 movkg:hasContribClass rdf:type owl:ObjectProperty ;
                       rdfs:domain movkg:RoleResource ;
-                      rdfs:comment "actor, actress, cinematopher, composer, costume designer, director, distributor, editor, producer, production company, production designer, special effects company, writer, miscellaneous"@en ;
-                       rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/kg/> ;
+                   rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/kg> ;
                       rdfs:label "hasContribClass"@en ;
                       rdfs:seeAlso movdoc:ContribClass .
 
-
 ###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/kg/hasDBPediaRef
 movkg:hasDBPediaRef rdf:type owl:ObjectProperty ;
-                 rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/kg/> ;
+                   rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/kg> ;
                     rdfs:label "hasDBPediaRef"@en .
 
 
@@ -56,7 +68,7 @@ movkg:hasDBPediaRef rdf:type owl:ObjectProperty ;
 movkg:hasMovie rdf:type owl:ObjectProperty ;
                rdfs:domain movkg:RoleResource ;
                rdfs:range movkg:MovieResource ;
-                 rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/kg/> ;
+                   rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/kg> ;
                rdfs:label "hasMovie"@en .
 
 
@@ -64,7 +76,7 @@ movkg:hasMovie rdf:type owl:ObjectProperty ;
 movkg:hasRekognitionCeleb rdf:type owl:ObjectProperty ;
                           rdfs:domain movkg:VideoAnalysisResource ;
                           rdfs:range movkg:CelebResource ;
-                 rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/kg/> ;
+                   rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/kg> ;
                           rdfs:label "hasRekognitionCeleb"@en .
 
 
@@ -78,728 +90,18 @@ movkg:hasVideoAnalysis rdf:type owl:ObjectProperty ;
 
 ###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/kg/hasWikidataRef
 movkg:hasWikidataRef rdf:type owl:ObjectProperty ;
-                 rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/kg/> ;
+                   rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/kg> ;
                      rdfs:label "hasWikidataRef"@en .
 
 
 ###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/kg/mentions
 movkg:mentions rdf:type owl:ObjectProperty ;
                rdfs:domain movkg:StoryResource ;
-                 rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/kg/> ;
+                   rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/kg> ;
                rdfs:label "mentions"@en .
 
 
-#################################################################
-#    Data properties
-#################################################################
 
 
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/doc/ContribClass
-movdoc:ContribClass rdf:type owl:DatatypeProperty ;
-                    rdfs:comment "actor, actress, cinematopher, composer, costume designer, director, distributor, editor, producer, production company, production designer, special effects company, writer, miscellaneous"@en ;
-                 rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/kg/> ;
-                    rdfs:label "ContribClass"@en .
 
 
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/doc/ContribID
-movdoc:ContribID rdf:type owl:DatatypeProperty ;
-                 rdfs:subPropertyOf mov:IMDBID ;
-                 rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/kg/> ;
-                 rdfs:label "ContribID"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/doc/MovieID
-movdoc:MovieID rdf:type owl:DatatypeProperty ;
-               rdfs:subPropertyOf mov:IMDBID ;
-                 rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/kg/> ;
-               rdfs:label "MovieID"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/doc/w
-movdoc:RoleKey rdf:type owl:DatatypeProperty ;
-               :compositeKey movdoc:ContribClass ,
-                             movdoc:ContribID ,
-                             movdoc:MovieID ;
-                 rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/kg/> ;
-               rdfs:label "RoleKey"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/doc/SeriesID
-movdoc:SeriesID rdf:type owl:DatatypeProperty ;
-                rdfs:subPropertyOf mov:IMDBID ;
-                rdfs:comment "If movie record is episode, this is MovieID of series" ;
-                 rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/kg/> ;
-                rdfs:label "SeriesID"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/doc/SeriesType
-movdoc:SeriesType rdf:type owl:DatatypeProperty ;
-                  rdfs:comment "feature, series, episode" ;
-                  rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                  rdfs:label "SeriesID"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/story/PDFFileName
-movstory:PDFFileName rdf:type owl:DatatypeProperty ;
-                     rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                     rdfs:label "PDFFileName"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/story/StoryTitle
-movstory:StoryTitle rdf:type owl:DatatypeProperty ;
-                    rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                    rdfs:label "StoryTitle"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/video/AnalysisType
-movvideo:AnalysisType rdf:type owl:DatatypeProperty ;
-                      rdfs:comment "video, audio" ;
-                      rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                      rdfs:label "AnalysisType"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/video/MP4FileName
-movvideo:MP4FileName rdf:type owl:DatatypeProperty ;
-                     rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                     rdfs:label "MP4FileName"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/video/S3AnalysisLocation
-movvideo:S3AnalysisLocation rdf:type owl:DatatypeProperty ;
-                            rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                            rdfs:label "S3AnalysisLocation"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/video/S3IngestLocation
-movvideo:S3IngestLocation rdf:type owl:DatatypeProperty ;
-                          rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                          rdfs:label "S3IngestLocation"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/video/VideoID
-movvideo:VideoID rdf:type owl:DatatypeProperty ;
-                 rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                 rdfs:label "VideoID"@en .
-
-
-#################################################################
-#    Classes
-#################################################################
-
-mov:LonelyProduct rdf:type owl:Class ;
-                   rdfs:subClassOf :DataProduct ;
-                   rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                   rdfs:label "LonelyProduct"@en .
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/DataProduct
-:DataProduct rdf:type owl:Class ;
-             rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-             rdfs:label "DataProduct"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/DataProductImpl
-:DataProductImpl rdf:type owl:Class ;
-                 rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                 rdfs:label "DataProductImpl"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/Join
-:Join rdf:type owl:Class ;
-      rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-      rdfs:label "Join"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/Ref
-:Ref rdf:type owl:Class ;
-     rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-     rdfs:label "Ref"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/Similarity
-:Similarity rdf:type owl:Class ;
-            rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-            rdfs:label "Similarity"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/Source
-:Source rdf:type owl:Class ;
-        rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-        rdfs:label "Source"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/doc/ContribDocImpl
-movdoc:ContribDocImpl rdf:type owl:Class ;
-                      rdfs:subClassOf :DataProductImpl ;
-                      :caches movdoc:MovieElasticacheRedisCache ;
-                      :hasResource <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/documentDB/Document> ;
-                      :hasService <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/DocumentDB> ;
-                      <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/documentDB/pk> movdoc:ContribID ;
-                      rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                      rdfs:label "ContribDocImpl"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/doc/ContribSearchDocument
-movdoc:ContribSearchDocument rdf:type owl:Class ;
-                             rdfs:subClassOf :DataProductImpl ;
-                             :copies movdoc:ContribDocImpl ;
-                             :hasService <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/OpenSearch> ;
-                             <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/opensearch/id> movdoc:ContribID ;
-                             <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/opensearch/index> "contrib" ;
-                             rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                             rdfs:label "ContribSearchDocument"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/doc/ContributorDocument
-movdoc:ContributorDocument rdf:type owl:Class ;
-                           rdfs:subClassOf :DataProduct ;
-                           owl:hasKey ( movdoc:ContribID
-                                      ) ;
-                           :hasImpl movdoc:ContribDocImpl ,
-                                    movdoc:ContribSearchDocument ,
-                                    movdoc:MovieElasticacheRedisCache ;
-                           :hasSource movdoc:Doc2LakeSource ;
-                           rdfs:comment "Can be either an individual or a company" ;
-                           rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                           rdfs:label "ContributorDocument"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/doc/MovieDocImpl
-movdoc:MovieDocImpl rdf:type owl:Class ;
-                    rdfs:subClassOf :DataProductImpl ;
-                    :caches movdoc:MovieElasticacheRedisCache ;
-                    :hasResource <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/documentDB/Document> ;
-                    :hasService <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/DocumentDB> ;
-                    <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/documentDB/additionalIndex> movdoc:SeriesID ;
-                    <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/documentDB/pk> movdoc:MovieID ;
-                    rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                    rdfs:label "MovieDocImpl"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/doc/MovieDocument
-movdoc:MovieDocument rdf:type owl:Class ;
-                     rdfs:subClassOf :DataProduct ;
-                     owl:hasKey ( movdoc:MovieID
-                                ) ;
-                     :hasImpl movdoc:MovieDocImpl ,
-                              movdoc:MovieElasticacheRedisCache ,
-                              movdoc:MovieSearchDocument ;
-                     :hasSource movdoc:Doc2LakeSource ;
-                     :usagePattern "Find episodes of series" ,
-                                   "Find movie by ID" ,
-                                   "Find movie cast" ,
-                                   "List movies by criteria (genre, release year, etc)" ;
-                     rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                     rdfs:label "MovieDocument"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/doc/MovieElasticacheRedisCache
-movdoc:MovieElasticacheRedisCache rdf:type owl:Class ;
-                                  rdfs:subClassOf :DataProductImpl ;
-                                  :hasService <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/Elasticache> ;
-                                  <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/elasticache/cachingStrategy> <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/elasticache/Lazy> ;
-                                  <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/elasticache/engine> <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/elasticache/Redis> ;
-                                  rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                                  rdfs:label "MovieElasticacheRedisCache"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/doc/MovieSearchDocument
-movdoc:MovieSearchDocument rdf:type owl:Class ;
-                           rdfs:subClassOf :DataProductImpl ;
-                           :copies movdoc:MovieDocImpl ;
-                           :hasService <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/OpenSearch> ;
-                           <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/opensearch/id> movdoc:MovieID ;
-                           <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/opensearch/index> "movie" ;
-                           rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                           rdfs:label "MovieSearchDocument"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/doc/RoleDocImpl
-movdoc:RoleDocImpl rdf:type owl:Class ;
-                   rdfs:subClassOf :DataProductImpl ;
-                   :caches movdoc:MovieElasticacheRedisCache ;
-                   :hasResource <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/documentDB/Document> ;
-                   :hasService <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/DocumentDB> ;
-                   <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/documentDB/compoundIndex> movdoc:RoleKey ;
-                   rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                   rdfs:label "RoleDocImpl"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/doc/RoleDocument
-movdoc:RoleDocument rdf:type owl:Class ;
-                    rdfs:subClassOf :DataProduct ;
-                    owl:hasKey ( movdoc:RoleKey
-                               ) ;
-                    :hasImpl movdoc:MovieElasticacheRedisCache ,
-                             movdoc:RoleDocImpl ,
-                             movdoc:RoleSearchDocument ;
-                    :hasSource movdoc:Doc2LakeSource ;
-                    :joins movdoc:R2CJoin ,
-                           movdoc:R2MJoin ;
-                    :usagePattern "Find contrib by ID" ,
-                                  "Find contrib filmography" ,
-                                  "List contrib by criteria (place of birth, etc)" ;
-                    rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                    rdfs:label "RoleDocument"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/doc/RoleSearchDocument
-movdoc:RoleSearchDocument rdf:type owl:Class ;
-                          rdfs:subClassOf :DataProductImpl ;
-                          :copies movdoc:RoleDocImpl ;
-                          :hasService <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/OpenSearch> ;
-                          <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/opensearch/id> movdoc:RoleKey ;
-                          <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/opensearch/index> "role" ;
-                          rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                          rdfs:label "RoleSearchDocument"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/kg/CelebResource
-movkg:CelebResource rdf:type owl:Class ;
-                    rdfs:subClassOf :DataProduct ;
-                    :refersTo movkg:CelebURIKG2VideoRef ;
-                    rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                    :hasImpl movkg:NeptuneImpl;
-                    rdfs:label "CelebResource"@en .
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/kg/ContributorResource
-movkg:ContributorResource rdf:type owl:Class ;
-                          rdfs:subClassOf :DataProduct ;
-                          :federates "https://dbpedia.org/sparql/" ,
-                                     "https://query.wikidata.org/" ;
-                          :hasSource movkg:KG2LakeSource ;
-                          :joins movkg:ContribKG2DocJoin ;
-                          :hasSimilarity movkg:StorySimilarity ;
-                          rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                    :hasImpl movkg:NeptuneImpl;
-                          rdfs:label "ContributorResource"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/kg/MovieResource
-movkg:MovieResource rdf:type owl:Class ;
-                    rdfs:subClassOf :DataProduct ;
-                    :federates "https://dbpedia.org/sparql/" ,
-                               "https://query.wikidata.org/" ;
-                    :hasSource movkg:KG2LakeSource ;
-                    :joins movkg:MovieKG2DocJoin ;
-                    :hasSimilarity movkg:StorySimilarity ;
-                    rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                    :hasImpl movkg:NeptuneImpl;
-                    rdfs:label "MovieResource"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/kg/NeptuneImpl
-movkg:NeptuneImpl rdf:type owl:Class ;
-                  rdfs:subClassOf :DataProductImpl ;
-                  :hasService <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/Neptune> ;
-                  rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                  rdfs:label "NeptuneImpl"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/kg/RoleResource
-movkg:RoleResource rdf:type owl:Class ;
-                   rdfs:subClassOf :DataProduct ;
-                   :hasSource movkg:KG2LakeSource ;
-                   :joins movkg:RoleKG2DocJoin ;
-                   rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                    :hasImpl movkg:NeptuneImpl;
-                   rdfs:label "RoleResource"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/kg/StoryResource
-movkg:StoryResource rdf:type owl:Class ;
-                    rdfs:subClassOf :DataProduct ;
-                    owl:hasKey ( movstory:StoryTitle
-                               ) ;
-                    :hasSource movkg:KG2StorySource ;
-                    :joins movkg:KG2StoryJoin ;
-                    rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                    :hasImpl movkg:NeptuneImpl;
-                    rdfs:label "StoryResource"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/kg/VideoAnalysisResource
-movkg:VideoAnalysisResource rdf:type owl:Class ;
-                            rdfs:subClassOf :DataProduct ;
-                            owl:hasKey ( movvideo:VideoID
-                                       ) ;
-                            :hasSource movkg:KG2VideoSource ;
-                            :joins movkg:KG2VideoJoin ;
-                            :refersTo movkg:CelebURIKG2VideoRef ,
-                                      movkg:MP4KG2VideoRef ;
-                            rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                    :hasImpl movkg:NeptuneImpl;
-                            rdfs:label "VideoAnalysisResource"@en .
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/lake/ContribTable
-movlake:ContribTable rdf:type owl:Class ;
-                     rdfs:subClassOf :DataProductImpl ;
-                     :hasResource <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/glue/CatalogTable> ;
-                     :hasService <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/Glue> ,
-                                 <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/LakeFormation> ;
-                     <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/glue/S3Location> movlake:LakeStore ;
-                     rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                     rdfs:label "ContribTable"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/lake/ContributorLakeTable
-movlake:ContributorLakeTable rdf:type owl:Class ;
-                             rdfs:subClassOf :DataProduct ;
-                             owl:hasKey ( movdoc:ContribID
-                                        ) ;
-                             :hasImpl movlake:ContribTable ,
-                                      movlake:LakeStore ;
-                             :hasSource movlake:IMDBSource ;
-                             rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                             rdfs:label "ContributorLakeTable"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/lake/LakeStore
-movlake:LakeStore rdf:type owl:Class ;
-                  rdfs:subClassOf :DataProductImpl ;
-                  :hasResource <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/s3/Bucket> ;
-                  :hasService <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/S3> ;
-                  <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/s3/Tier> <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/s3/Standard> ;
-                  rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                  rdfs:label "LakeStore"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/lake/MovieLakeTable
-movlake:MovieLakeTable rdf:type owl:Class ;
-                       rdfs:subClassOf :DataProduct ;
-                       owl:hasKey ( movdoc:MovieID
-                                  ) ;
-                       :hasImpl movlake:LakeStore ,
-                                movlake:MovieTable ;
-                       :hasSource movlake:IMDBSource ;
-                       rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                       rdfs:label "MovieLakeTable"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/lake/MovieTable
-movlake:MovieTable rdf:type owl:Class ;
-                   rdfs:subClassOf :DataProductImpl ;
-                   :hasResource <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/glue/CatalogTable> ;
-                   :hasService <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/Glue> ,
-                               <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/LakeFormation> ;
-                   <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/glue/S3Location> movlake:LakeStore ;
-                   rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                   rdfs:label "MovieTable"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/lake/RoleLakeTable
-movlake:RoleLakeTable rdf:type owl:Class ;
-                      rdfs:subClassOf :DataProduct ;
-                      owl:hasKey ( movdoc:RoleKey
-                                 ) ;
-                      :hasImpl movlake:LakeStore ,
-                               movlake:RoleTable ;
-                      :hasSource movlake:IMDBSource ;
-                      rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                      rdfs:label "RoleLakeTable"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/lake/RoleTable
-movlake:RoleTable rdf:type owl:Class ;
-                  rdfs:subClassOf :DataProductImpl ;
-                  :hasResource <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/glue/CatalogTable> ;
-                  :hasService <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/Glue> ,
-                              <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/LakeFormation> ;
-                  <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/glue/S3Location> movlake:LakeStore ;
-                  rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                  rdfs:label "RoleTable"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/story/LAOrangeStoryBucket
-movstory:LAOrangeStoryBucket rdf:type owl:Class ;
-                             rdfs:subClassOf :DataProductImpl ;
-                             :hasResource <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/s3/Bucket> ;
-                             :hasService <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/S3> ;
-                             <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/folder> movstory:PDFFileName ;
-                             <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/tag> movstory:PDFFileName ;
-                             <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/s3/Tier> <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/s3/Standard> ;
-                             rdfs:comment "PDF file + Comprehend entity recognition output (JSON)" ;
-                             rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                             rdfs:label "LAOrangeStoryBucket"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/story/StoryAnalysis
-movstory:StoryAnalysis rdf:type owl:Class ;
-                       rdfs:subClassOf :DataProduct ;
-                       owl:hasKey ( movstory:StoryTitle
-                                  ) ;
-                       :hasImpl movstory:LAOrangeStoryBucket ;
-                       :hasSource movstory:StorySource ;
-                       rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                       rdfs:label "StoryAnalysis"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/video/AnalysisBucket
-movvideo:AnalysisBucket rdf:type owl:Class ;
-                        rdfs:subClassOf :DataProductImpl ;
-                        :hasResource <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/s3/Bucket> ;
-                        :hasService <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/S3> ;
-                        <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/tag> movvideo:MP4FileName ,
-                                                                                     movvideo:VideoID ;
-                        <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/s3/Tier> <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/s3/Standard> ;
-                        <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/s3/folder> movvideo:VideoID ;
-                        rdfs:comment "/mediainfo - technical video data json, xml" ,
-                                     "/raw - direct output comprehend, transcribe, rekognition" ,
-                                     "/timeseries, /vtt, /metadata - AI results across many files" ,
-                                     "/transcode - m4a and jpg transcode from mp4" ,
-                                     "key phrases, sentiment, entities" ,
-                                     "source: Ai analysis of ingested videos" ,
-                                     "video: celebs, faces, persons, labels, text in video" ;
-                        rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                        rdfs:label "AnalysisBucket"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/video/AnalysisItem
-movvideo:AnalysisItem rdf:type owl:Class ;
-                      rdfs:subClassOf :DataProductImpl ;
-                      :hasResource <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/dynamo/TableItem> ;
-                      :hasService <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/DynamoDB> ;
-                      :joins movvideo:S3AnalysisLocJoin ,
-                             movvideo:VideoIDJoin ;
-                      <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/dynamo/Attribute> movvideo:S3AnalysisLocation ;
-                      <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/dynamo/Partition> movvideo:VideoID ;
-                      <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/dynamo/Sort> movvideo:AnalysisType ;
-                      rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                      rdfs:label "AnalysisItem"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/video/IngestBucket
-movvideo:IngestBucket rdf:type owl:Class ;
-                      rdfs:subClassOf :DataProductImpl ;
-                      :hasResource <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/s3/Bucket> ;
-                      :hasService <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/S3> ;
-                      <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/folder> movvideo:VideoID ;
-                      <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/tag> movvideo:MP4FileName ,
-                                                                                   movvideo:VideoID ;
-                      <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/s3/Tier> <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/Standard> ;
-                      rdfs:comment "MP4 file upload" ;
-                      rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                      rdfs:label "IngestBucket"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/video/IngestItem
-movvideo:IngestItem rdf:type owl:Class ;
-                    rdfs:subClassOf :DataProductImpl ;
-                    :hasResource <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/dynamo/TableItem> ;
-                    :hasService <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/DynamoDB> ;
-                    :joins movvideo:S3IngestLocJoin ;
-                    <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/dynamo/Attribute> movvideo:S3IngestLocation ;
-                    <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/dynamo/Partition> movvideo:VideoID ;
-                    rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                    rdfs:label "IngestItem"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/video/VideoAnalysis
-movvideo:VideoAnalysis rdf:type owl:Class ;
-                       rdfs:subClassOf :DataProduct ;
-                       owl:hasKey ( movvideo:VideoID
-                                  ) ;
-                       :hasImpl movvideo:AnalysisBucket ,
-                                movvideo:AnalysisItem ,
-                                movvideo:IngestBucket ,
-                                movvideo:IngestItem ;
-                       :hasSource movvideo:VideoSource ;
-                       rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                       rdfs:label "VideoAnalysis"@en .
-
-
-#################################################################
-#    Individuals
-#################################################################
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/doc/LakeSource
-movdoc:Doc2LakeSource rdf:type owl:NamedIndividual ,
-                           :Source ;
-                  :hasDataset mov:IMDB ;
-                  :hasIntegrationType :ETL ;
-                  :hasNeighbor movlake:ContributorLakeTable ,
-                             movlake:MovieLakeTable ,
-                             movlake:RoleLakeTable ;
-                  rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                  rdfs:label "Doc2LakeSource"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/doc/R2CJoin
-movdoc:R2CJoin rdf:type owl:NamedIndividual ,
-                        :Join ;
-               :hasNeighbor movdoc:ContributorDocument ;
-               :hasNeighborAttribute movdoc:ContribID ;
-               rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-               rdfs:label "R2CJoin"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/doc/R2MJoin
-movdoc:R2MJoin rdf:type owl:NamedIndividual ,
-                        :Join ;
-               :hasNeighbor movdoc:MovieDocument ;
-               :hasNeighborAttribute movdoc:MovieID ;
-               rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-               rdfs:label "R2MJoin"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/kg/ContribJoin
-movkg:ContribKG2DocJoin rdf:type owl:NamedIndividual ,
-                           :Join ;
-                  :hasNeighbor movdoc:ContributorDocument ;
-                  :hasNeighborAttribute movdoc:ContribID ;
-                  rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                  rdfs:label "ContribKG2DocJoin"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/kg/LakeSource
-movkg:KG2LakeSource rdf:type owl:NamedIndividual ,
-                          :Source ;
-                 :hasDataset mov:IMDB ;
-                 :hasIntegrationType :ETL ;
-                 :hasNeighbor movlake:ContributorLakeTable ,
-                            movlake:MovieLakeTable ,
-                            movlake:RoleLakeTable ;
-                 rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                 rdfs:label "KG2LakeSource"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/kg/MovieJoin
-movkg:MovieKG2DocJoin rdf:type owl:NamedIndividual ,
-                         :Join ;
-                :hasNeighbor movdoc:MovieDocument ;
-                :hasNeighborAttribute movdoc:MovieID ;
-                rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                rdfs:label "MovieKG2DocJoin"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/kg/RoleJoin
-movkg:RoleKG2DocJoin rdf:type owl:NamedIndividual ,
-                        :Join ;
-               :hasNeighbor movdoc:RoleDocument ;
-               :hasNeighborAttribute movdoc:RoleKey ;
-               rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-               rdfs:label "RoleKG2DocJoin"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/kg/StoryJoin
-movkg:KG2StoryJoin rdf:type owl:NamedIndividual ,
-                         :Join ;
-                :hasNeighbor movstory:StoryAnalysis ;
-                :hasNeighborAttribute movstory:StoryTitle ;
-                rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                rdfs:label "KG2StoryJoin"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/kg/StorySimilarity
-movkg:StorySimilarity rdf:type owl:NamedIndividual ,
-                               :Similarity ;
-                      :hasAlgorithm :Valentine ;
-                      :hasNeighbor movstory:StoryAnalysis ;
-                      rdfs:comment "mentioned by story" ;
-                      rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                      rdfs:label "StorySimilarity"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/kg/StorySource
-movkg:KG2StorySource rdf:type owl:NamedIndividual ,
-                           :Source ;
-                  :hasEventType awsS3:PutObject ;
-                  :hasIntegrationType aws:S3Event ;
-                  :hasNeighbor movstory:StoryAnalysis ;
-                  rdfs:comment "When analysis ready, move essentials to KG" ;
-                  rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                  rdfs:label "Story2KGSource"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/kg/VideoCelebURIRef
-movkg:CelebURIKG2VideoRef rdf:type owl:NamedIndividual ,
-                                :Ref ;
-                       :hasNeighbor movvideo:VideoAnalysis ;
-                       :hasNeighborAttribute movvideo:VideoCelebURI ;
-                       rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                       rdfs:label "CelebURIKG2VideoRef"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/kg/VideoJoin
-movkg:KG2VideoJoin rdf:type owl:NamedIndividual ,
-                         :Join ;
-                :hasNeighbor movvideo:VideoAnalysis ;
-                :hasNeighborAttribute movvideo:VideoID ;
-                rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                rdfs:label "KG2VideoJoin"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/kg/VideoMP4Ref
-movkg:MP4KG2VideoRef rdf:type owl:NamedIndividual ,
-                           :Ref ;
-                  :hasNeighbor movvideo:VideoAnalysis ;
-                  :hasNeighborAttribute movvideo:MP4FileName ;
-                  rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                  rdfs:label "MP4KG2VideoRef"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/lake/IMDBSource
-movlake:IMDBSource rdf:type owl:NamedIndividual ,
-                            :Source ;
-                   :hasDataset mov:IMDB ;
-                   :hasIntegrationType <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/S3Upload> ;
-                   rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                   rdfs:label "IMDBSource"@en .
-
-
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/video/S3AnalysisLocJoin
-movvideo:S3AnalysisLocJoin rdf:type owl:NamedIndividual ,
-                                    :Join ;
-                           :hasNeighbor movvideo:AnalysisBucket ;
-                           :hasNeighborAttribute movvideo:S3AnalysisLocation ;
-                           rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                           rdfs:label "S3AnalysisLocJoin"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/video/S3IngestLocJoin
-movvideo:S3IngestLocJoin rdf:type owl:NamedIndividual ,
-                                  :Join ;
-                         :hasNeighbor movvideo:IngestBucket ;
-                         :hasNeighborAttribute movvideo:S3IngestLocation ;
-                         rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                         rdfs:label "S3IngestLocJoin"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/video/VideoIDJoin
-movvideo:VideoIDJoin rdf:type owl:NamedIndividual ,
-                              :Join ;
-                     :hasNeighbor movvideo:IngestItem ;
-                     :hasNeighborAttribute movvideo:VideoID ;
-                     rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                     rdfs:label "VideoIDJoin"@en .
-
-
-###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/video/VideoSource
-movvideo:VideoSource rdf:type owl:NamedIndividual ,
-                              :Source ;
-                     :hasIntegrationType awsS3:Upload ;
-                     rdfs:comment "Upload from MP4 video library" ;
-                     rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-                     rdfs:label "VideoSource"@en .
-
-movstory:StorySource rdf:type owl:NamedIndividual ,
-                              :Source ;
-    rdfs:label "StorySource"@en;
-                     rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/> ;
-    :hasIntegrationType awsS3:Upload;
-    rdfs:comment "Upload from PDF stories onsite";
-.
-
-movkg:KG2VideoSource a :Source;
-    rdfs:label "Video2KGSource"@en;
-    rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/mov/kg> ;
-    :hasIntegrationType aws:DynamoStreams;
-    rdfs:comment "When analysis ready, move essentials to KG";
-    :hasEventType aws:S3PutObject;
-    :hasNeighbor movvideo:VideoAnalysis;
-.
-
-
-
-###  Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi

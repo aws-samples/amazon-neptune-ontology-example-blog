@@ -108,9 +108,8 @@ Resources:
           def copy_web_s3(url, s3_client, bucket, folder, key):
             s3_path = folder+"/"+key
             local_path = "/tmp/" + key
-            fileurl = url + "/" + folder + "/" + key
-            print("loading web file *" + fileurl + "*")
-            the_file = http.request('GET',fileurl, preload_content=False)
+            print("loading web file *" + url + "*")
+            the_file = http.request('GET',url, preload_content=False)
             print("Got file")
             local_file = open(local_path, 'wb')
             local_file.write(the_file.data)
@@ -133,7 +132,7 @@ Resources:
                 copy_web_s3(ORG_URL, s3c, staging_bucket, "data", "org.ttl")
                 for folder in DATA_FILES:
                   for filename in DATA_FILES[folder]:
-                    copy_web_s3(webfolder, s3c, staging_bucket, folder, filename)
+                    copy_web_s3(webfolder + "/" + folder + "/" + key, s3c, staging_bucket, folder, filename)
 
                 response_data['Data'] = 'git success'
                 response_data['NotebookAddScript'] =  f'echo "export STAGE_BUCKET={staging_bucket}" >> ~/.bashrc\n'
