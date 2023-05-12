@@ -26,17 +26,14 @@
 :caches rdf:type owl:AnnotationProperty ;
         rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/ontology> .
 
-
 ###  http://amazon.com/aws/wwso/neptune/demo/multimodel/config
 :config rdf:type owl:AnnotationProperty ;
         rdfs:comment "define you own subprops like config-additionalIndex" ;
         rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/ontology> .
 
-
 ###  http://amazon.com/aws/wwso/neptune/demo/multimodel/copies
 :copies rdf:type owl:AnnotationProperty ;
         rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/ontology> .
-
 
 ###  http://amazon.com/aws/wwso/neptune/demo/multimodel/federates
 :federates rdf:type owl:AnnotationProperty ;
