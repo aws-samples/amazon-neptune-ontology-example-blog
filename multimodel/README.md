@@ -30,8 +30,10 @@ UML is easy to generate code from. It is represented in XML, or more particularl
 
 The demo has three main parts:
 1. Drawing the UML models. Done! Try the UML links above.
-2. Converting UML to RDF. Coming soon! 
-3. Ingesting the RDF to Amazon Neptune and asking questions via SPARQL questions about products and their relationships. Follow the instructions below.
+2. Converting UML to RDF. 
+3. Ingesting the RDF to Amazon Neptune and asking questions via SPARQL questions about products and their relationships. 
+
+Follow instructions [../README.md](../README.md) to setup.
 
 ## Representing the products in UML and RDF
 This demo shows both UML and RDF representations of data products. The UML representation is based on a profile of product stereotypes
