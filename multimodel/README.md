@@ -40,7 +40,7 @@ This demo shows both UML and RDF representations of data products. The UML repre
 
 ![Profile](../uml/MMProfile.png)
 
-The RDF representation is a (data product ontology)[mm_movie.ttl]. It is held in the KG. As mentioned above, the KG has both products definitions plus its own products! The ontology file, for convenience, contains both. 
+The RDF representation is generated from the UML. Follow the notebook ![../notebook/Neptune_Multimodel.ipynb](../notebook/Neptune_Multimodel.ipynb) to trace through the conversion process. 
 
 The following chart describes how products and relationships are represented.
 
@@ -74,6 +74,8 @@ Thing to represent|UML|Ontology|Params|
 | | | |In RDF, the object is a Similarity individual with triples like the above.|
 |Config|Stereotype config on any element|RDF is looser. Individual annotation properties, such as awss3:Tier are used.|UML: configKV[1..*]. Express as string of form K,V|
 
+## Bonus - The Bookstore workshop
+For fun we also model data products and implementations of the popular AWS bookstore demo (<https://github.com/aws-samples/aws-bookstore-demo-app>). The demo shows a multimodel solution involving DynamoDB, Neptune, OpenSearch, and Elasticache. Our UML model is here: [../uml/Bookstore.png](../uml/Bookstore.png). Using the demo's repo, you can deploy the end-to-demo demo in your environment and learn how to implement a multi-model solution. 
 
 ## License
 The ontology and notebook are licensed under the MIT-0 License. See the LICENSE file.
