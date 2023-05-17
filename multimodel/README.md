@@ -38,7 +38,7 @@ Follow instructions [../README.md](../README.md) to setup.
 ## Representing the products in UML and RDF
 This demo shows both UML and RDF representations of data products. The UML representation is based on a profile of product stereotypes
 
-![Profile](uml/MMProfile.png)
+![Profile](../uml/MMProfile.png)
 
 The RDF representation is a (data product ontology)[mm_movie.ttl]. It is held in the KG. As mentioned above, the KG has both products definitions plus its own products! The ontology file, for convenience, contains both. 
 
