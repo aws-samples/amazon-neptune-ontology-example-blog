@@ -1,14 +1,18 @@
-# Amazon Neptune Ontology Blog Example
+# Amazon Neptune Ontology and Multimodel Blog Example
 
 ## Setup 
-Use CloudFormation to setup Neptune DB, Neptune notebook, and S3 bulk loader bucket. Create a stack based on template in cfn/neptune_ontology_main.yml. It has two nested stacks using templates cfn/neptune_ontology_db.yml and cfn/neptune_ontology_workbench.yml. To setup:
+Use CloudFormation to setup Neptune DB, Neptune notebook, and S3 bulk loader bucket. Create a stack based on template in cfn/neptune_ontology_main.yml.To setup:
 
 1. Clone this repo. 
 2. In CloudFormation console, create a stack. For the template, upload your local copy of neptune_ontology_main.yml. Name your stack and override parameters if necessary.
 3. Create! Check it succeeds!
 
 ## Running the Examples
-Once the setup is complete, in the console open the Neptune notebook that is created. From the Jupyter menu then select Neptune_Ontology_Example.ipynb. Once open, follow the steps; it gives you a guided tour! You will be loading into Neptune three Turtle RDF files: example_org.ttl and tester_ontology.ttl (included in the data folder of the repo) and org.ttl (downloaded from http://www.w3.org/ns/org.ttl during CFN setup). You will then be querying and validating this data. 
+Once the setup is complete, open the Sagemaker notebook instance. You can find the link in the Outputs section of the CloudFormation stack. The link opens the Jupyter file fiew. 
+
+To run the ontology example discussed in the blog <https://aws.amazon.com/blogs/database/model-driven-graphs-using-owl-in-amazon-neptune>, open the Neptune_Ontology_Example.ipynb notebook; then follow the steps! 
+
+To run the multimodel example discussed in the blog <TBD>, open the Neptune_Multimodel.ipynb notebook and follow the steps.
 
 ## Cleanup
 To cleanup, delete the main stack that you created above. In CloudFormation, choose the stack based on template cfn/neptune_ontology_main.yml. Delete it.
