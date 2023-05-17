@@ -20,7 +20,7 @@ So how to model this? The data architect pretends they have a data mesh, even if
 - A profile containing common stereotypes of data products and their relationships. [XMI](../uml/MMProfile.xml), [Diagram](../uml/MMProfile.png).  
 - A model of the document store products. [XMI](../uml/MovieDoc.xml), [Diagram](../uml/MovieDoc.png).
 - A model of the lake products. [XMI](../uml/DataLake.xml), [Diagram](../uml/DataLake.png).
-- A model of the KG products. The KG serves two purposes. It has all product definitions plus their relationships. It also is one of the models, it offers its own products, and those products have many instances in the graph! [XMI](../uml/KnowledgeGraph.xml), [Diagram](../uml/KG.png).
+- A model of the KG products. The KG serves two purposes. It has all product definitions plus their relationships. It also is one of the models, it offers its own products, and those products have many instances in the graph! [XMI](../uml/KnowledgeGraph.xml), [Diagram](../uml/KnowledgeGraph.png).
 - A model of the video analysis products. [XMI](../uml/VideoAnalysis.xml), [Diagram](../uml/VideoAnalysis.png).
 - A model of the story analysis products. [XMI](../uml/StoryAnalysis.xml), [Diagram](../uml/StoryAnalysis.png).
 

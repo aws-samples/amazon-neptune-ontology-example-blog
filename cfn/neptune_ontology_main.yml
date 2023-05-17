@@ -39,7 +39,7 @@ Parameters:
   Branch:
     Type: String
     Default: main
-    Description: TODO remove
+    Description: Git branch to get code from
 
 Resources:
   S3Bucket:
