@@ -47,6 +47,7 @@ movkg:hasContribClass rdf:type owl:ObjectProperty ;
 
 ###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/kg/hasDBPediaRef
 movkg:hasDBPediaRef rdf:type owl:ObjectProperty ;
+  # let anything be domain
                    rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/kg> ;
                     rdfs:label "hasDBPediaRef"@en .
 
@@ -77,6 +78,7 @@ movkg:hasVideoAnalysis rdf:type owl:ObjectProperty ;
 
 ###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/kg/hasWikidataRef
 movkg:hasWikidataRef rdf:type owl:ObjectProperty ;
+  # let anything be domain
                    rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/kg> ;
                      rdfs:label "hasWikidataRef"@en .
 
@@ -84,6 +86,7 @@ movkg:hasWikidataRef rdf:type owl:ObjectProperty ;
 ###  http://amazon.com/aws/wwso/neptune/demo/multimodel/movmm/kg/mentions
 movkg:mentions rdf:type owl:ObjectProperty ;
                rdfs:domain movkg:StoryResource ;
+# let anything be range
                    rdfs:isDefinedBy <http://amazon.com/aws/wwso/neptune/demo/multimodel/kg> ;
                rdfs:label "mentions"@en .
 
