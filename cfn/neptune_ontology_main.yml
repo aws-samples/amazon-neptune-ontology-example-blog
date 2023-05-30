@@ -100,7 +100,7 @@ Resources:
           http = urllib3.PoolManager()
           DATA_FILES = {
             "data": ["example_org.ttl", "tester_ontology.ttl", "mm.ttl", "movkg.ttl"],
-            "uml": ["MMProfile.xml", "KnowledgeGraph.xml", "DataLake.xml", "MovieDoc.xml", "StoryAnalysis.xml", "VideoAnalysis.xml"],
+            "uml": ["MMProfile.xml", "KnowledgeGraph.xml", "DataLake.xml", "MovieDoc.xml", "StoryAnalysis.xml", "VideoAnalysis.xml", "Bookstore.xml"],
             "notebook": ["Neptune_Ontology_Example.ipynb", "Neptune_Multimodel.ipynb"] 
           }
           ORG_URL = "http://www.w3.org/ns/org.ttl"
