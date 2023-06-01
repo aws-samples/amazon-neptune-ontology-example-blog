@@ -77,5 +77,13 @@ Thing to represent|UML|Ontology|Params|
 ## Bonus - The Bookstore workshop
 For fun we also model data products and implementations of the popular AWS bookstore demo (<https://github.com/aws-samples/aws-bookstore-demo-app>). The demo shows a multimodel solution involving DynamoDB, Neptune, OpenSearch, and Elasticache. Our UML model is here: [../uml/Bookstore.png](../uml/Bookstore.png). Using the demo's repo, you can deploy the end-to-demo demo in your environment and learn how to implement a multi-model solution. 
 
+## Additional Reading
+More on data mesh and KG:
+- https://aws.amazon.com/blogs/big-data/automate-discovery-of-data-relationships-using-ml-and-amazon-neptune-graph-technology/
+
+Examples of building multimodel:
+- https://aws.amazon.com/blogs/database/build-a-knowledge-graph-on-amazon-neptune-with-ai-powered-video-analysis-using-media2cloud/
+- https://github.com/aws-samples/aws-bookstore-demo-app
+
 ## License
 The ontology and notebook are licensed under the MIT-0 License. See the LICENSE file.
