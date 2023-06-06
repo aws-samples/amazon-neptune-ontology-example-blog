@@ -1,0 +1,680 @@
+@prefix ns1: <http://amazon.com/aws/wwso/neptune/demo/multimodel/> .
+@prefix ns2: <http://amazon.com/aws/wwso/neptune/demo/multimodel/aws/> .
+@prefix ns3: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+ns2:config-Folders rdfs:subClassOf ns1:config .
+
+ns2:config-ID rdfs:subClassOf ns1:config .
+
+ns2:config-Index rdfs:subClassOf ns1:config .
+
+ns2:config-ObjectType rdfs:subClassOf ns1:config .
+
+ns2:config-TTL rdfs:subClassOf ns1:config .
+
+ns2:config-Tier rdfs:subClassOf ns1:config .
+
+ns2:config-additionalIndex rdfs:subClassOf ns1:config .
+
+ns2:config-cacheStrategy rdfs:subClassOf ns1:config .
+
+ns2:config-document rdfs:subClassOf ns1:config .
+
+ns2:config-gsi rdfs:subClassOf ns1:config .
+
+ns2:config-index rdfs:subClassOf ns1:config .
+
+ns2:config-key rdfs:subClassOf ns1:config .
+
+ns2:config-partition rdfs:subClassOf ns1:config .
+
+ns2:config-sort rdfs:subClassOf ns1:config .
+
+ns2:config-streams rdfs:subClassOf ns1:config .
+
+ns2:config-tag rdfs:subClassOf ns1:config .
+
+ns2:config-tier rdfs:subClassOf ns1:config .
+
+ns2:config-topFolder rdfs:subClassOf ns1:config .
+
+ns2:config-trigger rdfs:subClassOf ns1:config .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/bookstoredemo/Cart> a ns3:Class ;
+    rdfs:label "Cart" ;
+    ns1:hasImpl <http://amazon.com/aws/wwso/neptune/demo/multimodel/bookstoredemo/CartTable> ;
+    ns1:refersTo [ a ns1:Ref,
+                ns3:NamedIndividual ;
+            ns1:hasNeighbor <http://amazon.com/aws/wwso/neptune/demo/multimodel/bookstoredemo/Order> ;
+            rdfs:isDefinedBy ns1:ontology ] ;
+    ns1:usagePattern "GetCartItem",
+        "addToCart",
+        "listCart",
+        "removeFromCart",
+        "updateCart" ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProduct .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/kg/CelebResource> a ns3:Class ;
+    rdfs:label "CelebResource" ;
+    ns1:federates <https://dbpedia.org/sparql/>,
+        <https://query.wikidata.org/> ;
+    ns1:hasImpl <http://amazon.com/aws/wwso/neptune/demo/multimodel/kg/NeptuneImpl> ;
+    ns1:refersTo [ a ns1:Ref,
+                ns3:NamedIndividual ;
+            ns1:hasNeighbor <http://amazon.com/aws/wwso/neptune/demo/multimodel/video/VideoAnalysis> ;
+            ns1:hasNeighborAttribute <http://amazon.com/aws/wwso/neptune/demo/multimodel/video/VideoCelebURI> ;
+            rdfs:isDefinedBy ns1:ontology ] ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProduct .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/kg/ContributorResource> a ns3:Class ;
+    rdfs:label "ContributorResource" ;
+    ns1:federates <https://dbpedia.org/sparql/>,
+        <https://query.wikidata.org/> ;
+    ns1:hasImpl <http://amazon.com/aws/wwso/neptune/demo/multimodel/kg/NeptuneImpl> ;
+    ns1:hasSource [ a ns1:Source,
+                ns3:NamedIndividual ;
+            ns1:hasNeighbor <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/ContributorLakeTable>,
+                <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/MovieLakeTable>,
+                <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/RoleLakeTable> ;
+            ns1:integrationType ns1:ETL ;
+            ns1:sourceDataSet "IMDB" ;
+            rdfs:isDefinedBy ns1:ontology ] ;
+    ns1:joins [ a ns1:Ref,
+                ns3:NamedIndividual ;
+            ns1:hasNeighbor <http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/ContributorDocument> ;
+            ns1:hasNeighborAttribute <http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/ContribID> ;
+            rdfs:isDefinedBy ns1:ontology ] ;
+    ns1:similarTo [ a ns1:Similarity,
+                ns3:NamedIndividual ;
+            ns1:hasNeighbor <http://amazon.com/aws/wwso/neptune/demo/multimodel/kg/StoryResource> ;
+            ns1:simAlgorithm "Valentine" ;
+            ns1:simReason "mentions" ;
+            rdfs:isDefinedBy ns1:ontology ] ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProduct .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/kg/MovieResource> a ns3:Class ;
+    rdfs:label "MovieResource" ;
+    ns1:federates <https://dbpedia.org/sparql/>,
+        <https://query.wikidata.org/> ;
+    ns1:hasImpl <http://amazon.com/aws/wwso/neptune/demo/multimodel/kg/NeptuneImpl> ;
+    ns1:hasSource [ a ns1:Source,
+                ns3:NamedIndividual ;
+            ns1:hasNeighbor <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/ContributorLakeTable>,
+                <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/MovieLakeTable>,
+                <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/RoleLakeTable> ;
+            ns1:integrationType ns1:ETL ;
+            ns1:sourceDataSet "IMDB" ;
+            rdfs:isDefinedBy ns1:ontology ] ;
+    ns1:joins [ a ns1:Ref,
+                ns3:NamedIndividual ;
+            ns1:hasNeighbor <http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/MovieDocument> ;
+            ns1:hasNeighborAttribute <http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/MovieID> ;
+            rdfs:isDefinedBy ns1:ontology ] ;
+    ns1:similarTo [ a ns1:Similarity,
+                ns3:NamedIndividual ;
+            ns1:hasNeighbor <http://amazon.com/aws/wwso/neptune/demo/multimodel/kg/StoryResource> ;
+            ns1:simAlgorithm "Valentine" ;
+            ns1:simReason "mentions" ;
+            rdfs:isDefinedBy ns1:ontology ] ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProduct .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/kg/VideoAnalysisResource> a ns3:Class ;
+    rdfs:label "VideoAnalysisResource" ;
+    ns1:federates <https://dbpedia.org/sparql/>,
+        <https://query.wikidata.org/> ;
+    ns1:hasImpl <http://amazon.com/aws/wwso/neptune/demo/multimodel/kg/NeptuneImpl> ;
+    ns1:hasSource [ a ns1:Source,
+                ns3:NamedIndividual ;
+            ns1:hasNeighbor <http://amazon.com/aws/wwso/neptune/demo/multimodel/video/VideoAnalysis> ;
+            ns1:integrationType ns1:DynamoStreams ;
+            ns1:sourceEventType ns2:S3PutObject ;
+            rdfs:isDefinedBy ns1:ontology ] ;
+    ns1:joins [ a ns1:Ref,
+                ns3:NamedIndividual ;
+            ns1:hasNeighbor <http://amazon.com/aws/wwso/neptune/demo/multimodel/video/VideoAnalysis> ;
+            ns1:hasNeighborAttribute <http://amazon.com/aws/wwso/neptune/demo/multimodel/video/VideoID> ;
+            rdfs:isDefinedBy ns1:ontology ] ;
+    ns1:refersTo [ a ns1:Ref,
+                ns3:NamedIndividual ;
+            ns1:hasNeighbor <http://amazon.com/aws/wwso/neptune/demo/multimodel/video/VideoAnalysis> ;
+            ns1:hasNeighborAttribute <http://amazon.com/aws/wwso/neptune/demo/multimodel/video/MP4FileName>,
+                <http://amazon.com/aws/wwso/neptune/demo/multimodel/video/VideoCelebURI> ;
+            rdfs:isDefinedBy ns1:ontology ] ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProduct .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/bookstoredemo/BestSellerCache> a ns3:Class ;
+    rdfs:label "BestSellerCache" ;
+    ns2:config-trigger "DynamoDB Streams" ;
+    ns1:awsResource "RedisCache" ;
+    ns1:awsService ns2:Elasticache ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProductImpl .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/bookstoredemo/BookTable> a ns3:Class ;
+    rdfs:label "BookTable" ;
+    ns2:config-gsi "category" ;
+    ns2:config-key "id" ;
+    ns2:config-streams "NEW_AND_OLD_IMAGES" ;
+    ns1:awsResource "Table" ;
+    ns1:awsService ns2:DynamoDB ;
+    ns1:copies <http://amazon.com/aws/wwso/neptune/demo/multimodel/bookstoredemo/OpenSearchIndex> ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProductImpl .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/bookstoredemo/CartTable> a ns3:Class ;
+    rdfs:label "CartTable" ;
+    ns2:config-key "customerId|bookId" ;
+    ns1:awsResource "Table" ;
+    ns1:awsService ns2:DynamoDB ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProductImpl .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/bookstoredemo/OpenSearchIndex> a ns3:Class ;
+    rdfs:label "OpenSearchIndex" ;
+    ns2:config-index "lambda-index" ;
+    ns2:config-trigger "DynamoDB Streams" ;
+    ns1:awsResource "Index" ;
+    ns1:awsService ns2:OpenSearch ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProductImpl .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/bookstoredemo/OrderTable> a ns3:Class ;
+    rdfs:label "OrderTable" ;
+    ns2:config-key "customerId|orderId" ;
+    ns2:config-streams "NEW_AND_OLD_IMAGES" ;
+    ns1:awsResource "Table" ;
+    ns1:awsService ns2:DynamoDB ;
+    ns1:caches <http://amazon.com/aws/wwso/neptune/demo/multimodel/bookstoredemo/BestSellerCache> ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProductImpl .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/bookstoredemo/RecommendationGraph> a ns3:Class ;
+    rdfs:label "RecommendationGraph" ;
+    ns1:awsResource "LPG" ;
+    ns1:awsService ns2:Neptune ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProductImpl .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/bookstoredemo/id> a ns3:DatatypeProperty ;
+    rdfs:label "id" ;
+    ns1:domainIncludes <http://amazon.com/aws/wwso/neptune/demo/multimodel/bookstoredemo/Book> ;
+    rdfs:isDefinedBy ns1:ontology .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/bookstoredemo/orderId> a ns3:DatatypeProperty ;
+    rdfs:label "orderId" ;
+    ns1:domainIncludes <http://amazon.com/aws/wwso/neptune/demo/multimodel/bookstoredemo/Order> ;
+    rdfs:isDefinedBy ns1:ontology .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/ContribTable> a ns3:Class ;
+    rdfs:label "ContribTable" ;
+    ns1:awsResource "Catalog table" ;
+    ns1:awsService ns2:Glue ;
+    ns1:hasSource [ a ns1:Source,
+                ns3:NamedIndividual ;
+            ns1:integrationType ns1:uploadS3 ;
+            ns1:sourceDataSet "IMDB" ;
+            rdfs:isDefinedBy ns1:ontology ] ;
+    ns1:locatedIn <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/LakeStore> ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProductImpl .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/MovieTable> a ns3:Class ;
+    rdfs:label "MovieTable" ;
+    ns1:awsResource "Catalog table" ;
+    ns1:awsService ns2:Glue ;
+    ns1:hasSource [ a ns1:Source,
+                ns3:NamedIndividual ;
+            ns1:integrationType ns1:uploadS3 ;
+            ns1:sourceDataSet "IMDB" ;
+            rdfs:isDefinedBy ns1:ontology ] ;
+    ns1:locatedIn <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/LakeStore> ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProductImpl .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/RoleTable> a ns3:Class ;
+    rdfs:label "RoleTable" ;
+    ns1:awsResource "Catalog table" ;
+    ns1:awsService ns2:Glue ;
+    ns1:hasSource [ a ns1:Source,
+                ns3:NamedIndividual ;
+            ns1:integrationType ns1:uploadS3 ;
+            ns1:sourceDataSet "IMDB" ;
+            rdfs:isDefinedBy ns1:ontology ] ;
+    ns1:locatedIn <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/LakeStore> ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProductImpl .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/ContribClass> a ns3:DatatypeProperty ;
+    rdfs:label "ContribClass" ;
+    ns1:domainIncludes <http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/RoleDocument> ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subPropertyOf <http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/ContribClassEnum> .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/ContribClassEnum> a ns3:DatatypeProperty ;
+    rdfs:label "ContribClassEnum" ;
+    rdfs:isDefinedBy ns1:ontology .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/ContribDocImpl> a ns3:Class ;
+    rdfs:label "ContribDocImpl" ;
+    ns1:awsResource "Document" ;
+    ns1:awsService ns2:DocumentDB ;
+    ns1:caches <http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/MovieElasticacheRedisCache> ;
+    ns1:copies <http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/ContributorSearchDocument> ;
+    ns1:hasSource [ a ns1:Source,
+                ns3:NamedIndividual ;
+            ns1:hasNeighbor <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/ContributorLakeTable>,
+                <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/MovieLakeTable>,
+                <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/RoleLakeTable> ;
+            ns1:integrationType ns1:ETL ;
+            ns1:sourceDataSet "IMDB" ;
+            rdfs:isDefinedBy ns1:ontology ] ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProductImpl .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/ContributorSearchDocument> a ns3:Class ;
+    rdfs:label "ContributorSearchDocument" ;
+    ns2:config-ID "ContribID" ;
+    ns2:config-Index "Contrib" ;
+    ns1:awsResource "Document in index" ;
+    ns1:awsService ns2:OpenSearch ;
+    ns1:hasSource [ a ns1:Source,
+                ns3:NamedIndividual ;
+            ns1:hasNeighbor <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/ContributorLakeTable>,
+                <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/MovieLakeTable>,
+                <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/RoleLakeTable> ;
+            ns1:integrationType ns1:ETL ;
+            ns1:sourceDataSet "IMDB" ;
+            rdfs:isDefinedBy ns1:ontology ] ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProductImpl .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/MovieDocImpl> a ns3:Class ;
+    rdfs:label "MovieDocImpl" ;
+    ns2:config-additionalIndex "SeriesID" ;
+    ns1:awsResource "Document" ;
+    ns1:awsService ns2:DocumentDB ;
+    ns1:caches <http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/MovieElasticacheRedisCache> ;
+    ns1:copies <http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/MovieSearchDocument> ;
+    ns1:hasSource [ a ns1:Source,
+                ns3:NamedIndividual ;
+            ns1:hasNeighbor <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/ContributorLakeTable>,
+                <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/MovieLakeTable>,
+                <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/RoleLakeTable> ;
+            ns1:integrationType ns1:ETL ;
+            ns1:sourceDataSet "IMDB" ;
+            rdfs:isDefinedBy ns1:ontology ] ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProductImpl .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/MovieSearchDocument> a ns3:Class ;
+    rdfs:label "MovieSearchDocument" ;
+    ns2:config-ID "MovieID" ;
+    ns2:config-index "Role" ;
+    ns1:awsResource "Document in Index" ;
+    ns1:awsService ns2:OpenSearch ;
+    ns1:hasSource [ a ns1:Source,
+                ns3:NamedIndividual ;
+            ns1:hasNeighbor <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/ContributorLakeTable>,
+                <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/MovieLakeTable>,
+                <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/RoleLakeTable> ;
+            ns1:integrationType ns1:ETL ;
+            ns1:sourceDataSet "IMDB" ;
+            rdfs:isDefinedBy ns1:ontology ] ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProductImpl .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/RoleDocImpl> a ns3:Class ;
+    rdfs:label "RoleDocImpl" ;
+    ns1:awsResource "Document" ;
+    ns1:awsService ns2:DocumentDB ;
+    ns1:caches <http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/MovieElasticacheRedisCache> ;
+    ns1:copies <http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/RoleSearchDocument> ;
+    ns1:hasSource [ a ns1:Source,
+                ns3:NamedIndividual ;
+            ns1:hasNeighbor <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/ContributorLakeTable>,
+                <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/MovieLakeTable>,
+                <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/RoleLakeTable> ;
+            ns1:integrationType ns1:ETL ;
+            ns1:sourceDataSet "IMDB" ;
+            rdfs:isDefinedBy ns1:ontology ] ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProductImpl .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/RoleSearchDocument> a ns3:Class ;
+    rdfs:label "RoleSearchDocument" ;
+    ns2:config-ID "hash of compound key" ;
+    ns2:config-Index "Role" ;
+    ns1:awsResource "Document in index" ;
+    ns1:awsService ns2:OpenSearch ;
+    ns1:hasSource [ a ns1:Source,
+                ns3:NamedIndividual ;
+            ns1:hasNeighbor <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/ContributorLakeTable>,
+                <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/MovieLakeTable>,
+                <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/RoleLakeTable> ;
+            ns1:integrationType ns1:ETL ;
+            ns1:sourceDataSet "IMDB" ;
+            rdfs:isDefinedBy ns1:ontology ] ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProductImpl .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/story/LAOrangeStoryBucket> a ns3:Class ;
+    rdfs:label "LAOrangeStoryBucket" ;
+    ns2:config-tag "PDFFileName" ;
+    ns2:config-tier "Standard" ;
+    ns2:config-topFolder "PDFFileName" ;
+    ns1:awsResource "Bucket contents" ;
+    ns1:awsService ns2:S3 ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProductImpl .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/video/AnalysisItem> a ns3:Class ;
+    rdfs:label "AnalysisItem" ;
+    ns2:config-partition "VideoID" ;
+    ns2:config-sort "Type" ;
+    ns1:awsResource "table item" ;
+    ns1:awsService ns2:DynamoDB ;
+    ns1:joins [ a ns1:Ref,
+                ns3:NamedIndividual ;
+            ns1:hasNeighbor <http://amazon.com/aws/wwso/neptune/demo/multimodel/video/VideoAnalysisBucket> ;
+            ns1:hasNeighborAttribute <http://amazon.com/aws/wwso/neptune/demo/multimodel/video/S3AnalysisLocation> ;
+            rdfs:isDefinedBy ns1:ontology ],
+        [ a ns1:Ref,
+                ns3:NamedIndividual ;
+            ns1:hasNeighbor <http://amazon.com/aws/wwso/neptune/demo/multimodel/video/IngestItem> ;
+            ns1:hasNeighborAttribute <http://amazon.com/aws/wwso/neptune/demo/multimodel/video/VideoID> ;
+            rdfs:isDefinedBy ns1:ontology ] ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProductImpl .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/video/MP4FileName> a ns3:DatatypeProperty ;
+    rdfs:label "MP4FileName" ;
+    rdfs:isDefinedBy ns1:ontology .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/video/S3AnalysisLocation> a ns3:DatatypeProperty ;
+    rdfs:label "S3AnalysisLocation" ;
+    rdfs:isDefinedBy ns1:ontology .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/video/S3IngestLocation> a ns3:DatatypeProperty ;
+    rdfs:label "S3IngestLocation" ;
+    rdfs:isDefinedBy ns1:ontology .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/video/VideoAnalysisBucket> a ns3:Class ;
+    rdfs:label "VideoAnalysisBucket" ;
+    ns2:config-tag "MP4FileName",
+        "VideoID" ;
+    ns2:config-tier "Standard" ;
+    ns2:config-topFolder "VideoID" ;
+    ns1:awsResource "bucket contents" ;
+    ns1:awsService ns2:S3 ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProductImpl .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/video/VideoIngestBucket> a ns3:Class ;
+    rdfs:label "VideoIngestBucket" ;
+    ns2:config-tag "MP4FileName",
+        "VideoID" ;
+    ns2:config-tier "Standard" ;
+    ns2:config-topFolder "VideoID" ;
+    ns1:awsResource "bucket contents" ;
+    ns1:awsService ns2:S3 ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProductImpl .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/bookstoredemo/Book> a ns3:Class ;
+    rdfs:label "Book" ;
+    ns1:hasImpl <http://amazon.com/aws/wwso/neptune/demo/multimodel/bookstoredemo/BookTable>,
+        <http://amazon.com/aws/wwso/neptune/demo/multimodel/bookstoredemo/RecommendationGraph> ;
+    ns1:usagePattern "getBestSellers",
+        "getBook",
+        "getRecommendation",
+        "listBooks",
+        "search" ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProduct ;
+    ns3:hasKey ( <http://amazon.com/aws/wwso/neptune/demo/multimodel/bookstoredemo/id> ) .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/bookstoredemo/Order> a ns3:Class ;
+    rdfs:label "Order" ;
+    ns1:hasImpl <http://amazon.com/aws/wwso/neptune/demo/multimodel/bookstoredemo/OrderTable> ;
+    ns1:refersTo [ a ns1:Ref,
+                ns3:NamedIndividual ;
+            ns1:hasNeighbor <http://amazon.com/aws/wwso/neptune/demo/multimodel/bookstoredemo/Book> ;
+            rdfs:isDefinedBy ns1:ontology ] ;
+    ns1:usagePattern "checkout",
+        "listOrders" ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProduct ;
+    ns3:hasKey ( <http://amazon.com/aws/wwso/neptune/demo/multimodel/bookstoredemo/orderId> ) .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/kg/StoryResource> a ns3:Class ;
+    rdfs:label "StoryResource" ;
+    ns1:federates <https://dbpedia.org/sparql/>,
+        <https://query.wikidata.org/> ;
+    ns1:hasImpl <http://amazon.com/aws/wwso/neptune/demo/multimodel/kg/NeptuneImpl> ;
+    ns1:hasSource [ a ns1:Source,
+                ns3:NamedIndividual ;
+            ns1:hasNeighbor <http://amazon.com/aws/wwso/neptune/demo/multimodel/story/StoryAnalysis> ;
+            ns1:integrationType ns1:S3Event ;
+            ns1:sourceEventType ns2:S3PutObject ;
+            rdfs:isDefinedBy ns1:ontology ] ;
+    ns1:joins [ a ns1:Ref,
+                ns3:NamedIndividual ;
+            ns1:hasNeighbor <http://amazon.com/aws/wwso/neptune/demo/multimodel/story/StoryAnalysis> ;
+            ns1:hasNeighborAttribute <http://amazon.com/aws/wwso/neptune/demo/multimodel/story/StoryTitle> ;
+            rdfs:isDefinedBy ns1:ontology ] ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProduct .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/IMDBID> a ns3:DatatypeProperty ;
+    rdfs:label "IMDBID" ;
+    rdfs:isDefinedBy ns1:ontology .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/story/StoryTitle> a ns3:DatatypeProperty ;
+    rdfs:label "StoryTitle" ;
+    ns1:domainIncludes <http://amazon.com/aws/wwso/neptune/demo/multimodel/story/StoryAnalysis> ;
+    rdfs:isDefinedBy ns1:ontology .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/video/IngestItem> a ns3:Class ;
+    rdfs:label "IngestItem" ;
+    ns2:config-partition "VideoID" ;
+    ns1:awsResource "table item" ;
+    ns1:awsService ns2:DynamoDB ;
+    ns1:joins [ a ns1:Ref,
+                ns3:NamedIndividual ;
+            ns1:hasNeighbor <http://amazon.com/aws/wwso/neptune/demo/multimodel/video/VideoIngestBucket> ;
+            ns1:hasNeighborAttribute <http://amazon.com/aws/wwso/neptune/demo/multimodel/video/S3IngestLocation> ;
+            rdfs:isDefinedBy ns1:ontology ] ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProductImpl .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/video/VideoCelebURI> a ns3:DatatypeProperty ;
+    rdfs:label "VideoCelebURI" ;
+    rdfs:isDefinedBy ns1:ontology .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/video/VideoID> a ns3:DatatypeProperty ;
+    rdfs:label "VideoID" ;
+    rdfs:isDefinedBy ns1:ontology .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/LakeStore> a ns3:Class ;
+    rdfs:label "LakeStore" ;
+    ns2:config-Folders "StagingIMDB (one folder per lake table)" ;
+    ns2:config-ObjectType "Parquet" ;
+    ns2:config-Tier "standard" ;
+    ns1:awsResource "Bucket contents" ;
+    ns1:awsService ns2:S3 ;
+    ns1:hasSource [ a ns1:Source,
+                ns3:NamedIndividual ;
+            ns1:integrationType ns1:uploadS3 ;
+            ns1:sourceDataSet "IMDB" ;
+            rdfs:isDefinedBy ns1:ontology ] ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProductImpl .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/ContributorDocument> a ns3:Class ;
+    rdfs:label "ContributorDocument" ;
+    ns1:hasImpl <http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/ContribDocImpl> ;
+    ns1:hasSource [ a ns1:Source,
+                ns3:NamedIndividual ;
+            ns1:hasNeighbor <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/ContributorLakeTable>,
+                <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/MovieLakeTable>,
+                <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/RoleLakeTable> ;
+            ns1:integrationType ns1:ETL ;
+            ns1:sourceDataSet "IMDB" ;
+            rdfs:isDefinedBy ns1:ontology ] ;
+    ns1:usagePattern "Filmography",
+        "Find by ID",
+        "List by criteria" ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProduct ;
+    ns3:hasKey ( <http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/ContribID> ) .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/MovieDocument> a ns3:Class ;
+    rdfs:label "MovieDocument" ;
+    ns1:hasImpl <http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/MovieDocImpl> ;
+    ns1:hasSource [ a ns1:Source,
+                ns3:NamedIndividual ;
+            ns1:hasNeighbor <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/ContributorLakeTable>,
+                <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/MovieLakeTable>,
+                <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/RoleLakeTable> ;
+            ns1:integrationType ns1:ETL ;
+            ns1:sourceDataSet "IMDB" ;
+            rdfs:isDefinedBy ns1:ontology ] ;
+    ns1:usagePattern "Cast",
+        "Epi of series",
+        "Find by ID",
+        "List by criteria" ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProduct ;
+    ns3:hasKey ( <http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/MovieID> ) .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/MovieElasticacheRedisCache> a ns3:Class ;
+    rdfs:label "MovieElasticacheRedisCache" ;
+    ns2:config-TTL "60m" ;
+    ns2:config-cacheStrategy "lazy" ;
+    ns2:config-document "str JSON" ;
+    ns2:config-key "PK" ;
+    ns1:awsResource "Redis cache" ;
+    ns1:awsService ns2:Elasticache ;
+    ns1:hasSource [ a ns1:Source,
+                ns3:NamedIndividual ;
+            ns1:hasNeighbor <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/ContributorLakeTable>,
+                <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/MovieLakeTable>,
+                <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/RoleLakeTable> ;
+            ns1:integrationType ns1:ETL ;
+            ns1:sourceDataSet "IMDB" ;
+            rdfs:isDefinedBy ns1:ontology ] ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProductImpl .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/RoleDocument> a ns3:Class ;
+    rdfs:label "RoleDocument" ;
+    ns1:hasImpl <http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/RoleDocImpl> ;
+    ns1:hasSource [ a ns1:Source,
+                ns3:NamedIndividual ;
+            ns1:hasNeighbor <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/ContributorLakeTable>,
+                <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/MovieLakeTable>,
+                <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/RoleLakeTable> ;
+            ns1:integrationType ns1:ETL ;
+            ns1:sourceDataSet "IMDB" ;
+            rdfs:isDefinedBy ns1:ontology ] ;
+    ns1:joins [ a ns1:Ref,
+                ns3:NamedIndividual ;
+            ns1:hasNeighbor <http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/ContributorDocument> ;
+            ns1:hasNeighborAttribute <http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/ContribID> ;
+            rdfs:isDefinedBy ns1:ontology ],
+        [ a ns1:Ref,
+                ns3:NamedIndividual ;
+            ns1:hasNeighbor <http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/MovieDocument> ;
+            ns1:hasNeighborAttribute <http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/MovieID> ;
+            rdfs:isDefinedBy ns1:ontology ] ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProduct ;
+    ns3:hasKey ( <http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/MovieID> <http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/ContribID> <http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/ContribClass> ) .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/story/StoryAnalysis> a ns3:Class ;
+    rdfs:label "StoryAnalysis" ;
+    ns1:hasImpl <http://amazon.com/aws/wwso/neptune/demo/multimodel/story/LAOrangeStoryBucket> ;
+    ns1:hasSource [ a ns1:Source,
+                ns3:NamedIndividual ;
+            ns1:integrationType ns1:uploadS3 ;
+            ns1:sourceDataSet "On-prem PDF story lib" ;
+            rdfs:isDefinedBy ns1:ontology ] ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProduct ;
+    ns3:hasKey ( <http://amazon.com/aws/wwso/neptune/demo/multimodel/story/StoryTitle> ) .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/ContribID> a ns3:DatatypeProperty ;
+    rdfs:label "ContribID" ;
+    ns1:domainIncludes <http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/ContributorDocument>,
+        <http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/RoleDocument> ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subPropertyOf <http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/IMDBID> .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/MovieID> a ns3:DatatypeProperty ;
+    rdfs:label "MovieID" ;
+    ns1:domainIncludes <http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/MovieDocument>,
+        <http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/RoleDocument> ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subPropertyOf <http://amazon.com/aws/wwso/neptune/demo/multimodel/moviedoc/IMDBID> .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/video/VideoAnalysis> a ns3:Class ;
+    rdfs:label "VideoAnalysis" ;
+    ns1:hasImpl <http://amazon.com/aws/wwso/neptune/demo/multimodel/video/AnalysisItem>,
+        <http://amazon.com/aws/wwso/neptune/demo/multimodel/video/IngestItem> ;
+    ns1:hasSource [ a ns1:Source,
+                ns3:NamedIndividual ;
+            ns1:integrationType ns1:uploadS3 ;
+            ns1:sourceDataSet "on prem MP4 lib" ;
+            rdfs:isDefinedBy ns1:ontology ] ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProduct .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/kg/NeptuneImpl> a ns3:Class ;
+    rdfs:label "NeptuneImpl" ;
+    ns1:awsResource "RDF graph database" ;
+    ns1:awsService ns2:Neptune ;
+    ns1:federates <https://dbpedia.org/sparql/>,
+        <https://query.wikidata.org/> ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProductImpl .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/ContributorLakeTable> a ns3:Class ;
+    rdfs:label "ContributorLakeTable" ;
+    ns1:hasImpl <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/ContribTable> ;
+    ns1:hasSource [ a ns1:Source,
+                ns3:NamedIndividual ;
+            ns1:integrationType ns1:uploadS3 ;
+            ns1:sourceDataSet "IMDB" ;
+            rdfs:isDefinedBy ns1:ontology ] ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProduct .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/MovieLakeTable> a ns3:Class ;
+    rdfs:label "MovieLakeTable" ;
+    ns1:hasImpl <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/MovieTable> ;
+    ns1:hasSource [ a ns1:Source,
+                ns3:NamedIndividual ;
+            ns1:integrationType ns1:uploadS3 ;
+            ns1:sourceDataSet "IMDB" ;
+            rdfs:isDefinedBy ns1:ontology ] ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProduct .
+
+<http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/RoleLakeTable> a ns3:Class ;
+    rdfs:label "RoleLakeTable" ;
+    ns1:hasImpl <http://amazon.com/aws/wwso/neptune/demo/multimodel/lake/RoleTable> ;
+    ns1:hasSource [ a ns1:Source,
+                ns3:NamedIndividual ;
+            ns1:integrationType ns1:uploadS3 ;
+            ns1:sourceDataSet "IMDB" ;
+            rdfs:isDefinedBy ns1:ontology ] ;
+    rdfs:isDefinedBy ns1:ontology ;
+    rdfs:subClassOf ns1:DataProduct .
+
