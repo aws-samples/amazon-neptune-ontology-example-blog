@@ -25,18 +25,16 @@ This opens in your browser the Jupyter files view. There are two notebooks avail
 
 We encourage you to review the stack with your security team prior to using it in a production environment.
 
+## Running the Examples
+To run the ontology example discussed in the blog <https://aws.amazon.com/blogs/database/model-driven-graphs-using-owl-in-amazon-neptune>, open the Neptune_Ontology_Example.ipynb notebook; then follow the steps! 
+
+To run the multimodel example discussed in the blog <TBD>, open the Neptune_Multimodel.ipynb notebook and follow the steps.
+
 ## Cost
 The template creates Neptune cluster resources, a SageMaker notebook (Neptune Workbench), an S3 bucket, plus additional resources. The Neptune cluster and SageMaker notebook incur costs.  Refer to the Neptune pricing guide <https://aws.amazon.com/neptune/pricing/> for pricing. 
 
 ## Clean up
 If you’re done with the solution and wish to avoid future charges, delete the CloudFormation stack. 
-
-## Running the Examples
-Once the setup is complete, open the Sagemaker notebook instance. You can find the link in the Outputs section of the CloudFormation stack. The link opens the Jupyter file fiew. 
-
-To run the ontology example discussed in the blog <https://aws.amazon.com/blogs/database/model-driven-graphs-using-owl-in-amazon-neptune>, open the Neptune_Ontology_Example.ipynb notebook; then follow the steps! 
-
-To run the multimodel example discussed in the blog <TBD>, open the Neptune_Multimodel.ipynb notebook and follow the steps.
 
 ## License
 This library is licensed under the MIT-0 License. See the LICENSE file.
