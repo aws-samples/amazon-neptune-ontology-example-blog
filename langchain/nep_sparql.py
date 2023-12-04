@@ -79,7 +79,7 @@ class NepGraphSparqlQAChain(Chain):
         sparql_select_prompt: BasePromptTemplate = XSPARQL_GENERATION_SELECT_PROMPT,
         examples: Optional[str] = None,
         **kwargs: Any,
-    ) -> GraphSparqlQAChain:
+    ) -> NepGraphSparqlQAChain:
         """Initialize from LLM."""
         qa_chain = LLMChain(llm=llm, prompt=qa_prompt)
         template_to_use = XSPARQL_GENERATION_SELECT_TEMPLATE
