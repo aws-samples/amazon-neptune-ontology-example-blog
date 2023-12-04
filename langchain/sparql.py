@@ -16,7 +16,7 @@ from langchain.chains.graph_qa.prompts import (
     SPARQL_QA_PROMPT,
 )
 from langchain.chains.llm import LLMChain
-from langchain.graphs.nep_rdf_graph import NepRdfGraph
+from langchain.graphs.rdf_graph import RdfGraph
 
 from langchain_core.prompts.prompt import PromptTemplate
 
@@ -51,7 +51,7 @@ XSPARQL_GENERATION_SELECT_PROMPT = PromptTemplate(
     input_variables=["schema", "prompt"], template=XSPARQL_GENERATION_SELECT_TEMPLATE
 )
 
-class NepGraphSparqlQAChain(Chain):
+class GraphSparqlQAChain(Chain):
     """Question-answering against an RDF or OWL graph by generating SPARQL statements.
     """
 
@@ -79,7 +79,7 @@ class NepGraphSparqlQAChain(Chain):
         sparql_select_prompt: BasePromptTemplate = XSPARQL_GENERATION_SELECT_PROMPT,
         examples: Optional[str] = None,
         **kwargs: Any,
-    ) -> NepGraphSparqlQAChain:
+    ) -> GraphSparqlQAChain:
         """Initialize from LLM."""
         qa_chain = LLMChain(llm=llm, prompt=qa_prompt)
         template_to_use = XSPARQL_GENERATION_SELECT_TEMPLATE
