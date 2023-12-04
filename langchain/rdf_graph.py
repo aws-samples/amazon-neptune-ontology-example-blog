@@ -59,7 +59,7 @@ WHERE {
 }
 """
 
-class NepRdfGraph:
+class RdfGraph:
     """
     Modes:
     * online: Online file - can only be queried, changes can be stored locally
