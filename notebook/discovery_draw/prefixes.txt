@@ -2789,7 +2789,6 @@ PREFIX setl:       <http://purl.org/twc/vocab/setl/>
 PREFIX s223:       <http://data.ashrae.org/standard223#>
 PREFIX djo:        <http://purl.org/datajourneys/>
 PREFIX srmo:       <https://w3id.org/srmo#>
-PREFIX xmlns:      <http://xmlns.com/foaf/0.1/>
 PREFIX ea:         <http://eaontology.protect.linkeddata.es/def/>
 PREFIX gax:        <http://w3id.org/gaia-x/core#>
 PREFIX ghga:       <http://w3id.org/ghga/>
