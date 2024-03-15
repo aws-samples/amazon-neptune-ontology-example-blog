@@ -299,7 +299,8 @@ def discover_observational():
      
     # create or update a property entry with the results of a query.
     # contents of a property entry include types and stereotypes
-    def _get_entry(props, col_vals):
+    # determine flag can be set to False if you are just finding that entry while handling meta prop
+    def _get_entry(props, col_vals, determine=True):
         model_prop_name = col_vals['sprop'] if 'sprop' in col_vals else col_vals['prop']
         
         prop_entry = None
@@ -312,11 +313,12 @@ def discover_observational():
                 'metaprops': {}
             }
             props[model_prop_name] = prop_entry
-        _determine_type(col_vals, prop_entry, False)
+        if determine:
+            _determine_type(col_vals, prop_entry, False)
         return prop_entry
 
     def _get_meta_entry(props, col_vals, meta_naming):
-        prop_entry = _get_entry(props, col_vals)
+        prop_entry = _get_entry(props, col_vals, False)
         meta_prop_name = col_vals['metaprop']
         meta_entry = None
         if meta_prop_name in prop_entry['metaprops']:
@@ -352,25 +354,25 @@ def discover_observational():
     class_res = execute_sparql_query(CLASS_QUERY)
     for row in class_res:
         clazz = row['type']['value']
-        print(clazz)
+        print(clazz)            
         classes[clazz]={'props':{}}
         
         prop_res = execute_sparql_query(_make_prop_query(clazz))
         for prop in prop_res:
             col_vals = _get_cols(prop)
             prop_entry = _get_entry(classes[clazz]['props'], col_vals)
-        
+            
         meta_res = execute_sparql_query(_make_metadata_ng_query(clazz))
         for prop in meta_res:
             col_vals = _get_cols(prop)
-            prop_entry = _get_entry(classes[clazz]['props'], col_vals)
+            prop_entry = _get_entry(classes[clazz]['props'], col_vals, False)
             meta_entry = _get_meta_entry(classes[clazz]['props'], col_vals, False)
             meta_entry['entryType']='namedgraph'
 
         meta_res = execute_sparql_query(_make_metadata_singleton_query(clazz))
         for prop in meta_res:
             col_vals = _get_cols(prop)
-            prop_entry = _get_entry(classes[clazz]['props'], col_vals)
+            prop_entry = _get_entry(classes[clazz]['props'], col_vals, False)
             meta_entry = _get_meta_entry(classes[clazz]['props'], col_vals, False)
             meta_entry['entryType']='singleton'
             
