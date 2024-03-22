@@ -49,13 +49,25 @@ def execute_sparql(query, crud_type):
         method="POST", url=NEPTUNE_ENV['endpoint'], headers=request_hdr, data=data
     )
     if str(queryres.status_code) != "200":
+        print(f"Query error {queryres.status_code} {queryres.text}")
+        print(f"Here is the query:\n{query}\n")
+        print(f"CRUD type is *{crud_type}*")
+        print(f"Here is the result:\n{queryres.text}\n")
         raise Exception({queryres.status_code, queryres.text})
-        
-    json_resp = json.loads(queryres.text)
-    if 'results' in json_resp:
-        return json_resp['results']['bindings']
-    else:
-        return json_resp
+
+    try:
+        json_resp = json.loads(queryres.text)    
+        if 'results' in json_resp:
+            return json_resp['results']['bindings']
+        else:
+            return json_resp
+    except Exception as e:
+        print("Exception: {}".format(type(e).__name__))
+        print("Exception message: {}".format(e))
+        print(f"Here is the query:\n{query}\n")
+        print(f"CRUD type is *{crud_type}*")
+        print(f"Here is the result:\n{queryres.text}\n")
+        raise e
 
 # Run SPARQL select query on Neptune        
 def execute_sparql_query(query):
@@ -66,38 +78,9 @@ Observational query support.
 This block contains queries to discover instances.
 '''  
 
-MAX_TYPES=100
-MAX_PROPS=100
+MAX_PROPS=1000
 MAX_RESOURCE_SAMPLE=500
-
-'''
-Find the distinct types that resources have. 
-'''
-CLASS_QUERY = f'''
-SELECT ?type WHERE {{
-    {{
-        select distinct ?type where {{
-            ?_ a ?type .  
-        }}
-    }}
-
-    # don't want bnodes
-    FILTER(!isBlank(?type)) . 
-    
-    # don't want rdf, rdfs, owl or a few other common ones
-    # we're drawing YOUR classes, not the common ones 
-    FILTER(!strstarts(str(?type), "http://www.w3.org/1999/02/22-rdf-syntax-ns#" )) .
-    FILTER(!strstarts(str(?type), "http://www.w3.org/2000/01/rdf-schema#" )) .
-    FILTER(!strstarts(str(?type), "http://www.w3.org/2002/07/owl#" )) .
-    FILTER(!strstarts(str(?type), "http://www.w3.org/2001/XMLSchema#" )) .
-    FILTER(!strstarts(str(?type), "http://www.w3.org/ns/json-ld#" )) .
-    FILTER(!strstarts(str(?type), "http://purl.org/dc/elements/1.1/" )) .
-    FILTER(!strstarts(str(?type), "http://xmlns.com/foaf/0.1/" )) .
-    FILTER(!strstarts(str(?type), "http://www.w3.org/2004/02/skos/core#" )) .
-    FILTER(!strstarts(str(?type), "http://www.w3.org/2008/05/skos-xl#" )) .
-}}
-LIMIT {MAX_TYPES}
-'''
+BAG_1TON = "{ rdfs:_1 rdfs:_2 rdfs:_3 rdfs:_4 rdfs:_5 } "
 
 '''
 Get properties of given *clazz*. 
@@ -143,8 +126,8 @@ SELECT distinct {project} WHERE {{
     # Bag, Sq, Alt, Container
     OPTIONAL {{       
         VALUES ?objType {{ rdf:Bag rdf:Seq rdf:Alt rdf:Container }} .
+        VALUES ?index {BAG_1TON} .
         ?obj ?index ?val .
-        FILTER(STRSTARTS(STR(?index),"http://www.w3.org/1999/02/22-rdf-syntax-ns#_")) .
         BIND (DATATYPE(?val) as ?valLitType) .
         OPTIONAL {{
             ?val a ?valType .
@@ -207,21 +190,30 @@ to a statement. Instead of writing :S :P :O, we write:
 For our objective, we want to arrange these statements in class/property structure.
 This query helps us do that.
 '''
-STMT_QUERY = f'''
-SELECT distinct ?type ?prop ?metaprop 
+def _make_stmt_query(clazz, prop):
+    return f'''
+SELECT distinct ?prop ?metaprop 
     ?litType ?objType ?valLitType ?valType  
     ?metaLitType ?metaObjType ?metaValLitType ?metaValType  
 WHERE {{
-    ?stmt a rdf:Statement .
-    ?stmt rdf:subject ?resource .
-    ?resource a ?type .
-    ?stmt rdf:predicate ?prop .
-    ?stmt rdf:object ?obj . 
-    ?stmt ?metaprop ?mobj .
-    FILTER (?metaprop != rdf:subject ) .
-    FILTER (?metaprop != rdf:predicate ) .
-    FILTER (?metaprop != rdf:object ) .
-    FILTER (?metaprop != rdf:type ) .
+
+    # select some statements of this type
+    {{
+        SELECT ?prop ?obj ?metaprop ?mobj WHERE {{
+            ?stmt a rdf:Statement .
+            ?stmt rdf:subject ?resource .
+            ?resource a <{clazz}> .
+            BIND  (<{prop}> as ?prop ) .
+            ?stmt rdf:predicate ?prop .
+            ?stmt rdf:object ?obj . 
+            ?stmt ?metaprop ?mobj .
+            FILTER (?metaprop != rdf:subject ) .
+            FILTER (?metaprop != rdf:predicate ) .
+            FILTER (?metaprop != rdf:object ) .
+            FILTER (?metaprop != rdf:type ) .
+        }}
+        LIMIT {MAX_RESOURCE_SAMPLE}
+    }}
 
     # object types    
     # literal
@@ -244,8 +236,8 @@ WHERE {{
     # Bag, Sq, Alt, Container
     OPTIONAL {{     
         VALUES ?objType {{ rdf:Bag rdf:Seq rdf:Alt rdf:Container }} .
+        VALUES ?index {BAG_1TON} .
         ?obj ?index ?val .
-        FILTER(STRSTARTS(STR(?index),"http://www.w3.org/1999/02/22-rdf-syntax-ns#_")) .
         BIND (DATATYPE(?val) as ?valLitType) .
         OPTIONAL {{
             ?val a ?valType .
@@ -272,8 +264,8 @@ WHERE {{
     # Bag, Sq, Alt, Container
     OPTIONAL {{      
         VALUES ?metaObjType {{ rdf:Bag rdf:Seq rdf:Alt rdf:Container }} .
+        VALUES ?mindex {BAG_1TON} .
         ?mobj ?mindex ?metaVal .
-        FILTER(STRSTARTS(STR(?mindex),"http://www.w3.org/1999/02/22-rdf-syntax-ns#_")) .
         BIND (DATATYPE(?metaVal) as ?metaValLitType) .
         OPTIONAL {{
             ?metaVal a ?metaValType .
@@ -287,7 +279,7 @@ LIMIT {MAX_PROPS}
 COLS = ["type", "prop", "sprop", "metaprop", "objType", "litType", "valType", "valLitType", \
     "metaLitType", "metaObjType", "metaValLitType", "metaValType"]  
 
-def discover_observational():
+def discover_observational(rdf_summary):
     
     # from result row, return values for given COLS names.
     def _get_cols(prop_res):
@@ -350,10 +342,28 @@ def discover_observational():
             entry['isList'] = True    
             
     # classes and their props
+    summary_classes = []
+    for c in rdf_summary['payload']['graphSummary']['classes']:
+        if not(c.startswith("http://www.w3.org/1999/02/22-rdf-syntax-ns#" ) or \
+               c.startswith("http://www.w3.org/2000/01/rdf-schema#") or \
+               c.startswith("http://www.w3.org/2002/07/owl#") or \
+               c.startswith("http://www.w3.org/2001/XMLSchema#") or \
+               c.startswith("http://www.w3.org/ns/json-ld#") or \
+               c.startswith("http://purl.org/dc/elements/1.1/") or \
+               c.startswith("http://xmlns.com/foaf/0.1/") or \
+               c.startswith("http://www.w3.org/2004/02/skos/core#") or \
+               c.startswith("http://www.w3.org/2008/05/skos-xl#")):
+            summary_classes.append(c)
+
+    # I won't use these for now. Could constrain prop queries by preds from summary, 
+    # but seems ok without it.
+    summary_predicates = []
+    for p in rdf_summary['payload']['graphSummary']['predicates']:
+        for pn in p:
+            summary_predicates.append(pn)
+    
     classes = {}
-    class_res = execute_sparql_query(CLASS_QUERY)
-    for row in class_res:
-        clazz = row['type']['value']
+    for clazz in summary_classes:
         print(clazz)            
         classes[clazz]={'props':{}}
         
@@ -376,19 +386,18 @@ def discover_observational():
             meta_entry = _get_meta_entry(classes[clazz]['props'], col_vals, False)
             meta_entry['entryType']='singleton'
             
-
-    # Special statement processing
-    stmt_res = execute_sparql_query(STMT_QUERY)
-    for row in stmt_res:
-        col_vals = _get_cols(row)
-        clazz = col_vals['type']
-        print(clazz)
-        if not(clazz in classes):
-            classes[clazz] = {'props':{}}
-        classes[clazz]['isStatement']=True
-        prop_entry = _get_entry(classes[clazz]['props'], col_vals)
-        meta_entry = _get_meta_entry(classes[clazz]['props'], col_vals, True)
-        meta_entry['entryType']='statement'
+        # Special statement processing
+        # Here, check one per prop
+        for prop in classes[clazz]['props']:
+            stmt_res = execute_sparql_query(_make_stmt_query(clazz, prop))
+            for row in stmt_res:
+                col_vals = _get_cols(row)
+                if not(clazz in classes):
+                    classes[clazz] = {'props':{}}
+                classes[clazz]['isStatement']=True
+                prop_entry = _get_entry(classes[clazz]['props'], col_vals)
+                meta_entry = _get_meta_entry(classes[clazz]['props'], col_vals, True)
+                meta_entry['entryType']='statement'
 
     return classes
 
@@ -458,6 +467,7 @@ select ?class
     OPTIONAL { ?class owl:oneOf ?oneList . } .
     OPTIONAL { ?class owl:disjointWith ?disj . } . 
 } group by ?class
+LIMIT 200
     """
 
     ONT_PROP_QUERY = """
@@ -493,6 +503,8 @@ select ?prop
     ?prop rdf:type ?type . # allows us to check functional, transitive, etc
 } 
 group by ?prop
+LIMIT 200
+
     """
 
     ONT_RESTRICTION_QUERY ="""
@@ -513,6 +525,8 @@ select ?restriction ?prop
     OPTIONAL { ?restriction owl:hasValue ?lval . FILTER(isLiteral(?lval)) . } .
     OPTIONAL { ?restriction owl:hasValue ?ival . FILTER(!isLiteral(?ival)) . } .
 } group by ?restriction ?prop
+LIMIT 200
+
     """
 
     ONT_LIST_QUERY = """
@@ -524,6 +538,8 @@ select ?list (GROUP_CONCAT(distinct ?entity;SEPARATOR=",") AS ?entities) where {
     ?subject owl:unionOf|owl:intersectionOf|owl:oneOf|owl:onProperties|owl:members|owl:disjoinUnionOf|owl:propertyChainAxioms|owl:hasKey ?list .
     OPTIONAL {?list rdf:rest*/rdf:first ?entity . } .
 } group by ?list
+LIMIT 200
+
     """
 
     # sub-function to run a sparql query and transform it
@@ -768,7 +784,7 @@ def discover_and_merge_ontological(observed):
                 "metaprops": {}
             }
             if r['prop'] in class_entry['props']:
-                prop_entry = class_entry['props']
+                prop_entry = class_entry['props'][r['prop']]
             else:
                 class_entry['props'][r['prop']]=prop_entry
 
@@ -955,6 +971,7 @@ def to_plant_uml(classes, class_filter=None):
     for c in classes:
         if not(class_filter is None) and not (c in class_filter):
             continue
+        print(c)
         class_name = _make_curie(c)
         stereos = []
         ref_only_classes = []
