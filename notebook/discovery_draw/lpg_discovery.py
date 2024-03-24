@@ -9,7 +9,7 @@ from botocore.awsrequest import AWSRequest
 
 #  Keep track of Neptune environment for query
 NEPTUNE_ENV = {'host': None, 'port': None, 'region': None, 'use_iam_auth': False, 'session': None}
-def set_neptune_env(host, port, region, use_iam_auth):
+def set_neptune_env(host, port=8182, use_iam_auth=False, region=''):
     NEPTUNE_ENV['endpoint']=f"https://{host}:{port}/sparql" 
     NEPTUNE_ENV['region']=region
     NEPTUNE_ENV['use_iam_auth']=use_iam_auth
@@ -97,7 +97,7 @@ def discover(pgsummary):
     return [classes, rel_classes]
 
 
-def to_plant_uml(observation, class_filter=None):
+def to_plant_uml(observation, class_filter=None, max_classes=-1, max_rels=-1):
 
     classes_str = ""
     rels_str = ""
@@ -113,14 +113,28 @@ def to_plant_uml(observation, class_filter=None):
             s += f(" also t['types'][1:]")
         return s
 
+    num_classes = 0
+    num_rels = 0
+    
     for c in classes:
         if not(class_filter is None) and not (c in class_filter):
             continue
+
+        # max classes?
+        num_classes += 1
+        if max_classes >=0 and num_classes > max_classes:
+            print("Max classes. Stopping.")
+            break
+            
         classstr = f"\nclass {c} {{"
         for p in classes[c]['props']:
             classstr += f"\n   - {p}:{_print_type(classes[c]['props'][p])}"
 
         for r in classes[c]['rels']:
+            num_rels += 1
+            if max_rels >=0 and num_rels > max_rels:
+                print(f"Max rels reached. Skipping {r} of {c}")
+            
             for target in classes[c]['rels'][r]:
                 rels_str += f'\n{c} "1" -- "*" {target} : {r} > '
 
