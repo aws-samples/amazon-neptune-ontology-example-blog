@@ -9,14 +9,14 @@ from botocore.awsrequest import AWSRequest
 
 #  Keep track of Neptune environment for query
 NEPTUNE_ENV = {'endpoint': None, 'region': None, 'use_iam_auth': False, 'session': None}
-def set_neptune_env(host, port, region, use_iam_auth):
+def set_neptune_env(host, port=8182, use_iam_auth=False, region=''):
     NEPTUNE_ENV['endpoint']=f"https://{host}:{port}/sparql" 
     NEPTUNE_ENV['region']=region
     NEPTUNE_ENV['use_iam_auth']=use_iam_auth
     NEPTUNE_ENV['session']= boto3.Session() if use_iam_auth else None
  
 # make SPARQL query of crud_type query or update on Neptune
-def execute_sparql(query, crud_type):
+def execute_sparql(query, crud_type='query'):
     request_data = {crud_type: query}
     data = request_data
     request_hdr = None
@@ -921,7 +921,7 @@ This part writes PlantUML so you can render it in the viewer
 '''
 
 # Optionally remove classes beforehand
-def to_plant_uml(classes, class_filter=None):
+def to_plant_uml(classes, class_filter=None, max_classes=-1, max_rels=-1):
 
     plant_uml_sections=["", ""]
     all_refs = {}
@@ -967,11 +967,20 @@ def to_plant_uml(classes, class_filter=None):
         plant_uml_sections[1] += f'\n{class_name} "1" -- "*" {r} : {prop_name} {s_stereos} > '
         if len(meta_notes) > 0:
             plant_uml_sections[1] += f'\nnote on link: {_notes_string(meta_notes)}  '
-        
+
+    num_classes = 0
+    num_rels = 0
     for c in classes:
+        # filter
         if not(class_filter is None) and not (c in class_filter):
             continue
-        print(c)
+
+        # max classes?
+        num_classes += 1
+        if max_classes >=0 and num_classes > max_classes:
+            print("Max classes. Stopping.")
+            break
+            
         class_name = _make_curie(c)
         stereos = []
         ref_only_classes = []
@@ -1044,7 +1053,11 @@ def to_plant_uml(classes, class_filter=None):
                 _add_prop(prop_name, prop_stereos, is_list, lits)
                 
             for r in rels:
-                _add_rel(class_name, prop_name, prop_stereos, is_list, r, meta_notes)
+                num_rels += 1
+                if max_rels >=0 and num_rels > max_rels:
+                    print(f"Max rels reached. Skipping {prop_name} of {class_name}")
+                else:
+                    _add_rel(class_name, prop_name, prop_stereos, is_list, r, meta_notes)
                           
         _end_class(class_name, ref_only_classes, all_meta_notes)
 
