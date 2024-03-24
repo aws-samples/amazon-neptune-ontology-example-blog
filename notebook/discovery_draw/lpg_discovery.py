@@ -28,7 +28,8 @@ def execute_oc_query(query):
 def discover(pgsummary):
     classes={}
     rel_classes={}
-    RESULT_LIMIT=5000
+    SAMPLE_LIMIT=10000
+    RESULT_LIMIT=200
 
     def _map_type(typ):
         if str(typ) == "<class 'int'>":
@@ -59,7 +60,7 @@ def discover(pgsummary):
         classes[n] = {'labels': [], 'props': {}, 'rels': {}}
 
         # node props
-        structure_query = f"MATCH(n:{n}) RETURN properties(n) as props LIMIT {RESULT_LIMIT}"  
+        structure_query = f"MATCH(n:{n}) RETURN properties(n) as props LIMIT {SAMPLE_LIMIT}"  
         df = execute_oc_query(structure_query)
         for row in df:
             props = row['props']
@@ -69,7 +70,7 @@ def discover(pgsummary):
                 _determine_type(classes[n]['props'][p], props[p])
 
         # edges
-        structure_query = f"MATCH(n:{n})-[e]->(m) RETURN distinct type(e) as edgetype, labels(m) as target  LIMIT {RESULT_LIMIT}"
+        structure_query = f"MATCH(n:{n})-[e]->(m) WITH type(e) AS edgetype, labels(m) AS target LIMIT {SAMPLE_LIMIT} RETURN distinct edgetype, target LIMIT {RESULT_LIMIT}"
         df = execute_oc_query(structure_query)
         for row in df:
             edge_type = row['edgetype']
@@ -78,7 +79,7 @@ def discover(pgsummary):
                 classes[n]['rels'][edge_type] = target
 
         # edge properties when that node is source
-        structure_query = f"MATCH(n:{n})-[e]->(m) RETURN type(e) as edgetype, properties(e) as props LIMIT {RESULT_LIMIT}" 
+        structure_query = f"MATCH(n:{n})-[e]->(m) RETURN type(e) as edgetype, properties(e) as props LIMIT {SAMPLE_LIMIT}" 
         df = execute_oc_query(structure_query)
         for row in df:
             edge_type = row['edgetype']
