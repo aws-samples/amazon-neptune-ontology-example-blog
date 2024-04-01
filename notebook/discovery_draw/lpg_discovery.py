@@ -135,6 +135,7 @@ def to_plant_uml(observation, class_filter=None, max_classes=-1, max_rels=-1):
             num_rels += 1
             if max_rels >=0 and num_rels > max_rels:
                 print(f"Max rels reached. Skipping {r} of {c}")
+                break
             
             for target in classes[c]['rels'][r]:
                 rels_str += f'\n{c} "1" -- "*" {target} : {r} > '
