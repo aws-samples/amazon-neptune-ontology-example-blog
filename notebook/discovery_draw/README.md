@@ -21,7 +21,6 @@ To draw your RDF schema as a UML class diagram, copy the following files a folde
 
 - VisualizeModel-RDF.ipynb
 - rdf_discovery.py
-- prefixes.txt
 
 Open VisualizeModel-RDF.ipynb. Run through the steps. 
 
