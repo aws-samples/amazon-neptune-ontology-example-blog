@@ -43,31 +43,31 @@ Follow the same steps as above to create a second graph. Name it KGC-demo-chatbo
 ### Create Neptune Notebook
 Follow instructions in https://docs.aws.amazon.com/neptune-analytics/latest/userguide/create-notebook-cfn.html to create a notebook instance through CloudFormation.
 
+TODO - IAM role allows bedrock, S3 working bucket
+
 ### Create S3 Working Bucket
 Navigate to the S3 console. Create a bucket with a unique name similar to *kgc2024-masterclass-demo-yourname*. 
 
 ### Create Chatbot
-We also provide a chatbot to ask natural language questions of the knowledge graph
+We also provide a chatbot to ask natural language questions of the knowledge graph.
 
-TODO
+#### Create EC2 Instance
+TODO, VPC, IAM role, need public access, SG allows you to access from your machine
 
+#### Obtain Code
+git clone
 
-- command line
-/home/ec2-user/neptune-genai-examples/llamaindex/knowledgegraphindex-chatbot-streamlit/venv/bin/python3.11 /home/ec2-user/neptune-genai-examples/llamaindex/knowledgegraphindex-chatbot-streamlit/venv/bin/streamlit run main.py
+#### Obtain text data
+aws s3 sync _the raw data_
 
+#### Configure
+edit graph identifier
 
-- which pip installs
+#### Get Dependencies
+pip install requirements.txt
 
-
-- env for graph identifier
-
-- does it need storage folders from instance?
-
-pip install -r x/requirement.txt
-
-Then streamlit ...
-
-Two graphs
+#### Start
+streamlit run main.py
 
 ## Cleanup
 This demo incurs cost. If you are done and wish to avoid further charges:
