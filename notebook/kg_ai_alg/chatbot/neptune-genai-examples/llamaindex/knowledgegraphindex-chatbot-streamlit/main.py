@@ -1,4 +1,7 @@
-# main.py
+"""
+Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+SPDX-License-Identifier: Apache-2.0
+"""
 
 import threading
 import streamlit as st
@@ -13,6 +16,7 @@ from llama_index.core.evaluation import FaithfulnessEvaluator
 from llama_index.core.evaluation import RelevancyEvaluator
 from llama_index.core.prompts import PromptTemplate
 
+# Configure the faitfulness eval prompt template
 faithfulness_eval_prompt = PromptTemplate(
     "Please tell if a given piece of information "
     "is supported by the context.\n"
@@ -33,7 +37,9 @@ faithfulness_eval_prompt = PromptTemplate(
 
 
 # ------------------------------------------------------------------------
-# LlamaIndex - Amazon Bedrock
+# LlamaIndex - Amazon
+# This section sets up global settings for LlamaIndex, such as the LLM
+# and embedding models
 
 llm = Bedrock(
     model="anthropic.claude-3-sonnet-20240229-v1:0",
@@ -50,23 +56,16 @@ Settings.embed_model = embed_model
 Settings.chunk_size = 1024
 
 # ------------------------------------------------------------------------
-# Streamlit
-
-# Page title
-st.set_page_config(
-    page_title="Press Release Q&A Chatbot",
-    layout="wide",
-)
-
-
-# Clear Chat History function
-def clear_screen():
-    st.session_state.messages = [
-        {"role": "assistant", "content": "How may I assist you today?"}
-    ]
+# Functions
+# This section contains the functions needed to be called by our streamlit app
 
 
 def write_messages(context):
+    """Writes the message to the chatbot window
+
+    Args:
+        context: The context of the message
+    """
     for message in st.session_state.messages:
         if message["role"] == "assistant" or (
             "context" in message and message["context"] == context
@@ -75,7 +74,15 @@ def write_messages(context):
                 st.write(message["content"])
 
 
-def run_query(indices, prompt, context, col):
+def run_query(prompt, context, col):
+    """Runs the user prompt as a query and returns the result.
+    This then runs evaluations on the answers provided.
+
+    Args:
+        prompt: The user's prompt
+        context: The context of the message
+        col: The streamlit column to update
+    """
     with col:
         with st.chat_message("user"):
             st.write(prompt)
@@ -90,36 +97,75 @@ def run_query(indices, prompt, context, col):
         st.divider()
 
         with st.spinner("Evaluating Responses ..."):
-            resp = evaluate_response(prompt, response)
-            st.write(f"**FAITHFULNESS EVALUATION**: {resp['faithfulness']}")
-            st.write(f"**RELEVANCY EVALUATION**: {resp['relevancy']}")
+            with st.expander("See explanation"):
+                resp = evaluate_response(prompt, response)
+                st.write(f"**FAITHFULNESS EVALUATION**: {resp['faithfulness']}")
+                st.write(f"**RELEVANCY EVALUATION**: {resp['relevancy']}")
 
 
 def evaluate_response(query, response):
+    """Runs evaluations of the responses
+
+    Args:
+        query: The user's question
+        response: The LLM's response
+
+    Returns:
+        The evaluation results
+    """
     faith_result = faithfulness_evaluator.evaluate_response(response=response)
     relevancy_result = relevancy_evaluator.evaluate_response(
         query=query, response=response
     )
     return {
-        "faithfulness": str(faith_result.passing),
-        "relevancy": str(relevancy_result.passing),
+        "faithfulness": str(faith_result.feedback),
+        "relevancy": str(relevancy_result.feedback),
     }
-
-
-st.title("Press Release Q&A Chatbot")
-# st.image("llamaposeidon.png", use_column_width=True)
-st.divider()
 
 
 @st.cache_resource(show_spinner=False)
 def load_indices():
+    """Loads the indicies while showing the spinner
+
+    Returns:
+        The indicies
+    """
     with st.spinner(text="Loading and indexing your data. This may take a while..."):
         return create_or_load_indexes()
 
 
-# with Profiler() as pr:
+def run_parallel_retrievals(prompt):
+    """Runs the parallel retrieval workflows in a multi-threaded manner
 
-# Create Index
+    Args:
+        prompt: The user's question
+    """
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    t1 = threading.Thread(target=run_query, args=[prompt, "vss_index", col1])
+    t2 = threading.Thread(target=run_query, args=[prompt, "kg_index", col2])
+    add_script_run_ctx(t1)
+    add_script_run_ctx(t2)
+    t1.start()
+    t2.start()
+
+    t1.join()
+    t2.join()
+
+
+# ------------------------------------------------------------------------
+# Streamlit
+# This section represents our Streamlit App UI and Actions
+
+# Page title
+st.set_page_config(
+    page_title="Press Release Q&A Chatbot",
+    layout="wide",
+)
+
+st.title("Amazon Press Release Q&A Chatbot")
+st.divider()
+
+# Create or load the Vector and KnowledgeGraph indices
 indices = load_indices()
 
 # Store LLM generated responses
@@ -132,7 +178,7 @@ if "messages" not in st.session_state.keys():
         }
     ]
 
-
+# Setup columns for the two chatbots
 col1, col2 = st.columns([0.5, 0.5])
 with col1:
     st.subheader("RAG - similarity using vectors")
@@ -143,15 +189,32 @@ with col2:
     write_messages("kgindex")
 
 
-if prompt := st.chat_input():
-    st.session_state.messages.append({"role": "user", "content": prompt})
+# Configure the sidebar with the example questions
+with st.sidebar:
+    st.header("Example Queries")
+    st.subheader("Exploratory Queries")
+    st.write(
+        "Questions where all the data to answer it exists within a single document are questions where we expect both RAG and Graph RAG applications to do well."
+    )
+    if st.button("Try it", key="exploratory"):
+        run_parallel_retrievals("Does Amazon have a fulfillment center in Minnesota?")
 
-    t1 = threading.Thread(target=run_query, args=[indices, prompt, "vss_index", col1])
-    t2 = threading.Thread(target=run_query, args=[indices, prompt, "kg_index", col2])
-    add_script_run_ctx(t1)
-    add_script_run_ctx(t2)
-    t1.start()
-    t2.start()
+    st.subheader("Connect the Dots Queries")
+    st.write(
+        "Questions that require taking information from multiple documents and connecting them together is an example of where RAG struggles and Graph RAG does well."
+    )
+    if st.button("Try it", key="connect_the_dots"):
+        run_parallel_retrievals(
+            "What activities does AWS have going on in San Francisco?"
+        )
 
-    t1.join()
-    t2.join()
+    st.subheader("Whole Dataset Reasoning")
+    st.write(
+        "Questions that require aggregation across the dataset is an example of where RAG struggles and Graph RAG does well."
+    )
+    if st.button("Try it", key="whole_dataset"):
+        run_parallel_retrievals("Summarize the top trends in AWS?")
+
+# Setup the chat input
+if user_prompt := st.chat_input():
+    run_parallel_retrievals(user_prompt)

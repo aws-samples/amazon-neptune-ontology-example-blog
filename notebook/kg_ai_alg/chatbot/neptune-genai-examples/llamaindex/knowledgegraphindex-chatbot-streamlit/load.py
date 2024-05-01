@@ -1,4 +1,10 @@
+"""
+Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+SPDX-License-Identifier: Apache-2.0
+"""
+
 import os
+from dotenv import load_dotenv
 from llama_index.core import SimpleDirectoryReader
 from llama_index.graph_stores.neptune import NeptuneAnalyticsGraphStore
 from llama_index.vector_stores.neptune import NeptuneAnalyticsVectorStore
@@ -11,20 +17,27 @@ from llama_index.core import (
 from llama_index.core import PromptTemplate
 
 
-KG_PERSIST_DIR = "storage_kg"
-VSS_PERSIST_DIR = "storage_vss"
-graph_identifier = "g-fcowfewla8"
-max_triplets_per_chunk = 15
+load_dotenv()
+KG_PERSIST_DIR = os.getenv("BASE_PERSIST_DIR") + "_kg"
+VSS_PERSIST_DIR = os.getenv("BASE_PERSIST_DIR") + "_vss"
+graph_identifier = os.getenv("GRAPH_ID")
+max_triplets_per_chunk = os.getenv("TRIPLETS_PER_CHUNK")
 
-documents = SimpleDirectoryReader("data").load_data()
+
+documents = SimpleDirectoryReader("./data").load_data()
 
 
 def create_or_load_indexes():
+    """Overall function to coordinate loading both the VSS and KG indexes
+
+    Returns:
+        A dict of indicies
+    """
     graph_store = NeptuneAnalyticsGraphStore(graph_identifier=graph_identifier)
     vector_store = NeptuneAnalyticsVectorStore(
         graph_identifier=graph_identifier, embedding_dimension=1536
     )
-    print('getting the index')
+    print("getting the index")
     indexes = {
         "kg_index": load_kg_index(graph_store),
         "vss_index": load_vector_index(vector_store),
@@ -33,6 +46,14 @@ def create_or_load_indexes():
 
 
 def load_kg_index(graph_store):
+    """Creates or loads the KG Index
+
+    Args:
+        graph_store: The KG Index to use in the storage context
+
+    Returns:
+        The loaded KG Index
+    """
     # check if kg storage already exists
     if not os.path.exists(KG_PERSIST_DIR):
         # load the documents and create the index
@@ -40,18 +61,20 @@ def load_kg_index(graph_store):
         print("Creating KG Index")
 
         text = (
-            "Some text is provided below. Given the text, extract up to "
-            "{max_knowledge_triplets} "
-            "knowledge triplets in the form of (subject, predicate, object). Avoid stopwords.\n"
-            "Triplets should be focused on entities such as people and companies, and events.\n"
+            "Your task is to take the text provided and extract up to the "
+            "{max_knowledge_triplets} most important concepts in "
+            "knowledge triplets in the form of (subject, predicate, object).\n"
+            "Triplets should be focused on entities such as people, companies, locations, and events.\n"
+            "All triplets should not include stopwords such as a, an, and, are, as, at, be, but, by, for, if, in, into, is, it, no, not, of, on, or, such, that, the, their, then, there, these, they, this, to, was, will and with.\n"
+            "For each predicate, simplify the action into a single verb or a 2 words.\n"
             "---------------------\n"
             "Example:"
             "Text: Amazon is located in Seattle."
-            "Triplets:\n(Amazon, is located in, Seattle)\n"
+            "Triplets:\n(amazon, is located in, seattle)\n"
             "Text: Amazon will acquire Whole Foods Market for $42 per share.\n"
             "Triplets:\n"
             "(Amazon, acquires, Whole Foods Market)\n"
-            "(Whole Foods Market, acquired for, $42 per share)\n"
+            "(whole foods market, acquired for, $42 per share)\n"
             "---------------------\n"
             "Text: {text}\n"
             "Triplets:\n"
@@ -76,10 +99,19 @@ def load_kg_index(graph_store):
         )
         kg_index = load_index_from_storage(storage_context)
 
+    print("KG Index Loading Complete")
     return kg_index
 
 
 def load_vector_index(vector_store):
+    """Creates or loads the VSS Index
+
+    Args:
+        graph_store: The VSS Index to use in the storage context
+
+    Returns:
+        The loaded VSS Index
+    """
     # check if vss storage already exists
     if not os.path.exists(VSS_PERSIST_DIR):
         # load the documents and create the index
@@ -104,4 +136,5 @@ def load_vector_index(vector_store):
         )
         vss_index = load_index_from_storage(storage_context)
 
+    print("VSS Index Loading Complete")
     return vss_index
