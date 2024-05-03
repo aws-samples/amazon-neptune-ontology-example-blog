@@ -43,9 +43,9 @@ Use the following settings:
 
 It will take a few minutes to create. Wait for the status of the graph to become *Available*. 
 
-Then look in the configuration settings and note the graph identifier. You will need it later.
+Then look in the configuration settings and note the graph identifier and endpoint. You will need these later.
 
-![Graph identifier](images/na_graph.png "Graph identifier").
+![Graph identifier and endpoint](images/na_graph.png "Graph identifier and endpoint").
 
 #### Create graph for chatbot
 
@@ -53,7 +53,17 @@ Follow the same steps as above to create a second graph. Name it *kgc-chat*. Wai
 
 ### Create Neptune Notebook
 
-Follow instructions in https://docs.aws.amazon.com/neptune-analytics/latest/userguide/create-notebook-cfn.html to create a notebook instance through CloudFormation.
+Follow instructions in https://docs.aws.amazon.com/neptune-analytics/latest/userguide/create-notebook-cfn.html to create a Sagemaker notebook instance for Neptune Analytics through CloudFormation. On the stack details page provide the following:
+
+- Stack name: *KGC-Notebook*
+- GraphEndpoint: enter the endpoint from the *kgc-demo* graph you created above.
+- NotebookName: *kgc-notebook*
+
+Leave the remaining parameters blank. Navigate through the remaining pages, accepting defaults.
+
+![notebook params](images/na_notebook.png "notebook params").
+
+
 
 TODO - IAM role allows bedrock, S3 working bucket
 
