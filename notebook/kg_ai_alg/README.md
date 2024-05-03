@@ -22,9 +22,7 @@ In your AWS console, open the Bedrock console and request model access for the _
 
 Check back until both models show as _Access granted_.
 
-![Claude access](images/bedrock_claude.png "Claude access").
-
-![Titan access](images/bedrock_titan.png "Titan access").
+![Bedrock model access](images/bedrock_model_access.png "Bedrock model access").
 
 You will need these models to create the LlamaIndex indexes. 
 
@@ -49,10 +47,9 @@ Then look in the configuration settings and note the graph identifier. You will 
 
 ![Graph identifier](images/na_graph.png "Graph identifier").
 
-
 #### Create graph for chatbot
 
-Follow the same steps as above to create a second graph. Name it *kgc-chat*.
+Follow the same steps as above to create a second graph. Name it *kgc-chat*. Wait it to become available and note down its graph identifier.
 
 ### Create Neptune Notebook
 
