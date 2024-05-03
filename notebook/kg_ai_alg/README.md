@@ -69,7 +69,7 @@ TODO - IAM role allows bedrock, S3 working bucket
 
 ### Create S3 Working Bucket
 
-Navigate to the S3 console. Create a bucket with a unique name similar to _kgc2024-masterclass-demo-yourname_.
+Navigate to the S3 console. Create a bucket with a unique name similar to _kgc2024-masterclass-demo-yourname_. Follow instructions in <https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html>. Accept defaults. The bucket may be private and use default encryption.
 
 ### Create Chatbot
 
