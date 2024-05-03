@@ -63,6 +63,18 @@ Leave the remaining parameters blank. Navigate through the remaining pages, acce
 
 ![notebook params](images/na_notebook.png "notebook params").
 
+Wait for the CloudFormation stack to complete. It may take several minutes.
+
+#### Modify Notebook IAM Role
+
+When complete, go the SageMaker console. In the left menu select _Notebook_. Locate your notebook in the main pane. 
+
+![notebook_created](images/sm_notebook.png "notebook created").
+
+Select the notebook to see its configuration. Click on its IAM role.
+
+#### Get Demo Notebook Files
+
 
 
 TODO - IAM role allows bedrock, S3 working bucket
