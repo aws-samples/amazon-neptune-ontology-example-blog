@@ -1,27 +1,32 @@
 # KGC 2024 MasterClass: Generating and analyzing knowledge graphs using GenAI and Neptune Analytics
 
-UNDER CONSTRUCTION
-
-This folder contains the demo accompanying the masterclass _Generating and analyzing knowledge graphs using GenAI and Neptune Analytics_ presented at Knowledge Graph Conference 2024.
+This folder contains the demo accompanying the masterclass _Generating and analyzing knowledge graphs using GenAI and Neptune Analytics_ presented at Knowledge Graph Conference 2024 (<https://events.knowledgegraph.tech/event/7ffec6d4-b17d-4fce-b55c-fcd77fa58146/summary>). 
 
 Here are instructions to setup the demo.
 
 ## Pre-requisites
 
-You require an AWS account with permissions to create Neptune, SageMaker, and S3 resources.
+You require an AWS account with permissions to create Amazon Neptune (<https://aws.amazon.com/neptune>) , Amazon Bedrock (<https://aws.amazon.com/bedrock>), Amazon SageMaker (<https://aws.amazon.com/sagemaker>), Amazon EC2 (<https://aws.amazon.com/ec2/>) , and Amazon Simple Storage Service (S3) (<https://aws.amazon.com/s3/>) resources.
 
-Provision all resources in the same region. Use a region that supports both Neptune Analytics and Bedrock. We recommend using us-east-1 or us-west-2.
+Provision all resources in the same region. Use a region that supports both Neptune Analytics and Bedrock. See <https://docs.aws.amazon.com/neptune-analytics/latest/userguide/analytics-limits.html> and <https://docs.aws.amazon.com/bedrock/latest/userguide/bedrock-regions.html>.
 
-For simplicity provision all resources in the same account.
+We recommend using us-east-1 or us-west-2.
+
+For simplicity, provision all resources in the same AWS account.
 
 ## Setup
 
 ### Allow Bedrock models
 
-Navigate to the Bedrock console. Select _Model access_ from the left menu. Select _Manage Model Access_. If access is not already granted, check _Titan Embeddings G1_ and _Claude_ models. Save changes.
+In your AWS console, open the Bedrock console and request model access for the _Titan Embeddings G1_ and _Claude_ models. For instructions how to request model access, follow <https://docs.aws.amazon.com/bedrock/latest/userguide/model-access.html>.
 
-TODO - confirm you have access
-TODO - screenshots
+Check back until both models show as _Access granted_.
+
+![Claude access](images/bedrock_claude.png "Claude access").
+
+![Titan access](images/bedrock_titan.png "Titan access").
+
+You will need these models to create the LlamaIndex indexes. 
 
 ### Create Neptune Analytics Graphs
 
