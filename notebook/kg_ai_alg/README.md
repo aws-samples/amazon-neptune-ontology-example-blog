@@ -30,26 +30,29 @@ You will need these models to create the LlamaIndex indexes.
 
 ### Create Neptune Analytics Graphs
 
-Navigate to the Neptune console. In the left menu, select _Graphs_.
+In your AWS console, open the Neptune console. In the left menu, select _Graphs_ and create two graphs. One will be used as the main knowledge graph for our demo. The other will be used separately by the chatbot.
+
+Follow instructions <https://docs.aws.amazon.com/neptune-analytics/latest/userguide/gettingStarted-creating-a-graph.html> to create the graphs. 
 
 #### Create main graph
 
-Click _Create graph_.
-
-Fill in values as follows:
-
-- Graph name: KGC-demo
+Use the following settings: 
+- Graph name: *kgc-demo*
 - Data source: Create empty graph
-- Enable public connectivity - check
-- Setup private endpoint - uncheck
-- Vector search settings. Select _Use vector dimension_. When prompted for _Number of dimensions in each vector_, enter 1536.
-- Select _Create Graph_.
+- Enable public connectivity: check
+- Setup private endpoint: uncheck
+- Vector search settings: Enable these settings and set dimension to *1536*.
 
-Wait for the graph to become available. Obtain graph identifier.
+It will take a few minutes to create. Wait for the status of the graph to become *Available*. 
+
+Then look in the configuration settings and note the graph identifier. You will need it later.
+
+![Graph identifier](images/na_graph.png "Graph identifier").
+
 
 #### Create graph for chatbot
 
-Follow the same steps as above to create a second graph. Name it KGC-demo-chatbot.
+Follow the same steps as above to create a second graph. Name it *kgc-chat*.
 
 ### Create Neptune Notebook
 
