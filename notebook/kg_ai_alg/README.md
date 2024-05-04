@@ -202,13 +202,30 @@ In the _Modify IAM Role_ page, associate this new role with the instance.
 
 #### Connect to EC2 Instance
 
+Open an SSH session to the instance. For instructions on how to do this, select _Connect_ | _SSH client_ from the details pane of your instance. 
+
+For example, if your local machine is a Mac, the key file *kgc-chat.pem* was downloaded to your machine when setting up the instance. You can SSH to it as follows, substituting the public IP of your instance:
+
+```
+chmod 400 ~/Downloads/kgc-chat.pem
+ssh -i ~/Downloads/kgc-chat.pem ec2-user@<my_public_ip>
+```
+
 ##### Obtain Code
 
-git clone
+In the SSH session, obtain the source code for the chatbot as follows:
+
+```
+git clone xxx
+```
 
 ##### Obtain text data
 
-aws s3 sync _the raw data_
+In the SSH session, obtain the press release documents by running:
+
+```
+aws s3 sync s3://aws-neptune-customer-samples-us-east-1/kgc2024_na/rawtext data
+```
 
 ##### Configure
 
