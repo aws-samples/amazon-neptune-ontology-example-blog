@@ -120,11 +120,25 @@ In the EC2 console, create an instance on which to run the chatbot. Select *Laun
 - Network settings. VPC: Use the default VPC, which should already be selected.
 - Network settings. Subnet: Choose a subnet that is public.
 
-Use default values for the remaining settings.
+Use default values for the remaining settings. In the EC2 console, located the instance and wait for the instance to enter *Running* status. Select the instance to see its settings. Note down the Public IP address. You will need it later.
+
+![ec2 instance](images/ec2.png "ec2 instance")
 
 #### Modify EC2 Security Group
 
-TODO
+In the settings pane of the EC2 instance, select the _Security_ tab. Find the security group for the instance and click on it.  
+
+![ec2 security group](images/ec2_sg.png "ec2 security group")
+
+Edit the inbound rules of the security group as follows:
+
+- Restrict access to port 22 (for SSH) to your local machine's IP address.
+- Add a rule to allow access to port 8080 to your local machine's IP address. The chatbot will listen on this port.
+
+This restricts access to the machine and the chatbot to only your machine.
+
+![ec2 security group inbound rules](images/ec2_sg_inbound.png "ec2 security group inbound rules")
+
 
 #### Modify EC2 IAM Role
 
