@@ -69,9 +69,16 @@ Wait for the CloudFormation stack to complete. It may take several minutes.
 
 When complete, go the SageMaker console. In the left menu select _Notebook_. Locate your notebook in the main pane. 
 
-![notebook_created](images/sm_notebook.png "notebook created").
+![change notebook role](images/iam_notebook.png "change notebook role").
 
-Select the notebook to see its configuration. Click on its IAM role.
+Select the notebook to see its configuration. Locate its IAM role. Click on that role to bring it up in the IAM console.
+
+Add two policies to the permissions: 
+
+- *AmazonBedrockReadOnly*, giving the notebook access to Bedrock models for embedding and entity extraction
+- *AmazonS3FullAccess*, as the notebook will need write access to your working bucket.
+
+![notebook_created](images/sm_notebook.png "notebook created").
 
 #### Get Demo Notebook Files
 
