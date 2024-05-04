@@ -51,6 +51,10 @@ Then look in the configuration settings and note the graph identifier and endpoi
 
 Follow the same steps as above to create a second graph. Name it *kgc-chat*. Wait it to become available and note down its graph identifier.
 
+### Create S3 Working Bucket
+
+Navigate to the S3 console. Create a bucket with a unique name similar to _kgc2024-masterclass-demo-yourname_. Follow instructions in <https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html>. Accept defaults. The bucket may be private and use default encryption.
+
 ### Create Neptune Notebook
 
 Follow instructions in https://docs.aws.amazon.com/neptune-analytics/latest/userguide/create-notebook-cfn.html to create a Sagemaker notebook instance for Neptune Analytics through CloudFormation. On the stack details page provide the following:
@@ -80,15 +84,24 @@ Add two policies to the permissions:
 
 ![notebook_created](images/sm_notebook.png "notebook created").
 
-#### Get Demo Notebook Files
+#### Get Demo Notebook Files and Begin
 
+Download the four notebooks from this repository:
 
+- 0-PrepSources.ipynb
+- 1-PopulateGraph.ipynb
+- 2-CreateLlamaIndex.ipynb
+- 3-GraphAlgorithms.ipynb
 
-TODO - IAM role allows bedrock, S3 working bucket
+Back in the SageMaker console, open the Jupyter notebook folder view
 
-### Create S3 Working Bucket
+![jupyter](images/jupyter.png "jupyter").
 
-Navigate to the S3 console. Create a bucket with a unique name similar to _kgc2024-masterclass-demo-yourname_. Follow instructions in <https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html>. Accept defaults. The bucket may be private and use default encryption.
+In Jupyter, upload the four notebooks should downloaded to your local machine above.
+
+![jupyter notebooks upload](images/jupyter_upload.png "jupyter notebooks upload").
+
+Now run through the notebooks! *0-PrepSources.ipynb* is optional, meant mostly to show how we prepared the data. You may skip this as the prepared data is already available publicly.
 
 ### Create Chatbot
 
