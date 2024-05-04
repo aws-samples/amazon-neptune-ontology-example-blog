@@ -183,7 +183,22 @@ This restricts access to the machine and the chatbot to only your machine.
 
 #### Modify EC2 IAM Role
 
-TODO
+In the EC2 console, select the instance. From the _Actions_ menu choose _Security_ | _Modify IAM Role_. 
+
+![ec2 iam](images/ec2_iam.png "ec2 iam")
+
+This takes you to a page to manage the IAM role for the instance. Select _Create new IAM role_. This opens the IAM console to allow you to define the role.  Create a role with a trust relationship for ec2 and permissions on Bedrock, S3, and Neptune Analytics. 
+
+![ec2 iam_trust](images/ec2_iam_trust.png "ec2 iam trust")
+
+![ec2 iam_perms](images/ec2_iam_perms.png "ec2 iam perms")
+
+Name the role *kgc-chat-role*.
+
+In the _Modify IAM Role_ page, associate this new role with the instance.
+
+![ec2 iam_update](images/ec2_iam_perms.png "ec2 iam update")
+
 
 #### Connect to EC2 Instance
 
@@ -216,8 +231,17 @@ TODO
 
 ## Cleanup
 
+<details><summary>Click to view/hide this section</summary>
+<p>
+
+
 This demo incurs cost. If you are done and wish to avoid further charges:
 
 - Delete the Neptune Analytics graphs (TODO)
 - Stop and remove the Sagemaker notebook instance (TODO)
 - Remove the S3 bucket (TODO)
+- Terminate the EC2 instance (TODO)
+
+</p>
+</details>
+
