@@ -111,27 +111,50 @@ We also provide a chatbot to ask natural language questions of the knowledge gra
 
 #### Create EC2 Instance
 
-TODO, VPC, IAM role, need public access, SG allows you to access from your machine
+In the EC2 console, create an instance on which to run the chatbot. Select *Launch Instance*. Use the following settings:
 
-#### Obtain Code
+- Name: *kgc-chat*
+- Application/OS Image: *Amazon Linux 2023*
+- Intance type: *t2.medium*
+- Key Pair: create new and call it *kgc-chat*
+- Network settings. VPC: Use the default VPC, which should already be selected.
+- Network settings. Subnet: Choose a subnet that is public.
+
+Use default values for the remaining settings.
+
+#### Modify EC2 Security Group
+
+TODO
+
+#### Modify EC2 IAM Role
+
+TODO
+
+#### Connect to EC2 Instance
+
+##### Obtain Code
 
 git clone
 
-#### Obtain text data
+##### Obtain text data
 
 aws s3 sync _the raw data_
 
-#### Configure
+##### Configure
 
 edit graph identifier
 
-#### Get Dependencies
+##### Get Dependencies
 
 pip install requirements.txt
 
-#### Start
+##### Start
 
 streamlit run main.py
+
+##### Access the chatbot from your browser
+
+TODO
 
 ## Cleanup
 
