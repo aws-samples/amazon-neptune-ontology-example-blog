@@ -197,7 +197,7 @@ Name the role *kgc-chat-role*.
 
 In the _Modify IAM Role_ page, associate this new role with the instance.
 
-![ec2 iam_update](images/ec2_iam_perms.png "ec2 iam update")
+![ec2 iam_update](images/ec2_iam_update.png "ec2 iam update")
 
 
 #### Connect to EC2 Instance
