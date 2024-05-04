@@ -216,7 +216,11 @@ ssh -i ~/Downloads/kgc-chat.pem ec2-user@<my_public_ip>
 In the SSH session, obtain the source code for the chatbot as follows:
 
 ```
-git clone xxx
+sudo yum update -y
+sudo yum install git -y
+git clone https://github.com/aws-samples/amazon-neptune-ontology-example-blog.git
+cp -r  amazon-neptune-ontology-example-blog/notebook/kg_ai_alg/chatbot/neptune-genai-examples .
+
 ```
 
 ##### Obtain text data
