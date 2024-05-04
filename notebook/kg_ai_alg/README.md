@@ -6,6 +6,10 @@ Here are instructions to setup the demo.
 
 ## Pre-requisites
 
+<details><summary>Click to view/hide this section</summary>
+<p>
+
+
 You require an AWS account with permissions to create Amazon Neptune (<https://aws.amazon.com/neptune>) , Amazon Bedrock (<https://aws.amazon.com/bedrock>), Amazon SageMaker (<https://aws.amazon.com/sagemaker>), Amazon EC2 (<https://aws.amazon.com/ec2/>) , and Amazon Simple Storage Service (S3) (<https://aws.amazon.com/s3/>) resources.
 
 Provision all resources in the same region. Use a region that supports both Neptune Analytics and Bedrock. See <https://docs.aws.amazon.com/neptune-analytics/latest/userguide/analytics-limits.html> and <https://docs.aws.amazon.com/bedrock/latest/userguide/bedrock-regions.html>.
@@ -14,9 +18,15 @@ We recommend using us-east-1 or us-west-2.
 
 For simplicity, provision all resources in the same AWS account.
 
+</p>
+</details>
+
 ## Setup
 
 ### Allow Bedrock models
+
+<details><summary>Click to view/hide this section</summary>
+<p>
 
 In your AWS console, open the Bedrock console and request model access for the _Titan Embeddings G1_ and _Claude_ models. For instructions how to request model access, follow <https://docs.aws.amazon.com/bedrock/latest/userguide/model-access.html>.
 
@@ -26,7 +36,15 @@ Check back until both models show as _Access granted_.
 
 You will need these models to create the LlamaIndex indexes. 
 
+</p>
+</details>
+
+
 ### Create Neptune Analytics Graphs
+
+<details><summary>Click to view/hide this section</summary>
+<p>
+
 
 In your AWS console, open the Neptune console. In the left menu, select _Graphs_ and create two graphs. One will be used as the main knowledge graph for our demo. The other will be used separately by the chatbot.
 
@@ -51,11 +69,26 @@ Then look in the configuration settings and note the graph identifier and endpoi
 
 Follow the same steps as above to create a second graph. Name it *kgc-chat*. Wait it to become available and note down its graph identifier.
 
+</p>
+</details>
+
 ### Create S3 Working Bucket
+
+<details><summary>Click to view/hide this section</summary>
+<p>
+
 
 Navigate to the S3 console. Create a bucket with a unique name similar to _kgc2024-masterclass-demo-yourname_. Follow instructions in <https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html>. Accept defaults. The bucket may be private and use default encryption.
 
+</p>
+</details>
+
+
 ### Create Neptune Notebook
+
+<details><summary>Click to view/hide this section</summary>
+<p>
+
 
 Follow instructions in https://docs.aws.amazon.com/neptune-analytics/latest/userguide/create-notebook-cfn.html to create a Sagemaker notebook instance for Neptune Analytics through CloudFormation. On the stack details page provide the following:
 
@@ -105,7 +138,15 @@ In Jupyter, upload the four notebooks should downloaded to your local machine ab
 
 Now run through the notebooks! *0-PrepSources.ipynb* is optional, meant mostly to show how we prepared the data. You may skip this as the prepared data is already available publicly.
 
+</p>
+</details>
+
+
 ### Create Chatbot
+
+<details><summary>Click to view/hide this section</summary>
+<p>
+
 
 We also provide a chatbot to ask natural language questions of the knowledge graph.
 
@@ -169,6 +210,9 @@ streamlit run main.py
 ##### Access the chatbot from your browser
 
 TODO
+
+</p>
+</details>
 
 ## Cleanup
 
