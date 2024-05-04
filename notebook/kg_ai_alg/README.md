@@ -79,8 +79,10 @@ Select the notebook to see its configuration. Locate its IAM role. Click on that
 
 Add two policies to the permissions: 
 
-- *AmazonBedrockReadOnly*, giving the notebook access to Bedrock models for embedding and entity extraction
+- *AmazonBedrockFullAccess*, giving the notebook access to invoke Bedrock models for embedding and entity extraction
 - *AmazonS3FullAccess*, as the notebook will need write access to your working bucket.
+
+If you prefer narrower permissions, create your own policy that restricts S3 writes to only your working bucket and Bedrock invokes to only the Claude and Titan models.
 
 ![notebook_created](images/sm_notebook.png "notebook created").
 
