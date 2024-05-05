@@ -234,19 +234,38 @@ chmod 400 ~/Downloads/kgc-chat.pem
 ssh -i ~/Downloads/kgc-chat.pem ec2-user@<my_public_ip>
 ```
 
-##### Obtain Code
+##### Obtain Code and Download Dependencies
 
 In the SSH session, obtain the source code for the chatbot as follows:
 
 ```
-git clone xxx
+# clone the chatbot source
+git clone https://github.com/aws-samples/amazon-neptune-ontology-example-blog.git
+
+# extract just the chatbot
+cp -r amazon-neptune-ontology-example-blog/notebook/kg_ai_alg/chatbot/neptune-genai-examples neptune-genai-examples
+rm -rf amazon-neptune-ontology-example-blog
+
+# go to the directory with the main code
+cd neptune-genai-examples/llamaindex/knowledgegraphindex-chatbot-streamlit
+
+# get python 3.11 if not already installed
+sudo dnf install python3.11 -y
+
+# get pip 3.11 if not already installed
+sudo dnf install python3.11-pip -y
+
+# install dependencies
+pwd # should be /home/ec2-user/neptune-genai-examples/llamaindex/knowledgegraphindex-chatbot-streamlit
+pip3.11 install -r requirements.txt 
 ```
 
 ##### Obtain text data
 
-In the SSH session, obtain the press release documents by running:
+In the SSH session, obtain the press release documents by running the following
 
 ```
+pwd # should be /home/ec2-user/neptune-genai-examples/llamaindex/knowledgegraphindex-chatbot-streamlit
 aws s3 sync s3://aws-neptune-customer-samples-us-east-1/kgc2024_na/rawtext data
 ```
 
