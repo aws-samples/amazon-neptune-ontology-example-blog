@@ -271,21 +271,34 @@ aws s3 sync s3://aws-neptune-customer-samples-us-east-1/kgc2024_na/rawtext data
 
 ##### Configure
 
-In the SSH session, add a *.env* file to configure the graph identifier for the kgc-chat graph.
+In the SSH session, add a *.env* file in neptune-genai-examples/llamaindex/knowledgegraphindex-chatbot-streamlit:
 
 ```
-echo GRAPH_ID=<your graph identifier> .env
+GRAPH_ID=<your graph identifier> 
+BASE_PERSIST_DIR=.
+VSS_PERSIST_DIR=.
 ```
 
 ##### Start
 
+In the SSH session, in directory neptune-genai-examples/llamaindex/knowledgegraphindex-chatbot-streamlit, run the chatbot
+
 ```
-nohup streamlit run main.py &
+# set your region. For example us-east-1
+export AWS_DEFAULT_REGION=<your region>
+
+# start chatbot in foregraph
+streamlit run main.py --server.port 8080
 ```
 
 ##### Access the chatbot from your browser
 
-TODO
+In your browser navigate to the chatbot. Its URL is *http://<public host of EC2 instance>:8080*. If you are unable to reach it, check that the security group for the EC2 instance allows inbound access to port 8080 from your machine.
+
+The chatbot takes several minutes to index. Wait until the initialization completes and the following display shows:
+
+![ec2 chatbot](images/chatbot.png "chatbot")
+
 
 </p>
 </details>
