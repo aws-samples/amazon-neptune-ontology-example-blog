@@ -294,7 +294,7 @@ streamlit run main.py --server.port 8080
 
 ##### Access the chatbot from your browser
 
-In your browser navigate to the chatbot. Its URL is *http://_public host of EC2 instance_:8080*. If you are unable to reach it, check that the security group for the EC2 instance allows inbound access to port 8080 from your machine.
+In your browser navigate to the chatbot. Its URL is *http://\<public host of EC2 instance\>:8080*. If you are unable to reach it, check that the security group for the EC2 instance allows inbound access to port 8080 from your machine.
 
 The chatbot takes several minutes to index. Wait until the initialization completes and the following display shows:
 
