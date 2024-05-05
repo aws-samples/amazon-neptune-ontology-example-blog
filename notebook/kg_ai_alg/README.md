@@ -262,7 +262,7 @@ pip3.11 install -r requirements.txt
 
 ##### Obtain text data
 
-In the SSH session, obtain the press release documents by running the following
+In the SSH session, obtain the press release documents by running the following from the /home/ec2-user/neptune-genai-examples/llamaindex/knowledgegraphindex-chatbot-streamlit directory.
 
 ```
 pwd # should be /home/ec2-user/neptune-genai-examples/llamaindex/knowledgegraphindex-chatbot-streamlit
@@ -271,15 +271,17 @@ aws s3 sync s3://aws-neptune-customer-samples-us-east-1/kgc2024_na/rawtext data
 
 ##### Configure
 
-edit graph identifier
+In the SSH session, add a *.env* file to configure the graph identifier for the kgc-chat graph.
 
-##### Get Dependencies
-
-pip install requirements.txt
+```
+echo GRAPH_ID=<your graph identifier> .env
+```
 
 ##### Start
 
-streamlit run main.py
+```
+nohup streamlit run main.py &
+```
 
 ##### Access the chatbot from your browser
 
