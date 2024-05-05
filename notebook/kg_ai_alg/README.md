@@ -78,7 +78,7 @@ Follow the same steps as above to create a second graph. Name it *kgc-chat*. Wai
 <p>
 
 
-Navigate to the S3 console. Create a bucket with a unique name similar to _kgc2024-masterclass-demo-yourname_. Follow instructions in <https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html>. Accept defaults. The bucket may be private and use default encryption.
+Navigate to the S3 console. Create a bucket with a unique name similar to _kgc2024-masterclass-demo-\<yourname\>_. Follow instructions in <https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html>. Accept defaults. The bucket may be private and use default encryption.
 
 </p>
 </details>
@@ -106,7 +106,7 @@ Wait for the CloudFormation stack to complete. It may take several minutes.
 
 When complete, go the SageMaker console. In the left menu select _Notebook_. Locate your notebook in the main pane. 
 
-![change notebook role](images/iam_notebook.png "change notebook role").
+![notebook_created](images/sm_notebook.png "notebook created").
 
 Select the notebook to see its configuration. Locate its IAM role. Click on that role to bring it up in the IAM console.
 
@@ -115,9 +115,10 @@ Add two policies to the permissions:
 - *AmazonBedrockFullAccess*, giving the notebook access to invoke Bedrock models for embedding and entity extraction
 - *AmazonS3FullAccess*, as the notebook will need write access to your working bucket.
 
+![change notebook role](images/iam_notebook.png "change notebook role").
+
 If you prefer narrower permissions, create your own policy that restricts S3 writes to only your working bucket and Bedrock invokes to only the Claude and Titan models.
 
-![notebook_created](images/sm_notebook.png "notebook created").
 
 #### Get Demo Notebook Files and Begin
 
@@ -293,7 +294,7 @@ streamlit run main.py --server.port 8080
 
 ##### Access the chatbot from your browser
 
-In your browser navigate to the chatbot. Its URL is *http://<public host of EC2 instance>:8080*. If you are unable to reach it, check that the security group for the EC2 instance allows inbound access to port 8080 from your machine.
+In your browser navigate to the chatbot. Its URL is *http://_public host of EC2 instance_:8080*. If you are unable to reach it, check that the security group for the EC2 instance allows inbound access to port 8080 from your machine.
 
 The chatbot takes several minutes to index. Wait until the initialization completes and the following display shows:
 
@@ -308,13 +309,12 @@ The chatbot takes several minutes to index. Wait until the initialization comple
 <details><summary>Click to view/hide this section</summary>
 <p>
 
-
 This demo incurs cost. If you are done and wish to avoid further charges:
 
-- Delete the Neptune Analytics graphs (TODO)
-- Stop and remove the Sagemaker notebook instance (TODO)
-- Remove the S3 bucket (TODO)
-- Terminate the EC2 instance (TODO)
+- Delete the Neptune Analytics graphs. The Neptune console provides an action to delete a graph. Or see <https://docs.aws.amazon.com/neptune-analytics/latest/apiref/API_DeleteGraph.html>. 
+- Stop and remove the Sagemaker notebook instance. For this, delete the CloudFormation stack you created for the notebook. See <https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-delete-stack.html> for instructions how to delete a stack.
+- Remove the S3 bucket. See <https://docs.aws.amazon.com/AmazonS3/latest/userguide/delete-bucket.html>.
+- Terminate the EC2 instance. See <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/terminating-instances.html>.
 
 </p>
 </details>
