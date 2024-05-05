@@ -189,7 +189,30 @@ In the EC2 console, select the instance. From the _Actions_ menu choose _Securit
 
 This takes you to a page to manage the IAM role for the instance. Select _Create new IAM role_. This opens the IAM console to allow you to define the role.  Create a role with a trust relationship for ec2 and permissions on Bedrock, S3, and Neptune Analytics. 
 
+For Bedrock, add managed policy *AmazonBedrockFullAccess*. 
+
+For S3, add managed policy *AmazonS3ReadOnlyAccess*.
+
+For Neptune Analytics, create a policy the permissions
+
+```
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": "neptune-graph:*",
+            "Resource": "*",
+            "Effect": "Allow"
+        }
+    ]
+}
+```
+
+Here is what the trust relationship looks like:
+
 ![ec2 iam_trust](images/ec2_iam_trust.png "ec2 iam trust")
+
+Here are the permissions:
 
 ![ec2 iam_perms](images/ec2_iam_perms.png "ec2 iam perms")
 
