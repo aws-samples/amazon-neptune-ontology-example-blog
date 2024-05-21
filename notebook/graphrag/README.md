@@ -5,7 +5,7 @@ In those presentations, we describe why Knowledge Graph improves Generative AI. 
 
 We demonstrate three Graph RAG patterns. 
 
-1. The LLM generates the graph query. RAG involves running that query against the graph database and having the LLM summarize the results.
+1. The LLM generates the graph query. RAG involves running that query against the graph database and having the LLM summarize the results. For more, see <https://python.langchain.com/v0.1/docs/integrations/graphs/amazon_neptune_open_cypher/> and <https://python.langchain.com/v0.1/docs/integrations/graphs/amazon_neptune_sparql/>.
 
 2. The graph represents unstructured data as embeddings (in chunks if necessary). It links these embeddings to structured resources. When the user asks a question, we first match similar embeddings in the graph, then we pull in related structured resources. We pass this as context to the LLM to answer the question.
 
