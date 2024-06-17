@@ -24,12 +24,15 @@ There are two types of embeddings which we produce using [Amazon Sagemaker](http
 To setup this solution, you need an AWS account with permission to create resources such as a Neptune cluster, and OpenSearch Service cluster, and SageMaker resources.
 
 ### Amazon Neptune Cluster Setup
+Create a Neptune cluster and a notebook instance. One way to setup these resources is using the CloudForamtion template via [https://docs.aws.amazon.com/neptune/latest/userguide/get-started-cfn-create.html](https://docs.aws.amazon.com/neptune/latest/userguide/get-started-cfn-create.html). We recommend using a `NotebookInstanceType` of `ml.t3.large` or higher.
+
+When the notebook instance is ready, modify its IAM role 
 
 Also need ML IAM role for GNN training. 
 see https://s3.amazonaws.com/aws-neptune-customer-samples/v2/cloudformation-templates/neptune-ml-base-stack.json for role/policy
 Do i need more?
 
-for notebook, what instance type, what additional IAM policies
+what additional IAM policies
 
 ### Amazon Simple Storage Service (S3) Bucket Setup
 Create an Amazon Simple Storage Service (S3) bucket in the same account and region in which you deploy the other resources. This bucket is used to store embeddings produced by Neptune ML model training.
