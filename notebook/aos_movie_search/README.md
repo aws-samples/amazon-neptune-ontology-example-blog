@@ -23,28 +23,72 @@ There are two types of embeddings which we produce using [Amazon Sagemaker](http
 ## Setup
 To setup this solution, you need an AWS account with permission to create resources such as a Neptune cluster, and OpenSearch Service cluster, and SageMaker resources.
 
-### Amazon Neptune Cluster Setup
-Create a Neptune cluster and a notebook instance. One way to setup these resources is using the CloudForamtion template via [https://docs.aws.amazon.com/neptune/latest/userguide/get-started-cfn-create.html](https://docs.aws.amazon.com/neptune/latest/userguide/get-started-cfn-create.html). We recommend using a `NotebookInstanceType` of `ml.t3.large` or higher.
-
-When the notebook instance is ready, modify its IAM role 
-
-Also need ML IAM role for GNN training. 
-see https://s3.amazonaws.com/aws-neptune-customer-samples/v2/cloudformation-templates/neptune-ml-base-stack.json for role/policy
-Do i need more?
-
-what additional IAM policies
-
 ### Amazon Simple Storage Service (S3) Bucket Setup
 Create an Amazon Simple Storage Service (S3) bucket in the same account and region in which you deploy the other resources. This bucket is used to store embeddings produced by Neptune ML model training.
 
-Follow instructions in [https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html](https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html). 
+Follow instructions in [https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html](https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html). The bucket may be private and use default encryption.
+
+### Amazon Neptune Cluster Setup
+Create a Neptune cluster and a notebook instance. One way to setup these resources is using the CloudForamtion template via [https://docs.aws.amazon.com/neptune/latest/userguide/get-started-cfn-create.html](https://docs.aws.amazon.com/neptune/latest/userguide/get-started-cfn-create.html). We recommend using a `NotebookInstanceType` of `ml.t3.large` or higher.
+
+When the CloudFormation stack completes do the following. 
+
+First, locate the Neptune cluster and *make note of its VPC and subnets*. You will need these when creating the OpenSearch Service domain.
+
+Second, locate the notebook in the SageMaker console. Find its IAM role under `Permissions and encryptpion` on the details page for the notebook. Select that role and add IAM policies as follows:
+
+- The notebook should already have read access to all S3 buckets. Add write access to the S3 bucket you created above. One way to accomplish this is to add the `AmazonS3FullAccess` managed policy.
+- The notebook should be able to create and execute the SageMaker pipeline for Neptune ML. One way to accomplish this is to add the `AmazonSageMakerFullAccess` managed policy.
+- The notebook should be able to read from and write to your Amazon OpenSearch Service Domain. One way to accomplish this is to add the `AmazonOpenSearchServiceFullAccess` managed policy.
+
+Also, *make note of the role ARN*. You will need it when running through the notebooks.
 
 ### Amazon OpenSearch Service Domain Setup
-Create an Amazon Neptune cluster
+In the Opensearch Service console, create a new domain as follows;
+- Use standard create.
+- Choose `Dev/test` template.
+- Choose `Domain without standby` with `1-AZ` deployment option.
+- Use version OpenSearch 2.7 or higher.
+- Under `network`, choose the same VPC in which your Neptune cluster is deployed. Fors subnets, choose one of the subnets under the Neptune cluster.
+- For security group, use a security group allowing inbound access to port 443.
+- Disable fine-grained access control.
 
+Once setup, *make note of the domain endpoint*. You will need it when running through the notebooks.
+
+For more on creating domains, see [https://docs.aws.amazon.com/opensearch-service/latest/developerguide/createupdatedomains.html](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/createupdatedomains.html). 
+
+### Run through the notebooks
+Download the three notebook `ipynb` files to your local machine:
+
+- [https://github.com/aws-samples/amazon-neptune-ontology-example-blog/blob/main/notebook/aos_movie_search/01-PopulateAndExploreNeptune.ipynb](https://github.com/aws-samples/amazon-neptune-ontology-example-blog/blob/main/notebook/aos_movie_search/01-PopulateAndExploreNeptune.ipynb)
+- [https://github.com/aws-samples/amazon-neptune-ontology-example-blog/blob/main/notebook/aos_movie_search/02-PopulateOpenSearch.ipynb](https://github.com/aws-samples/amazon-neptune-ontology-example-blog/blob/main/notebook/aos_movie_search/02-PopulateOpenSearch.ipynb)
+- [https://github.com/aws-samples/amazon-neptune-ontology-example-blog/blob/main/notebook/aos_movie_search/03-Search.ipynb](https://github.com/aws-samples/amazon-neptune-ontology-example-blog/blob/main/notebook/aos_movie_search/03-Search.ipynb)
+
+In the notebook instance, open Jupyter. Upload the three notebook files to Jupyter. 
+
+Once uploaded, run notebook `01-PopulateAndExploreNeptune.ipynb`. 
+
+When complete, run notebook `02-PopulateOpenSearch.ipynb`.  In the initial code cell, replace values in angled brackets with values for your environment. 
+
+```
+TARGET_S3_PATH_NOSLASH="s3://<your bucket>/movie/gnn"
+# Replace the below red string with your own Amazon OpenSearch endpoint
+AOS_ENDPOINT="<your AOS endpoint>"
+# Replace the below red string with your own IAM role for the GNN embedding pipeline.
+SAGEMAKER_ROLE="<your IAM role for GNN pipeline>"
+```
+
+Replace `<your bucket>` with the name of your bucket.
+
+Replace `<your AOS endpoint>` with the endpoint of your OpenSearch Service domain.
+
+Replace `<your IAM role for GNN pipeline>` with the IAM role for the notebook instance. 
 
 ## Cleanup
-
+To cleanup the resources you created above:
+- Delete the CloudFormation stack you created for the Neptune cluster and notebook instance.
+- Delete the S3 bucket you created. See [https://docs.aws.amazon.com/AmazonS3/latest/userguide/delete-bucket.html](https://docs.aws.amazon.com/AmazonS3/latest/userguide/delete-bucket.html). 
+- Delete the OpenSearch Service domain you created. You may do this from the Opensearch Service console. Or see [https://awscli.amazonaws.com/v2/documentation/api/2.7.12/reference/opensearch/delete-domain.html](https://awscli.amazonaws.com/v2/documentation/api/2.7.12/reference/opensearch/delete-domain.html). 
 
 ## Cost
 This solution incurs cost. Refer to pricing guides for [Neptune](https://aws.amazon.com/neptune/pricing/), [OpenSearch Service](https://aws.amazon.com/opensearch-service/pricing/), and [SageMaker](https://aws.amazon.com/sagemaker/pricing/).
