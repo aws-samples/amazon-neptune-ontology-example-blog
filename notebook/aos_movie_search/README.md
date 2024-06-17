@@ -68,7 +68,7 @@ In the notebook instance, open Jupyter. Upload the three notebook files to Jupyt
 
 Once uploaded, run notebook `01-PopulateAndExploreNeptune.ipynb`. 
 
-When complete, run notebook `02-PopulateOpenSearch.ipynb`.  In the initial code cell, replace values in angled brackets with values for your environment. 
+When complete, run notebook `02-PopulateOpenSearch.ipynb`. Run all cells.  In the initial code cell, replace values in angled brackets with values for your environment. 
 
 ```
 TARGET_S3_PATH_NOSLASH="s3://<your bucket>/movie/gnn"
@@ -83,6 +83,8 @@ Replace `<your bucket>` with the name of your bucket.
 Replace `<your AOS endpoint>` with the endpoint of your OpenSearch Service domain.
 
 Replace `<your IAM role for GNN pipeline>` with the IAM role for the notebook instance. 
+
+When complete, run notebook `03-Search.ipynb`. 
 
 ## Cleanup
 To cleanup the resources you created above:
