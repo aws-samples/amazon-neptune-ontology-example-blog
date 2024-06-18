@@ -26,7 +26,9 @@ To setup this solution, you need an AWS account with permission to create resour
 ### Amazon Simple Storage Service (S3) Bucket Setup
 Create an Amazon Simple Storage Service (S3) bucket in the same account and region in which you deploy the other resources. This bucket is used to store embeddings produced by Neptune ML model training.
 
-Follow instructions in [https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html](https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html). The bucket may be private and use default encryption.
+Follow instructions in [https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html](https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html). 
+
+The bucket may be private and use default encryption.
 
 ### Amazon Neptune Cluster Setup
 Create a Neptune cluster and a notebook instance. One way to setup these resources is using the CloudForamtion template via [https://docs.aws.amazon.com/neptune/latest/userguide/get-started-cfn-create.html](https://docs.aws.amazon.com/neptune/latest/userguide/get-started-cfn-create.html). We recommend using a `NotebookInstanceType` of `ml.t3.large` or higher.
@@ -38,7 +40,7 @@ First, locate the Neptune cluster and *make note of its VPC and subnets*. You wi
 Second, locate the notebook in the SageMaker console. Find its IAM role under `Permissions and encryptpion` on the details page for the notebook. Select that role and add IAM policies as follows:
 
 - The notebook should already have read access to all S3 buckets. Add write access to the S3 bucket you created above. One way to accomplish this is to add the `AmazonS3FullAccess` managed policy.
-- The notebook should be able to create and execute the SageMaker pipeline for Neptune ML. One way to accomplish this is to add the `AmazonSageMakerFullAccess` managed policy.
+- The notebook should be able to create and execute the SageMaker pipeline for Neptune ML. The pipeline will need to create and run SageMaker processing and training jobs. One way to accomplish this is to add the `AmazonSageMakerFullAccess` managed policy.
 - The notebook should be able to read from and write to your Amazon OpenSearch Service Domain. One way to accomplish this is to add the `AmazonOpenSearchServiceFullAccess` managed policy.
 
 Also, *make note of the role ARN*. You will need it when running through the notebooks.
