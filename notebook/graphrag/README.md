@@ -36,3 +36,9 @@ Walk me through an NLQ:
 - All this is put into context
 - What would a response look like?
 - 
+
+Case Study:
+Deal research:
+- structured graph already has banks, lawyers, customers, key people, etc.
+- unstructured has deals in SEC filings. We can put some structure aroudn this aliging with ontology; tracing structured back to where it was found in unstructured is key
+- but also have loose text. 
