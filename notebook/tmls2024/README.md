@@ -29,17 +29,14 @@ Check back until both models show as _Access granted_.
 
 ![Bedrock model access](../kg_ai_alg/images/bedrock_model_access.png "Bedrock model access").
 
-You will need these models to create the LlamaIndex indexes. 
-
 </p>
 </details>
 
 
-### Create Neptune Analytics Graphs
+### Create Neptune Analytics Graph
 
 <details><summary>Click to view/hide this section</summary>
 <p>
-
 
 In your AWS console, open the Neptune console. In the left menu, select _Graphs_ and create two graphs. One will be used as the main knowledge graph for our demo. The other will be used separately by the chatbot.
 
