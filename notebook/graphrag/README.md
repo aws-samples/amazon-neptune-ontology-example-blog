@@ -10,3 +10,10 @@ We demonstrate three Graph RAG patterns.
 2. The graph represents unstructured data as embeddings (in chunks if necessary). It links these embeddings to structured resources. When the user asks a question, we first match similar embeddings in the graph, then we pull in related structured resources. We pass this as context to the LLM to answer the question. To try this out, take a look at <https://github.com/aws-samples/amazon-neptune-ontology-example-blog/blob/main/notebook/kg_ai_alg>, particularly <https://github.com/aws-samples/amazon-neptune-ontology-example-blog/blob/main/notebook/kg_ai_alg/2x-TryVSSAndRAGOnChunks.ipynb>.
 
 3. The LLM builds the graph as a network of relationships extracted from unstructured data. To answer the user's question, we query that LLM-driven graph! To try this out, take a look at <https://github.com/aws-samples/amazon-neptune-ontology-example-blog/blob/main/notebook/kg_ai_alg>, particularly <https://github.com/aws-samples/amazon-neptune-ontology-example-blog/blob/main/notebook/kg_ai_alg/2-CreateLlamaIndex.ipynb>.
+
+Expand as follows:
+- recommended architecture that works for both LPG and RDF
+- NA shortcoming: topKByEmbedding cannot filter to a specific node label. Chunks will take the top spots in search results, making it hard to find other nodes.
+- Extremely searchable graph capabilities:
+  > 
+  > 
