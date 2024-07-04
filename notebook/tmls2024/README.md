@@ -7,7 +7,7 @@ The following figure shows the LPG architecture. We use a Neptune Analytics grap
 
 TODO figure
 
-The following figure shows the RDF architecture. We use a Neptune database cluster in conjunction with an Amazon OpenSearch Service domain. We use a SageMaker notebook as a client to populate the graph and run natural language queries of it. We use Comprehend for entity extraction, and Anthropic and Titan LLMs via Bedrock for Q&A and embeddings.
+The next figure shows the RDF architecture. We use a Neptune database cluster in conjunction with an Amazon OpenSearch Service domain. We use a SageMaker notebook as a client to populate the graph and run natural language queries of it. We use Comprehend for entity extraction, and Anthropic and Titan LLMs via Bedrock for Q&A and embeddings. The RDF demo is UNDER CONSTRUCTION. Watch this page for updates.
 
 TODO figure
 
