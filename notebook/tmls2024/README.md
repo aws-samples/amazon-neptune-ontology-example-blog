@@ -1,6 +1,19 @@
 # Toronto Machine Learning Summit 2024: Ask the Graph: How Knowledge Graphs Helps Generative AI Models Answer Questions
 This folder contains the demo accompanying the presentation _Ask the Graph: How Knowledge Graphs Helps Generative AI Models Answer Questions_ presented at the Toronto Machine Learning Summit 2024 (<https://www.torontomachinelearning.com/speakers/#agenda>). 
 
+This is actually two demos in one. We show how to ask natural language questions of a knowledge graph represented as either Labeled Property Graph (LPG) or Resource Description Framework (RDF). Both approaches use Amazon Neptune.
+
+The following figure shows the LPG architecture. We use a Neptune Analytics graph. We use a SageMaker notebook as a client to populate the graph and run natural language queries of it. We use Comprehend for entity extraction, and Anthropic and Titan LLMs via Bedrock for Q&A and embeddings. 
+
+TODO figure
+
+The following figure shows the RDF architecture. We use a Neptune database cluster in conjunction with an Amazon OpenSearch Service domain. We use a SageMaker notebook as a client to populate the graph and run natural language queries of it. We use Comprehend for entity extraction, and Anthropic and Titan LLMs via Bedrock for Q&A and embeddings.
+
+TODO figure
+
+Here is the data model that the demos use.
+TODO figure. 
+
 Here are instructions to setup the demo.
 
 ## Pre-requisites
@@ -18,7 +31,9 @@ Provision all resources in either us-east-1 or us-west-2 regions. For simplicity
 
 ## Setup
 
-### Allow Bedrock models
+### Common setup
+
+#### Allow Bedrock models
 
 <details><summary>Click to view/hide this section</summary>
 <p>
@@ -32,8 +47,9 @@ Check back until both models show as _Access granted_.
 </p>
 </details>
 
+### LPG Demo Setup
 
-### Create Neptune Analytics Graph
+#### Create Neptune Analytics Graph
 
 <details><summary>Click to view/hide this section</summary>
 <p>
@@ -53,7 +69,10 @@ It will take a few minutes to create. Wait for the status of the graph to become
 
 TODO - find the graph endpoint ...
 
-### Create Neptune Notebook
+</p>
+</details>
+
+#### Create Neptune Notebook
 
 <details><summary>Click to view/hide this section</summary>
 <p>
