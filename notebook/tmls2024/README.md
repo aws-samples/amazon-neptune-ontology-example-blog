@@ -38,14 +38,12 @@ Check back until both models show as _Access granted_.
 <details><summary>Click to view/hide this section</summary>
 <p>
 
-In your AWS console, open the Neptune console. In the left menu, select _Graphs_ and create two graphs. One will be used as the main knowledge graph for our demo. The other will be used separately by the chatbot.
+In your AWS console, open the Neptune console. In the left menu, select _Graphs_ to create a graph. 
 
-Follow instructions <https://docs.aws.amazon.com/neptune-analytics/latest/userguide/gettingStarted-creating-a-graph.html> to create the graphs. 
-
-#### Create main graph
+Follow instructions <https://docs.aws.amazon.com/neptune-analytics/latest/userguide/gettingStarted-creating-a-graph.html> to create the graph. 
 
 Use the following settings: 
-- Graph name: *kgc-demo*
+- Graph name: *tmls*
 - Data source: Create empty graph
 - Enable public connectivity: check
 - Setup private endpoint: uncheck
@@ -53,28 +51,7 @@ Use the following settings:
 
 It will take a few minutes to create. Wait for the status of the graph to become *Available*. 
 
-Then look in the configuration settings and note the graph identifier and endpoint. You will need these later.
-
-![Graph identifier and endpoint](images/na_graph.png "Graph identifier and endpoint").
-
-#### Create graph for chatbot
-
-Follow the same steps as above to create a second graph. Name it *kgc-chat*. Wait it to become available and note down its graph identifier.
-
-</p>
-</details>
-
-### Create S3 Working Bucket
-
-<details><summary>Click to view/hide this section</summary>
-<p>
-
-
-Navigate to the S3 console. Create a bucket with a unique name similar to _kgc2024-masterclass-demo-\<yourname\>_. Follow instructions in <https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html>. Accept defaults. The bucket may be private and use default encryption.
-
-</p>
-</details>
-
+TODO - find the graph endpoint ...
 
 ### Create Neptune Notebook
 
@@ -84,9 +61,9 @@ Navigate to the S3 console. Create a bucket with a unique name similar to _kgc20
 
 Follow instructions in https://docs.aws.amazon.com/neptune-analytics/latest/userguide/create-notebook-cfn.html to create a Sagemaker notebook instance for Neptune Analytics through CloudFormation. On the stack details page provide the following:
 
-- Stack name: *KGC-Notebook*
-- GraphEndpoint: enter the endpoint from the *kgc-demo* graph you created above.
-- NotebookName: *kgc-notebook*
+- Stack name: *tmls-LPGDemo*
+- GraphEndpoint: enter the endpoint from the *tmls* graph you created above.
+- NotebookName: *tmls-LPG-notebook*
 
 Leave the remaining parameters blank. Navigate through the remaining pages, accepting defaults.
 
@@ -105,14 +82,16 @@ Select the notebook to see its configuration. Locate its IAM role. Click on that
 Add two policies to the permissions: 
 
 - *AmazonBedrockFullAccess*, giving the notebook access to invoke Bedrock models for embedding and entity extraction
-- *AmazonS3FullAccess*, as the notebook will need write access to your working bucket.
 
+TODO change
 ![change notebook role](images/iam_notebook.png "change notebook role").
 
 If you prefer narrower permissions, create your own policy that restricts S3 writes to only your working bucket and Bedrock invokes to only the Claude and Titan models.
 
 
 #### Get Demo Notebook Files and Begin
+
+TODO ... 
 
 Download the four notebooks from this repository:
 
@@ -135,166 +114,7 @@ Now run through the notebooks! *0-PrepSources.ipynb* is optional, meant mostly t
 </details>
 
 
-### Create Chatbot
 
-<details><summary>Click to view/hide this section</summary>
-<p>
-
-
-We also provide a chatbot to ask natural language questions of the knowledge graph.
-
-#### Create EC2 Instance
-
-In the EC2 console, create an instance on which to run the chatbot. Select *Launch Instance*. Use the following settings:
-
-- Name: *kgc-chat*
-- Application/OS Image: *Amazon Linux 2023*
-- Intance type: *t2.medium*
-- Key Pair: create new and call it *kgc-chat*
-- Network settings. VPC: Use the default VPC, which should already be selected.
-- Network settings. Subnet: Choose a subnet that is public.
-
-Use default values for the remaining settings. In the EC2 console, located the instance and wait for the instance to enter *Running* status. Select the instance to see its settings. Note down the Public IP address. You will need it later.
-
-![ec2 instance](images/ec2.png "ec2 instance")
-
-#### Modify EC2 Security Group
-
-In the settings pane of the EC2 instance, select the _Security_ tab. Find the security group for the instance and click on it.  
-
-![ec2 security group](images/ec2_sg.png "ec2 security group")
-
-Edit the inbound rules of the security group as follows:
-
-- Restrict access to port 22 (for SSH) to your local machine's IP address.
-- Add a rule to allow access to port 8080 to your local machine's IP address. The chatbot will listen on this port.
-
-This restricts access to the machine and the chatbot to only your machine.
-
-![ec2 security group inbound rules](images/ec2_sg_inbound.png "ec2 security group inbound rules")
-
-
-#### Modify EC2 IAM Role
-
-In the EC2 console, select the instance. From the _Actions_ menu choose _Security_ | _Modify IAM Role_. 
-
-![ec2 iam](images/ec2_iam.png "ec2 iam")
-
-This takes you to a page to manage the IAM role for the instance. Select _Create new IAM role_. This opens the IAM console to allow you to define the role.  Create a role with a trust relationship for ec2 and permissions on Bedrock, S3, and Neptune Analytics. 
-
-For Bedrock, add managed policy *AmazonBedrockFullAccess*. 
-
-For S3, add managed policy *AmazonS3ReadOnlyAccess*.
-
-For Neptune Analytics, create a policy the permissions
-
-```
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Action": "neptune-graph:*",
-            "Resource": "*",
-            "Effect": "Allow"
-        }
-    ]
-}
-```
-
-Here is what the trust relationship looks like:
-
-![ec2 iam_trust](images/ec2_iam_trust.png "ec2 iam trust")
-
-Here are the permissions:
-
-![ec2 iam_perms](images/ec2_iam_perms.png "ec2 iam perms")
-
-Name the role *kgc-chat-role*.
-
-In the _Modify IAM Role_ page, associate this new role with the instance.
-
-![ec2 iam_update](images/ec2_iam_update.png "ec2 iam update")
-
-
-#### Connect to EC2 Instance
-
-Open an SSH session to the instance. For instructions on how to do this, select _Connect_ | _SSH client_ from the details pane of your instance. 
-
-For example, if your local machine is a Mac, the key file *kgc-chat.pem* was downloaded to your machine when setting up the instance. You can SSH to it as follows, substituting the public IP of your instance:
-
-```
-chmod 400 ~/Downloads/kgc-chat.pem
-ssh -i ~/Downloads/kgc-chat.pem ec2-user@<my_public_ip>
-```
-
-##### Obtain Code and Download Dependencies
-
-In the SSH session, obtain the source code for the chatbot as follows:
-
-```
-# clone the chatbot source
-git clone https://github.com/aws-samples/amazon-neptune-ontology-example-blog.git
-
-# extract just the chatbot
-cp -r amazon-neptune-ontology-example-blog/notebook/kg_ai_alg/chatbot/neptune-genai-examples neptune-genai-examples
-rm -rf amazon-neptune-ontology-example-blog
-
-# go to the directory with the main code
-cd neptune-genai-examples/llamaindex/knowledgegraphindex-chatbot-streamlit
-
-# get python 3.11 if not already installed
-sudo dnf install python3.11 -y
-
-# get pip 3.11 if not already installed
-sudo dnf install python3.11-pip -y
-
-# install dependencies
-pwd # should be /home/ec2-user/neptune-genai-examples/llamaindex/knowledgegraphindex-chatbot-streamlit
-pip3.11 install -r requirements.txt 
-```
-
-##### Obtain text data
-
-In the SSH session, obtain the press release documents by running the following from the /home/ec2-user/neptune-genai-examples/llamaindex/knowledgegraphindex-chatbot-streamlit directory.
-
-```
-pwd # should be /home/ec2-user/neptune-genai-examples/llamaindex/knowledgegraphindex-chatbot-streamlit
-aws s3 sync s3://aws-neptune-customer-samples-us-east-1/kgc2024_na/rawtext data
-```
-
-##### Configure
-
-In the SSH session, add a *.env* file in neptune-genai-examples/llamaindex/knowledgegraphindex-chatbot-streamlit:
-
-```
-GRAPH_ID=<your graph identifier> 
-BASE_PERSIST_DIR=.
-VSS_PERSIST_DIR=.
-```
-
-##### Start
-
-In the SSH session, in directory neptune-genai-examples/llamaindex/knowledgegraphindex-chatbot-streamlit, run the chatbot
-
-```
-# set your region. For example us-east-1
-export AWS_DEFAULT_REGION=<your region>
-
-# start chatbot in foregraph
-streamlit run main.py --server.port 8080
-```
-
-##### Access the chatbot from your browser
-
-In your browser navigate to the chatbot. Its URL is *http://\<public host of EC2 instance\>:8080*. If you are unable to reach it, check that the security group for the EC2 instance allows inbound access to port 8080 from your machine.
-
-The chatbot takes several minutes to index. Wait until the initialization completes and the following display shows:
-
-![ec2 chatbot](images/chatbot.png "chatbot")
-
-
-</p>
-</details>
 
 ## Cleanup
 
