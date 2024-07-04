@@ -15,5 +15,24 @@ Expand as follows:
 - recommended architecture that works for both LPG and RDF
 - NA shortcoming: topKByEmbedding cannot filter to a specific node label. Chunks will take the top spots in search results, making it hard to find other nodes.
 - Extremely searchable graph capabilities:
-  > 
-  > 
+  > findEntity (input: lots of ways - exact name, fuzzy name, semantically similar name, alternate name (same combos), related name (same combos)). Output: found entities, their provenance, their neibhborhood, all the ways we can name them taxonomically
+  > findRelationship - e.g, find a hostile takeover (but maybe that's not the actual name; fuzzy, semantic, taxo
+  > searchSupportingDocs - search the docs ad hoc, return back entities, relationships, as well as where we found it. ALso return what other facts are mentioned.
+  >
+How to:
+- KG
+- Search index
+- LLM - Extract keywords from question
+- LLM - Suggest entity linkage for ER
+- LLM - Extract entities from documents
+- LLM - Summarize documents
+- LLM - Chunk and embed documents
+
+Walk me through an NLQ:
+- Extract keywords from question
+- Find the things in graph with those keywords. That could be structured or unstructured data.
+- Find unstructured documents via chunk vector search, and then link to extracted facts, and how do they link back to the structured graph
+
+- All this is put into context
+- What would a response look like?
+- 
