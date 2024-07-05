@@ -50,8 +50,8 @@ Also, *make note of the role ARN*. You will need it when running through the not
 ### Amazon OpenSearch Service Domain Setup
 In the Opensearch Service console, create a new domain as follows;
 - Use standard create.
-- Choose `Dev/test` template.
-- Choose `Domain without standby` with `1-AZ` deployment option.
+- To test a single AZ deployment for sandbox purposes, choose `Dev/test` template.
+- To test a single AZ deployment for sandbox purposes, choose `Domain without standby` with `1-AZ` deployment option.
 - Use version OpenSearch 2.7 or higher.
 - Under `network`, choose the same VPC in which your Neptune cluster is deployed. For subnets, choose one of the subnets under the Neptune cluster.
 - For security group, use a security group allowing inbound access to port 443.
