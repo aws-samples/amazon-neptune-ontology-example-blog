@@ -55,7 +55,7 @@ In the Opensearch Service console, create a new domain as follows;
 - Use version OpenSearch 2.7 or higher.
 - Under `network`, choose the same VPC in which your Neptune cluster is deployed. For subnets, choose one of the subnets under the Neptune cluster.
 - For security group, use a security group allowing inbound access to port 443.
-- Disable fine-grained access control.
+- For simplicity, we disable fine-grained access control. If you require it, keep it enabled and refer to <https://docs.aws.amazon.com/opensearch-service/latest/developerguide/fgac.html> for details on how this mechanism works. You will also need to change code in the notebook that creates the OpenSearch client. Refer to the API documentation at <https://github.com/opensearch-project/opensearch-py/blob/main/opensearchpy/client/__init__.py>.
 
 Once setup, *make note of the domain endpoint*. You will need it when running through the notebooks.
 
