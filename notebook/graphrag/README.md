@@ -11,6 +11,14 @@ We demonstrate three Graph RAG patterns.
 
 3. The LLM builds the graph as a network of relationships extracted from unstructured data. To answer the user's question, we query that LLM-driven graph! To try this out, take a look at <https://github.com/aws-samples/amazon-neptune-ontology-example-blog/blob/main/notebook/kg_ai_alg>, particularly <https://github.com/aws-samples/amazon-neptune-ontology-example-blog/blob/main/notebook/kg_ai_alg/2-CreateLlamaIndex.ipynb>.
 
+## Variant: Extrenmely Searchable Graph
+
+In one talk we emphasized the benefit of arranging your knowledge graph to that it is extremely searchable in a generic way while not breaking your existing data. We proposed a model that allows unstructured data as documents, chunks, and extracted triples or facts. This data is linked to your structured data. The next figure shows a deal graph model that aligns with the approach. Red boxes are documents and chunks. Yellow boxes are extracted facts. Blue boxes are existing structured data: companies, persons, deals, etc.
+
+
+
+Watch this page for a link to a demo of the approach.
+
 Expand as follows:
 - recommended architecture that works for both LPG and RDF
 - NA shortcoming: topKByEmbedding cannot filter to a specific node label. Chunks will take the top spots in search results, making it hard to find other nodes.
