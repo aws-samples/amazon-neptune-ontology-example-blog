@@ -197,7 +197,7 @@ with st.sidebar:
         "Questions where all the data to answer it exists within a single document are questions where we expect both RAG and Graph RAG applications to do well."
     )
     if st.button("Try it", key="exploratory"):
-        run_parallel_retrievals("Does Amazon have a fulfillment center in Minnesota?")
+        run_parallel_retrievals("How is AWS increasing energy efficiency?")
 
     st.subheader("Connect the Dots Queries")
     st.write(
@@ -205,7 +205,7 @@ with st.sidebar:
     )
     if st.button("Try it", key="connect_the_dots"):
         run_parallel_retrievals(
-            "What activities does AWS have going on in San Francisco?"
+            "What are the top press releases from AWS?"
         )
 
     st.subheader("Whole Dataset Reasoning")
@@ -213,7 +213,7 @@ with st.sidebar:
         "Questions that require aggregation across the dataset is an example of where RAG struggles and Graph RAG does well."
     )
     if st.button("Try it", key="whole_dataset"):
-        run_parallel_retrievals("Summarize the top trends in AWS?")
+        run_parallel_retrievals("What people are most mentioned by AWS")
 
 # Setup the chat input
 if user_prompt := st.chat_input():
