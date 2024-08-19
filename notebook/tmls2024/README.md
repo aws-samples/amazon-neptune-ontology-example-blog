@@ -1,5 +1,24 @@
 # Toronto Machine Learning Summit 2024: Ask the Graph: How Knowledge Graphs Helps Generative AI Models Answer Questions
-((( UNDER CONSTRUCTION )))
+
+TODO
+setup
+- create S3 bucket
+- neptune cluster
+- add IAM role - s3 access for neptune cluster
+- AOS domain
+- enable streaming, restart neptune cluster
+- install FTS
+- change perms on notebook: bedrock, s3, comprehend, ...
+
+
+Then in notebook open a terminal and go a git clone. Folders will be
+
+xskg/README, 4 notebooks, 3 pythons
+xskg/source/rdf
+
+
+
+
 
 This folder contains the demo accompanying the presentation _Ask the Graph: How Knowledge Graphs Helps Generative AI Models Answer Questions_ presented at the Toronto Machine Learning Summit 2024 (<https://www.torontomachinelearning.com/speakers/#agenda>). 
 
