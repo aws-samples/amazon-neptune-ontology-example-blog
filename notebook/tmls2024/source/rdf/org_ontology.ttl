@@ -1,0 +1,508 @@
+@prefix : <http://example.org/orgdemo/> .
+@prefix xev: <http://example.org/orgdemo/xev/> .
+@prefix xent: <http://example.org/orgdemo/xent/> .
+@prefix xrole: <http://example.org/orgdemo/xrole/> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+#
+# This is an ontology that describes organizations and their relationships. 
+# In this ontology we have classes representing:
+
+# Organization
+# Person
+# Industry
+# Location
+# Product
+# Service
+
+# Relationships are the following: 
+# Organization hasParentOf Organization
+# Organization subsidiaryOf Organization
+# Organization hasKeyPerson Person
+# Organization hasService Service
+# Organization hasProduct Product
+# Organization hasLocation Location
+# Organization hasIndustry Industry
+
+:XSKGOrgOntology a owl:Ontology ;
+    rdfs:label "XSKG organizational ontology" ;
+    rdfs:comment "XSKG organizational ontology" ; 
+    rdfs:seeAlso <http://www.w3.org/ns/org#> .
+
+:OrgEntity rdf:type owl:Class ;
+    rdfs:comment "Every organizational class -- Organization, Person, Industry, Location, Product, Service -- is a subclass of OrgEntity. An orgizational entity has SKOS preferred and alternate labels. It may also have a rdfs:seeAlso linking it to some other resource. Additionally we can tie an org entity to a SKOS concept using :hasConcept" .
+
+:Industry rdf:type owl:Class ;
+    rdfs:subClassOf :OrgEntity ;
+    rdfs:label "industry" ; 
+    skos:prefLabel "industry" ;
+    rdfs:comment "Industry is the class of industries in which organizations operation. For example, the aerospace industry has URI http://dbpedia.org/resource/Aerospace. Its rdf type is Industry." .
+
+:Location rdf:type owl:Class ;
+    rdfs:subClassOf :OrgEntity ;
+    rdfs:label "location" ; 
+    skos:prefLabel "location" ;
+    rdfs:comment "Location is the class of locations (cities, states, countries) in which an organization operates. For example, the South Africa location has URI http://dbpedia.org/resource/South_Africa. Its rdf type is Location." .
+
+:Organization rdf:type owl:Class ;
+    rdfs:subClassOf :OrgEntity ;
+    rdfs:label "organization" ; 
+    skos:prefLabel "organization" ;
+    skos:altLabel "organisation", "org", "company", "firm" ;
+    rdfs:comment "Organization is the class of organizations. An example instance is Standard Bank, whose URI is http://dbpedia.org/resource/Standard_Bank. Its rdf type is Organization." .
+
+:Person rdf:type owl:Class ;
+    rdfs:subClassOf :OrgEntity ;
+    rdfs:label "person" ; 
+    skos:prefLabel "person" ;
+    skos:altLabel "leader", "executive" ;
+    rdfs:comment "Person is a person who plays a role in an organization. Normally it is a specific person. For example, Andy Jassy, the current CEO of Amazon, has URI is http://dbpedia.org/resource/Andy_Jassy and has rdf type Person. In some cases the instance is a role rather than a specific person. For example, http://dbpedia.org/resource/Chief_executive_officer has rdf type Person." . 
+
+:Product rdf:type owl:Class ;
+    rdfs:subClassOf :OrgEntity ;
+    rdfs:label "product" ; 
+    skos:prefLabel "product" ;
+    rdfs:comment "A product is produced by an organization. For example, the Amazon Echo (http://dbpedia.org/resource/Amazon_Echo) is a product from Amazon." .
+
+:Service rdf:type owl:Class ;
+    rdfs:subClassOf :OrgEntity ;
+    rdfs:label "service" ; 
+    skos:prefLabel "service" ;
+    rdfs:comment "A service is performed or offered by an organization. For example, http://dbpedia.org/resource/Amazon_Web_Services is a service." .
+
+:leType rdf:type owl:ObjectProperty ;
+    rdfs:comment "This property specifies the legal entity type for an organization. The range of this property is the URI for a legal entity type. For example, http://dbpedia.org/resource/Public_company." ; 
+    rdfs:subPropertyOf owl:topObjectProperty ;
+    rdfs:domain :Organization .
+
+:leStatus rdf:type owl:DatatypeProperty ;
+    rdfs:comment "This property specifies the legal entity status for an organization. The range is a string, such as Active." ; 
+    rdfs:subPropertyOf owl:topDatatypeProperty ;
+    rdfs:domain :Organization .
+
+:hasIndustry rdf:type owl:ObjectProperty ;
+    rdfs:comment "An industry in which an organization practices. Normally the domain is an Organization. We do not specify domain because other type of resources can validly have industries." ; 
+    rdfs:subPropertyOf owl:topObjectProperty ;
+    rdfs:range :Industry .
+
+:hasKeyPerson rdf:type owl:ObjectProperty ;
+    rdfs:comment "This property relates an organization to one of its key persons. A key person is often a C-level executive, director, board member, founder, or key deal maker." ; 
+    rdfs:subPropertyOf owl:topObjectProperty ;
+    rdfs:domain :Organization ;
+    rdfs:range :Person .
+
+:hasLocation rdf:type owl:ObjectProperty ;
+    rdfs:comment "A location is a city, state, or country in which an organization practices. Normally the domain is an Organization. We do not specify domain because other type of resources can validly have locations." ; 
+    rdfs:subPropertyOf owl:topObjectProperty ;
+    rdfs:range :Location .
+
+:hasParentOrg rdf:type owl:ObjectProperty, owl:TransitiveProperty, owl:FunctionalProperty ;
+    rdfs:comment "This property indicates that subject organization has a parent organization that is the object organization. This is transitive and functional. Because it is transitive, if A has parent B and B has parent C, we can infer A has parent C. Because it is functional, A in effect has only one parent B. If A has parents B and C, B and C must be the same." ; 
+    rdfs:subPropertyOf owl:topObjectProperty ;
+    rdfs:domain :Organization ;
+    rdfs:range :Organization .
+
+:subsidiaryOf rdf:type owl:ObjectProperty ;
+    rdfs:comment "This property indicates that subject organization is a subsidiary of the object organization." ; 
+    rdfs:subPropertyOf owl:topObjectProperty ;
+    rdfs:domain :Organization ;
+    rdfs:range :Organization ;
+    rdfs:label "subsidiary" ;
+    skos:prefLabel "subsidiary" .
+
+:hasProduct rdf:type owl:ObjectProperty ;
+    rdfs:comment "This property indicates that the subject resource has or makes a given product. Normally the domain is an Organization. We do not specify domain because other type of resources can validly have products." ; 
+    rdfs:subPropertyOf owl:topObjectProperty ;
+    rdfs:range :Product .
+
+:hasService rdf:type owl:ObjectProperty ;
+    rdfs:comment "This property indicates that the subject resource has or provides a given service. Normally the domain is an Organization. We do not specify domain because other type of resources can validly have services." ; 
+    rdfs:subPropertyOf owl:topObjectProperty ;
+    rdfs:range :Service .
+
+:hasConcept rdf:type owl:ObjectProperty ;
+    rdfs:comment "This property related some resource (often an OrgEntity) to a SKOS concept. This allows us not only to tap into the labeling of the concept, but also to navigate broader, narrower, and related concepts." ; 
+    rdfs:subPropertyOf owl:topObjectProperty ;
+    rdfs:range skos:Concept .
+
+# This class has something that is either a product or service.
+# Find me something that is a product or service:
+# {?x a :Product}  UNION {?x a :Service} 
+:ProductOrService a owl:Class ; 
+    owl:equivalentClass [
+        a owl:Class ;
+        owl:unionOf (:Product :Service)
+   ]
+.
+
+# This class gives me cloud companies
+# Find me a cloud company
+# ?x a :Organization ; :hasIndustry :Cloud_Computing .
+:CloudCompany a owl:Class ;
+    owl:equivalentClass  [ 
+        a owl:Class ; 
+        owl:intersectionOf (
+            :Organization 
+            [ a owl:Restriction ; 
+                owl:onProperty :hasIndustry ;
+                owl:someValuesFrom :Cloud_Computing 
+            ])
+    ] .
+
+#
+# Ontology: yellow/extraction data
+# Refer to Amazon Comprehend documentation for more: 
+# https://docs.aws.amazon.com/comprehend/latest/dg/how-events.html
+# I do not provide comments on specific types of events, entities, or roles.
+#
+
+:Extraction rdf:type owl:Class ;
+    rdfs:comment "Base class for ExtractedEvent, ExtractedEntity, used to represent extracted facts from unstructured text." .
+
+:ExtractedEvent rdf:type owl:Class ;
+                rdfs:subClassOf :Extraction ;
+                rdfs:comment "Base class for specific types of organizational events that are extracted for unstructured text" .
+
+xev:BANKRUPTCY rdf:type owl:Class ;
+    rdfs:subClassOf :ExtractedEvent ;
+    rdfs:label "bankruptcy"@en ;
+    skos:prefLabel "bankruptcy"@en .
+
+xev:CORPORATE_ACQUISITION rdf:type owl:Class ;
+    rdfs:subClassOf :ExtractedEvent ;
+    rdfs:label "corporate acquisition"@en ;
+    skos:prefLabel "corporate acquisition"@en ;
+    skos:altLabel "deal", "merger", "takeover" .
+
+xev:CORPORATE_MERGER rdf:type owl:Class ;
+    rdfs:subClassOf :ExtractedEvent ;
+    rdfs:label "corporate merger"@en ;
+    skos:prefLabel "corporate merger"@en ;
+    skos:altLabel "deal", "merger", "takeover", "acqusition" .
+
+xev:DATE rdf:type owl:Class ;
+    rdfs:subClassOf :ExtractedEvent ;
+    rdfs:label "date"@en ;
+    skos:prefLabel "date"@en .
+
+xev:EMPLOYMENT rdf:type owl:Class ;
+    rdfs:subClassOf :ExtractedEvent ;
+    rdfs:label "employment"@en ;
+    skos:prefLabel "employment"@en .
+
+xev:EMPLOYMENT_CHANGE rdf:type owl:Class ;
+    rdfs:subClassOf :ExtractedEvent ;
+    rdfs:label "employment change"@en ;
+    skos:prefLabel "employment change"@en .
+
+xev:FACILITY rdf:type owl:Class ;
+    rdfs:subClassOf :ExtractedEvent ;
+    rdfs:label "facility"@en ;
+    skos:prefLabel "facility"@en ;
+    skos:altLabel "plant", "warehouse", "distribution center", "fulfillment center" .
+
+xev:INVESTMENT_GENERAL rdf:type owl:Class ;
+    rdfs:subClassOf :ExtractedEvent ;
+    rdfs:label "investment"@en ;
+    skos:prefLabel "investment"@en .
+
+xev:IPO rdf:type owl:Class ;
+    rdfs:subClassOf :ExtractedEvent ;
+    rdfs:label "IPO"@en ;
+    skos:prefLabel "IPO"@en ;
+    skos:altLabel "initial public offering" .
+
+xev:TENDER_OFFERING rdf:type owl:Class ;
+    rdfs:subClassOf :ExtractedEvent ;
+    rdfs:label "tender offering"@en ;
+    skos:prefLabel "tender offering"@en ;
+    skos:altLabel "tender", "offer" .
+
+xev:SHELF_OFFERING rdf:type owl:Class ;
+    rdfs:subClassOf :ExtractedEvent ;
+    rdfs:label "shelf offering"@en ;
+    skos:prefLabel "shelf offering"@en ;
+    skos:altLabel "shelf", "offer" .
+
+:ExtractedEntity rdf:type owl:Class ;
+                 rdfs:subClassOf :Extraction ;
+                rdfs:comment "Base class for specific types of entities, such as organizations, that are extracted for unstructured text" .
+
+xent:DATE rdf:type owl:Class ;
+    rdfs:subClassOf :ExtractedEntity ;
+    rdfs:label "date"@en ;
+    skos:prefLabel "date"@en .
+
+xent:LOCATION rdf:type owl:Class ;
+    rdfs:subClassOf :ExtractedEntity ;
+    rdfs:label "location"@en ;
+    skos:prefLabel "location"@en ;
+    skos:altLabel "place" .
+
+xent:FACILITY rdf:type owl:Class ;
+    rdfs:subClassOf :ExtractedEntity ;
+    rdfs:label "facility"@en ;
+    skos:prefLabel "facility"@en ;
+    skos:altLabel "location" .
+
+xent:MONETARY_VALUE rdf:type owl:Class ;
+    rdfs:subClassOf :ExtractedEntity ;
+    rdfs:label "monetary value"@en ;
+    skos:prefLabel "monetary value"@en ;
+    skos:altLabel "money", "dollar value", "dollar" .
+
+xent:ORGANIZATION rdf:type owl:Class ;
+    rdfs:subClassOf :ExtractedEntity ;
+    rdfs:label "organization"@en ;
+    skos:prefLabel "organization"@en ;
+    skos:altLabel "org", "firm", "company" .
+
+xent:PERSON rdf:type owl:Class ;
+    rdfs:subClassOf :ExtractedEntity ;
+    rdfs:label "person"@en ;
+    skos:prefLabel "person"@en ;
+    skos:altLabel "person", "executive", "leader" .
+
+xent:PERSON_TITLE rdf:type owl:Class ;
+    rdfs:subClassOf :ExtractedEntity ;
+    rdfs:label "person title"@en ;
+    skos:prefLabel "person title"@en ;
+    skos:altLabel "title", "job", "role", "position" .
+
+xent:QUANTITY rdf:type owl:Class ;
+    rdfs:subClassOf :ExtractedEntity ;
+    rdfs:label "quantity"@en ;
+    skos:prefLabel "quantity"@en ;
+    skos:altLabel "amount" .
+
+xent:RIGHTS_ISSUE rdf:type owl:Class ;
+    rdfs:subClassOf :ExtractedEntity ;
+    rdfs:label "rights issue"@en ;
+    skos:prefLabel "rights issue"@en ;
+    skos:altLabel "issue", "right" .
+
+xent:SECONDARY_OFFERING rdf:type owl:Class ;
+    rdfs:subClassOf :ExtractedEntity ;
+    rdfs:label "secondary offering"@en ;
+    skos:prefLabel "secondary offering"@en ;
+    skos:altLabel "offer", "offering" .
+
+xent:SHELF_OFFERING rdf:type owl:Class ;
+    rdfs:subClassOf :ExtractedEntity ;
+    rdfs:label "shelf offering"@en ;
+    skos:prefLabel "shelf offering"@en ;
+    skos:altLabel "offer", "offering", "shelf" .
+
+xent:STOCK_CODE rdf:type owl:Class ;
+    rdfs:subClassOf :ExtractedEntity ;
+    rdfs:label "stock code"@en ;
+    skos:prefLabel "stock code"@en ;
+    skos:altLabel "ticker" .
+
+xent:STOCK_SPLIT rdf:type owl:Class ;
+    rdfs:subClassOf :ExtractedEntity ;
+    rdfs:label "stock split"@en ;
+    skos:prefLabel "stock split"@en .
+
+:ExtractedRole rdf:type owl:ObjectProperty ;
+               rdfs:domain :ExtractedEvent ;
+               rdfs:range :ExtractedEntity ;
+                rdfs:comment "Base object property for roles played by entities in organizational events extracted from unstructured text." .
+
+xrole:FILER rdf:type owl:ObjectProperty ;
+    rdfs:subPropertyOf :ExtractedRole ;
+    rdfs:label "filer"@en ;
+    skos:prefLabel "filer"@en .
+
+xrole:xDATE rdf:type owl:ObjectProperty ;
+    rdfs:subPropertyOf :ExtractedRole ;
+    rdfs:label "date"@en ;
+    skos:prefLabel "date"@en .
+
+xrole:PLACE rdf:type owl:ObjectProperty ;
+    rdfs:subPropertyOf :ExtractedRole ;
+    rdfs:label "place"@en ;
+    skos:prefLabel "place"@en ;
+    skos:altLabel "location" .
+
+xrole:ANNOUNCEMENT_PLACE rdf:type owl:ObjectProperty ;
+    rdfs:subPropertyOf :ExtractedRole ;
+    rdfs:label "announcement place"@en ;
+    skos:prefLabel "announcement place"@en ;
+    skos:altLabel "location" .
+
+xrole:INVESTMENT_PLACE rdf:type owl:ObjectProperty ;
+    rdfs:subPropertyOf :ExtractedRole ;
+    rdfs:label "investment place"@en ;
+    skos:prefLabel "investment place"@en ;
+    skos:altLabel "location" .
+
+xrole:EMPLOYEE rdf:type owl:ObjectProperty ;
+    rdfs:subPropertyOf :ExtractedRole ;
+    rdfs:label "employee"@en ;
+    skos:prefLabel "employee"@en .
+
+xrole:EMPLOYEE_TITLE rdf:type owl:ObjectProperty ;
+    rdfs:subPropertyOf :ExtractedRole ;
+    rdfs:label "employee title"@en ;
+    skos:prefLabel "employee title"@en ;
+    skos:altLabel "title" .
+
+xrole:EMPLOYER rdf:type owl:ObjectProperty ;
+    rdfs:subPropertyOf :ExtractedRole ;
+    rdfs:label "employer"@en ;
+    skos:prefLabel "employer"@en .
+
+xrole:START_DATE rdf:type owl:ObjectProperty ;
+    rdfs:subPropertyOf :ExtractedRole ;
+    rdfs:label "start date"@en ;
+    skos:prefLabel "start date"@en ;
+    skos:altLabel "date" .
+
+xrole:END_DATE rdf:type owl:ObjectProperty ;
+    rdfs:subPropertyOf :ExtractedRole ;
+    rdfs:label "end date"@en ;
+    skos:prefLabel "end date"@en ;
+    skos:altLabel "date" .
+
+xrole:ANNOUNCEMENT_DATE rdf:type owl:ObjectProperty ;
+    rdfs:subPropertyOf :ExtractedRole ;
+    rdfs:label "announcement date"@en ;
+    skos:prefLabel "announcement date"@en ;
+    skos:altLabel "date" .
+
+xrole:INVESTMENT_DATE rdf:type owl:ObjectProperty ;
+    rdfs:subPropertyOf :ExtractedRole ;
+    rdfs:label "investment date"@en ;
+    skos:prefLabel "investment date"@en ;
+    skos:altLabel "date" .
+
+xrole:MERGER_DATE rdf:type owl:ObjectProperty ;
+    rdfs:subPropertyOf :ExtractedRole ;
+    rdfs:label "merger date"@en ;
+    skos:prefLabel "merger date"@en ;
+    skos:altLabel "date" .
+
+xrole:AMOUNT rdf:type owl:ObjectProperty ;
+    rdfs:subPropertyOf :ExtractedRole ;
+    rdfs:label "amount"@en ;
+    skos:prefLabel "amount"@en ;
+    skos:altLabel "dollar value", "value", "deal size" .
+
+xrole:INVESTEE rdf:type owl:ObjectProperty ;
+    rdfs:subPropertyOf :ExtractedRole ;
+    rdfs:label "investee"@en ;
+    skos:prefLabel "investee"@en .
+
+xrole:INVESTOR rdf:type owl:ObjectProperty ;
+    rdfs:subPropertyOf :ExtractedRole ;
+    rdfs:label "investor"@en ;
+    skos:prefLabel "investor"@en .
+
+xrole:NEW_COMPANY rdf:type owl:ObjectProperty ;
+    rdfs:subPropertyOf :ExtractedRole ;
+    rdfs:label "new company"@en ;
+    skos:prefLabel "new company"@en ;
+    skos:altLabel "company", "firm", "org", "organization", "organisation" .
+
+xrole:PARTICIPANT rdf:type owl:ObjectProperty ;
+    rdfs:subPropertyOf :ExtractedRole ;
+    rdfs:label "participant"@en ;
+    skos:prefLabel "participant"@en ;
+    skos:altLabel "player" .
+
+xrole:EXPIRE_DATE rdf:type owl:ObjectProperty ;
+    rdfs:subPropertyOf :ExtractedRole ;
+    rdfs:label "expire date"@en ;
+    skos:prefLabel "expire date"@en .
+
+xrole:OFFEREE rdf:type owl:ObjectProperty ;
+    rdfs:subPropertyOf :ExtractedRole ;
+    rdfs:label "offeree"@en ;
+    skos:prefLabel "offeree"@en .
+
+xrole:OFFERING_AMOUNT rdf:type owl:ObjectProperty ;
+    rdfs:subPropertyOf :ExtractedRole ;
+    rdfs:label "filer"@en ;
+    skos:prefLabel "filer"@en .
+
+xrole:OFFERING_DATE rdf:type owl:ObjectProperty ;
+    rdfs:subPropertyOf :ExtractedRole ;
+    rdfs:label "offering date"@en ;
+    skos:prefLabel "offering date"@en ;
+    skos:altLabel "date" .
+
+xrole:OFFEROR rdf:type owl:ObjectProperty ;
+    rdfs:subPropertyOf :ExtractedRole ;
+    rdfs:label "offeror"@en ;
+    skos:prefLabel "offeror"@en .
+
+xrole:OFFEROR_TOTAL_VALUE rdf:type owl:ObjectProperty ;
+    rdfs:subPropertyOf :ExtractedRole ;
+    rdfs:label "offeror total value"@en ;
+    skos:prefLabel "offeror total value"@en ;
+    skos:altLabel "bid" .
+
+xrole:RECORD_DATE rdf:type owl:ObjectProperty ;
+    rdfs:subPropertyOf :ExtractedRole ;
+    rdfs:label "record date"@en ;
+    skos:prefLabel "record date"@en ;
+    skos:altLabel "date" .
+
+xrole:SELLING_AGENT rdf:type owl:ObjectProperty ;
+    rdfs:subPropertyOf :ExtractedRole ;
+    rdfs:label "selling agent"@en ;
+    skos:prefLabel "selling agent"@en .
+
+xrole:SHARE_PRICE rdf:type owl:ObjectProperty ;
+    rdfs:subPropertyOf :ExtractedRole ;
+    rdfs:label "share price"@en ;
+    skos:prefLabel "share price"@en ;
+    skos:altLabel "price", "stock price" .
+
+xrole:SHARE_QUANTITY rdf:type owl:ObjectProperty ;
+    rdfs:subPropertyOf :ExtractedRole ;
+    rdfs:label "share quantity"@en ;
+    skos:prefLabel "share quantity"@en ;
+    skos:altLabel "quantity", "amount", "shares" .
+
+xrole:UNDERWRITERS rdf:type owl:ObjectProperty ;
+    rdfs:subPropertyOf :ExtractedRole ;
+    rdfs:label "underwriters"@en ;
+    skos:prefLabel "underwriters"@en .
+
+xrole:COMPANY rdf:type owl:ObjectProperty ;
+    rdfs:subPropertyOf :ExtractedRole ;
+    rdfs:label "company"@en ;
+    skos:prefLabel "company"@en ;
+    skos:altLabel "firm", "organization", "org", "organisation" .
+
+xrole:SPLIT_RATIO rdf:type owl:ObjectProperty ;
+    rdfs:subPropertyOf :ExtractedRole ;
+    rdfs:label "split ratio"@en ;
+    skos:prefLabel "split ratio"@en .
+
+:resolvesTo rdf:type owl:ObjectProperty ;
+            rdfs:subPropertyOf owl:topObjectProperty ;
+            rdfs:domain :ExtractedEntity ;
+            rdfs:comment "An extracted entity resolves to some known structured resource, often but not always an OrgEntity. The range is always some BLUE resource." 
+.
+
+#
+# Ontology: red/document - unstructured data
+#
+
+:Document rdf:type owl:Class ;
+    rdfs:label "unstructured document" ; 
+    skos:prefLabel "unstructured document" ;
+    rdfs:comment "A source unstructured document" .
+
+:documentHasEvent rdf:type owl:ObjectProperty ;
+          rdfs:subPropertyOf owl:topObjectProperty ;
+          rdfs:domain :Document ;
+          rdfs:range :ExtractedEvent ;
+          rdfs:comment "We link a source unstructured document to an extracted event." .
