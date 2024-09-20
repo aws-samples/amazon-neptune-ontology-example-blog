@@ -16,3 +16,9 @@ def rdf_close(ff, filename):
     
 def make_uri(name, pfx=NS):
     return URIRef(f"{pfx}/{name}")
+
+def rdf_convert_turtle_nt(src_filename, dest_filename):
+    g = Graph()
+    g.parse(src_filename)
+    g.serialize(destination = dest_filename, format='nt')
+
