@@ -1,79 +1,68 @@
 # Toronto Machine Learning Summit 2024: Ask the Graph: How Knowledge Graphs Helps Generative AI Models Answer Questions
 
-TODO
-setup
-- create S3 bucket
-- neptune cluster
-- add IAM role - s3 access for neptune cluster
-- AOS domain
-- enable streaming, restart neptune cluster
-- install FTS
-- change perms on notebook: bedrock, s3, comprehend, ...
+## Introduction
 
+This folder contains the demo accompanying the presentation _Ask the Graph: How Knowledge Graphs Helps Generative AI Models Answer Questions_ presented at the Toronto Machine Learning Summit 2024 (<https://www.torontomachinelearning.com/speakers/#agenda>). It also provides the code sample for a blog post on the red-yellow-green pattern for combining unstructured and structured data for generative AI QA.
 
-Then in notebook open a terminal and go a git clone. Folders will be
+We support natural language questions of an RDF graph using the following solution: TODO image and wording.
 
-xskg/README, 4 notebooks, 3 pythons
-xskg/source/rdf
+Here is the data model: TODO image and wording
 
-
-
-
-
-This folder contains the demo accompanying the presentation _Ask the Graph: How Knowledge Graphs Helps Generative AI Models Answer Questions_ presented at the Toronto Machine Learning Summit 2024 (<https://www.torontomachinelearning.com/speakers/#agenda>). 
-
-This is actually two demos in one. We show how to ask natural language questions of a knowledge graph represented as either Labeled Property Graph (LPG) or Resource Description Framework (RDF). Both approaches use Amazon Neptune.
-
-The following figure shows the LPG architecture. We use a Neptune Analytics graph. We use a SageMaker notebook as a client to populate the graph and run natural language queries of it. We use Comprehend for entity extraction, and Anthropic and Titan LLMs via Bedrock for Q&A and embeddings. 
-
-TODO figure
-
-The next figure shows the RDF architecture. We use a Neptune database cluster in conjunction with an Amazon OpenSearch Service domain. We use a SageMaker notebook as a client to populate the graph and run natural language queries of it. We use Comprehend for entity extraction, and Anthropic and Titan LLMs via Bedrock for Q&A and embeddings. The RDF demo is UNDER CONSTRUCTION. Watch this page for updates.
-
-TODO figure
-
-Here is the data model that the demos use.
-TODO figure. 
-
-Here are instructions to setup the demo.
-
-## Pre-requisites
-
-<details><summary>Click to view/hide this section</summary>
-<p>
-
-
-You require an AWS account with permissions to create Amazon Neptune (<https://aws.amazon.com/neptune>), Amazon Bedrock (<https://aws.amazon.com/bedrock>), Amazon SageMaker (<https://aws.amazon.com/sagemaker>), and Amazon OpenSearch Service (<https://aws.amazon.com/opensearch-service/>) resources.
-
-Provision all resources in either us-east-1 or us-west-2 regions. For simplicity, provision all resources in the same AWS account.
-
-</p>
-</details>
+Here is how we ingest data into the model: TODO image and wording
 
 ## Setup
+To setup this solution, you need an AWS account with permission to create resources such as a Neptune cluster, and OpenSearch Service cluster, S3 bucket, and SageMaker resources. Also select a single region in which to deploy your resources, ensure that Amazon Neptune, Amazon OpenSearch Service, Amazon Sagemaker, and S3 are all available for deployment in said region.
 
-### Common setup
-
-#### Allow Bedrock models
-
-<details><summary>Click to view/hide this section</summary>
-<p>
-
+### Allow Bedrock models
 In your AWS console, open the Bedrock console and request model access for the _Titan Embeddings G1_ and _Claude_ models. For instructions how to request model access, follow <https://docs.aws.amazon.com/bedrock/latest/userguide/model-access.html>.
 
 Check back until both models show as _Access granted_.
 
-![Bedrock model access](../kg_ai_alg/images/bedrock_model_access.png "Bedrock model access").
+![Bedrock model access](../kg_ai_alg/images/bedrock_model_access.png "Bedrock model access"). TODO image
 
-</p>
-</details>
+### Create Amazon Simple Storage Service (S3) Bucket
+Create an Amazon Simple Storage Service (S3) bucket in the same account and region in which you deploy the other resources. This bucket is used to store embeddings produced by Neptune ML model training.
 
-### LPG Demo Setup
+Follow instructions in [https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html](https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html). The bucket may be private and use default encryption. Take note of your bucket name and resource ARN for upcoming deployment steps.
 
-#### Create Neptune Analytics Graph
+### Setup Amazon Neptune Cluster
+Create a Neptune cluster and a notebook instance. One way to setup these resources is using the CloudForamtion template via [https://docs.aws.amazon.com/neptune/latest/userguide/get-started-cfn-create.html](https://docs.aws.amazon.com/neptune/latest/userguide/get-started-cfn-create.html). We recommend using a `NotebookInstanceType` of `ml.t3.medium` or higher.
 
-<details><summary>Click to view/hide this section</summary>
-<p>
+When the CloudFormation stack completes, locate the Neptune cluster and *make note of its VPC and subnets*. You will need these when creating the OpenSearch Service domain to ensure you create resources that can connect to eachother.
+
+![Neptune Connection Items](images/movie_search_neptune_strings.png) TODO image
+
+### Setup Amazon OpenSearch Service Domain
+In the Opensearch Service console, create a new domain as follows;
+- Use standard create.
+- Choose `Dev/test` template.
+- Choose `Domain without standby` with `1-AZ` deployment option.
+- Use version OpenSearch 2.7 or higher.
+- Under `network`, choose the same VPC in which your Neptune cluster is deployed. For subnets, choose one of the subnets under the Neptune cluster.
+- For security group, use a security group allowing inbound access to port 443.
+- Disable fine-grained access control.
+
+Once setup, *make note of the domain endpoint*. You will need it when running through the notebooks.
+
+For more on creating domains, see [https://docs.aws.amazon.com/opensearch-service/latest/developerguide/createupdatedomains.html](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/createupdatedomains.html). 
+
+### Enable Full-Text Search on Amazon Neptune Cluster
+
+TODO
+
+### Modify IAM Role in Notebook Instance 
+
+In the SageMaker console, locate the notebook instance that was created by the Neptune cluster CloudFormation stack. Find its IAM role under `Permissions and encryption` on the details page for the notebook. Select that role and add IAM policies as follows:
+
+![Neptune Notebook Role ARN](images/movie_search_notebook_arn.png) TODO image
+
+- The notebook should already have read access to all S3 buckets. Add write access to the S3 bucket you created above. One way to accomplish this is to add the `AmazonS3FullAccess` managed policy.
+- The notebook should be able to read from and write to your Amazon OpenSearch Service Domain. One way to accomplish this is to add the `AmazonOpenSearchServiceFullAccess` managed policy.
+- TODO: comprehend
+- TODO: bedrock
+- TODO: analytics
+
+### (OPTIONAL) Create Neptune Analytics Graph
 
 In your AWS console, open the Neptune console. In the left menu, select _Graphs_ to create a graph. 
 
@@ -93,68 +82,38 @@ TODO - find the graph endpoint ...
 </p>
 </details>
 
-#### Create Neptune Notebook
+### Use the notebooks
 
-<details><summary>Click to view/hide this section</summary>
-<p>
+From this repository, download the four notebooks and supporting Python source files:
 
+- 0-PrepStructured.ipynb
+- 1-PrepUnstructured.ipynb
+- 2-IngestData.ipynb
+- 3-Query.ipynb
+- ai_helpers.py
+- aos_helpers.py
+- neptune_helpers.py
+- rdf_helpers.py
+- query_helpers.py
 
-Follow instructions in https://docs.aws.amazon.com/neptune-analytics/latest/userguide/create-notebook-cfn.html to create a Sagemaker notebook instance for Neptune Analytics through CloudFormation. On the stack details page provide the following:
-
-- Stack name: *tmls-LPGDemo*
-- GraphEndpoint: enter the endpoint from the *tmls* graph you created above.
-- NotebookName: *tmls-LPG-notebook*
-
-Leave the remaining parameters blank. Navigate through the remaining pages, accepting defaults.
-
-![notebook params](images/na_notebook.png "notebook params").
-
-Wait for the CloudFormation stack to complete. It may take several minutes.
-
-#### Modify Notebook IAM Role
-
-When complete, go the SageMaker console. In the left menu select _Notebook_. Locate your notebook in the main pane. 
-
-![notebook_created](images/sm_notebook.png "notebook created").
-
-Select the notebook to see its configuration. Locate its IAM role. Click on that role to bring it up in the IAM console.
-
-Add two policies to the permissions: 
-
-- *AmazonBedrockFullAccess*, giving the notebook access to invoke Bedrock models for embedding and entity extraction
-
-TODO change
-![change notebook role](images/iam_notebook.png "change notebook role").
-
-If you prefer narrower permissions, create your own policy that restricts S3 writes to only your working bucket and Bedrock invokes to only the Claude and Titan models.
-
-
-#### Get Demo Notebook Files and Begin
-
-TODO ... 
-
-Download the four notebooks from this repository:
-
-- 0-PrepSources.ipynb
-- 1-PopulateGraph.ipynb
-- 2-CreateLlamaIndex.ipynb
-- 3-GraphAlgorithms.ipynb
 
 Back in the SageMaker console, open the Jupyter notebook folder view
 
-![jupyter](images/jupyter.png "jupyter").
+![jupyter](images/jupyter.png "jupyter"). TODO image
 
-In Jupyter, upload the four notebooks should downloaded to your local machine above.
+In Jupyter, upload the above files from your local copy:
 
-![jupyter notebooks upload](images/jupyter_upload.png "jupyter notebooks upload").
+![jupyter notebooks upload](images/jupyter_upload.png "jupyter notebooks upload"). TODO image
 
-Now run through the notebooks! *0-PrepSources.ipynb* is optional, meant mostly to show how we prepared the data. You may skip this as the prepared data is already available publicly.
+In the same folder on the notebook instance, create a file called ```.env``` with the following contents:
 
-</p>
-</details>
+```
+AOS_ENDPOINT_HOST=<your OpenSearch Service domain host>
+S3_BUCKET_NOSLASH=<your S3 bucket and folder (if any). Do not end with a slash>
+GRAPH_IDENTIFIER=<your Neptune Analytics graph identifier (OPTIONAL)>
+```
 
-
-
+Now run through the notebooks! *0-PrepStructured.ipynb* and *1-PrepUnsructured.ipynb* are optional, meant mostly to show how we prepared the data. You may skip these as the prepared data is already available publicly.
 
 ## Cleanup
 
@@ -163,10 +122,14 @@ Now run through the notebooks! *0-PrepSources.ipynb* is optional, meant mostly t
 
 This demo incurs cost. If you are done and wish to avoid further charges:
 
+- Delete the CloudFormation stack you created for the Neptune cluster and notebook instance.
 - Delete the Neptune Analytics graphs. The Neptune console provides an action to delete a graph. Or see <https://docs.aws.amazon.com/neptune-analytics/latest/apiref/API_DeleteGraph.html>. 
 - Stop and remove the Sagemaker notebook instance. For this, delete the CloudFormation stack you created for the notebook. See <https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-delete-stack.html> for instructions how to delete a stack.
 - Remove the S3 bucket. See <https://docs.aws.amazon.com/AmazonS3/latest/userguide/delete-bucket.html>.
-- Terminate the EC2 instance. See <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/terminating-instances.html>.
+- Delete the OpenSearch Service domain you created. You may do this from the Opensearch Service console. Or see [https://awscli.amazonaws.com/v2/documentation/api/2.7.12/reference/opensearch/delete-domain.html](https://awscli.amazonaws.com/v2/documentation/api/2.7.12/reference/opensearch/delete-domain.html). 
+
+## Cost
+This solution incurs cost. Refer to pricing guides for [Neptune](https://aws.amazon.com/neptune/pricing/),[S3](https://aws.amazon.com/s3/pricing/), [OpenSearch Service](https://aws.amazon.com/opensearch-service/pricing/), and [SageMaker](https://aws.amazon.com/sagemaker/pricing/).
 
 </p>
 </details>
