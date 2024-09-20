@@ -79,9 +79,6 @@ It will take a few minutes to create. Wait for the status of the graph to become
 
 TODO - find the graph endpoint ...
 
-</p>
-</details>
-
 ### Use the notebooks
 
 From this repository, download the four notebooks and supporting Python source files:
@@ -109,7 +106,7 @@ In the same folder on the notebook instance, create a file called ```.env``` wit
 
 ```
 AOS_ENDPOINT_HOST=<your OpenSearch Service domain host>
-S3_BUCKET_NOSLASH=<your S3 bucket and folder (if any). Do not end with a slash>
+S3_BUCKET_NOSLASH=<your S3 bucket and folder (if any). Do NOT end with a slash>
 GRAPH_IDENTIFIER=<your Neptune Analytics graph identifier (OPTIONAL)>
 ```
 
@@ -117,19 +114,12 @@ Now run through the notebooks! *0-PrepStructured.ipynb* and *1-PrepUnsructured.i
 
 ## Cleanup
 
-<details><summary>Click to view/hide this section</summary>
-<p>
-
 This demo incurs cost. If you are done and wish to avoid further charges:
 
-- Delete the CloudFormation stack you created for the Neptune cluster and notebook instance.
+- Delete the CloudFormation stack you created for the Neptune cluster and notebook instance. See <https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-delete-stack.html> for instructions how to delete a stack.
 - Delete the Neptune Analytics graphs. The Neptune console provides an action to delete a graph. Or see <https://docs.aws.amazon.com/neptune-analytics/latest/apiref/API_DeleteGraph.html>. 
-- Stop and remove the Sagemaker notebook instance. For this, delete the CloudFormation stack you created for the notebook. See <https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-delete-stack.html> for instructions how to delete a stack.
 - Remove the S3 bucket. See <https://docs.aws.amazon.com/AmazonS3/latest/userguide/delete-bucket.html>.
 - Delete the OpenSearch Service domain you created. You may do this from the Opensearch Service console. Or see [https://awscli.amazonaws.com/v2/documentation/api/2.7.12/reference/opensearch/delete-domain.html](https://awscli.amazonaws.com/v2/documentation/api/2.7.12/reference/opensearch/delete-domain.html). 
 
 ## Cost
-This solution incurs cost. Refer to pricing guides for [Neptune](https://aws.amazon.com/neptune/pricing/),[S3](https://aws.amazon.com/s3/pricing/), [OpenSearch Service](https://aws.amazon.com/opensearch-service/pricing/), and [SageMaker](https://aws.amazon.com/sagemaker/pricing/).
-
-</p>
-</details>
+This solution incurs cost. Refer to pricing guides for [Neptune](https://aws.amazon.com/neptune/pricing/), [S3](https://aws.amazon.com/s3/pricing/), [OpenSearch Service](https://aws.amazon.com/opensearch-service/pricing/), and [SageMaker](https://aws.amazon.com/sagemaker/pricing/).
