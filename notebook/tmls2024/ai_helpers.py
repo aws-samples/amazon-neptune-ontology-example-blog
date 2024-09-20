@@ -4,8 +4,6 @@ from pathlib import Path
 
 # Setup LLMs and bedrock client
 # Modify this if you need
-# Langchain needs 
-# pip install -qU langchain-text-splitters langchain-community unstructured
 
 QA_MODEL="anthropic.claude-3-sonnet-20240229-v1:0"
 EMBED_MODEL="amazon.titan-embed-text-v1"
