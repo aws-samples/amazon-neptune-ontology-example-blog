@@ -1,8 +1,12 @@
 import aos_helpers as aosh
 import neptune_helpers as nh
 import ai_helpers as aih
+import rdf_helpers as rh
 import json
+import rdf_helpers as rh
+from rdflib import Graph, Literal, RDF, RDFS, URIRef, XSD, OWL, BNode, DC, SKOS
 
+CAT_MAIN="main"
 CAT_DOC="document"
 CAT_YELLOW_EVENT="yellow-event"
 CAT_YELLOW_ENTITY="yellow-entity"
@@ -11,14 +15,20 @@ CAT_REL="rel"
 CAT_CONCEPT="concept"
 CAT_BLUE_ENTITY="blue"
 CAT_OTHER="other"
-CAT_PATHS="paths_s_p_o"
+CAT_PATHS="paths"
 CAT_DEBUG="_debug"
 
-'''
-TODO:
-- inference classes
-- ask a question about an industry buying a startup. So I need to connect industry to company ...
-'''
+CAT_DEBUG_DESC_HIT_LIST="desc_hit_list"
+CAT_DEBUG_COMP_ENTS="comp_ents"
+CAT_DEBUG_LLM_ENTS="llm_ents"
+CAT_DEBUG_XTERMS="xterms"
+
+CONN_SESSION="session"
+CONN_NEPTUNE="neptune_conn"
+CONN_AOS="aos_client"
+CONN_BEDROCK="bedrock_client"
+CONN_COMPREHEND="comprehend_client"
+CONN_NA="na_client"
 
 '''
 This module uses the other helpers to help answer, and present the results of, a question.
@@ -26,80 +36,73 @@ We break this into steps for explanatory purposes. The notebook shows one way to
 '''
 
 # will store results as we find them
-def create_results():
+def create_results(question):
     return {
-        CAT_DOC:{},
-        CAT_YELLOW_EVENT:{},
-        CAT_YELLOW_ENTITY:{},
-        CAT_BLUE_ENTITY:{},
-        CAT_CLASS:{},
-        CAT_REL: {},
-        CAT_CONCEPT: {},
-        CAT_OTHER: {},
-        CAT_PATHS: [],
-        CAT_DEBUG:{}
-    }
-
-# function create create a wallet for all the connections
-def make_client(session, neptune_conn, aos_client, bedrock_client, comprehend_client):
-    return {
-        'session': session,
-        'neptune_conn': neptune_conn,
-        'aos_client': aos_client,
-        'bedrock_client': bedrock_client,
-        'comprehend_client': comprehend_client
+        CAT_MAIN: {
+            'question': question,
+            CAT_DOC:{},
+            CAT_YELLOW_EVENT:{},
+            CAT_YELLOW_ENTITY:{},
+            CAT_BLUE_ENTITY:{},
+            CAT_CLASS:{},
+            CAT_REL: {},
+            CAT_CONCEPT: {},
+            CAT_OTHER: {},
+            CAT_PATHS: []
+        }, 
+        CAT_DEBUG:{
+            CAT_DEBUG_DESC_HIT_LIST: {}
+        }
     }
 
 # render those results as a json file
-def render_results_json_file(json_fname, results):
-    with open(json_fname, 'w') as f: 
+def render_results_json_file(fname, results):
+    with open(fname, 'w') as f: 
         f.write(json.dumps(results, indent=4))
 
-# render those results as an HTML file
-def render_results_html(html_fname, results):
+# load json from file - just in case I need to revive it for more use
+def revive_results_json_file(fname, results):
+    with open(fname, 'r') as f: 
+        return f.read(json.dumps(results, indent=4))
+
+# render those results as plantuml
+# Not yet available
+def render_results_plantuml(fname, results):
     pass
 
-# render those results as a PNG graph diagram
-def render_results_graphviz(png_fname, results):
-    pass
-
-# render those results as a PNG graph diagram
+# render those results as an LLM summary
 # this is the lone RAG case
-def render_results_llm_summary(client, summary_fname, question, results):
-    with open(summary_fname, 'w') as f: 
-        f.write(aih.summarize_graph_results(client['bedrock_client'], question, results))
+def render_results_llm_summary(client, fname, question, results):
+    with open(fname, 'w') as f: 
+        f.write(aih.summarize_graph_results(client[CONN_BEDROCK], question, results[CAT_MAIN]))
 
+# Add a relationship/path discovered in Neptune query.
+def _add_path(results, rec, s, p, pl, o, direction):
+    # add object relationship
+    if not(rec is None) :
+        if not(p in rec):
+            rec[p] = []
+        rec[p].append({'p': p, 'relLabels': pl, 'value': o, 'direction': direction}) 
+                        
 # private function to run a describe and save objects to results
-'''
-in results I need a path:
-path: s, p, o, p2, o2, ...
-here I can directly link them
-'''
+# it returns the color of the entity, or None if the entity is not found
 DESCRIBE_LIMIT=1000
+URI_ATTRIBS=['types', 'typeLabels', 'typeSuperClasses', 'labels', 'uriSuperClasses', 
+             'uriSuperProperties']
+ 
 def _describe(client, results, uri, meta):
-    # describe only once
-    if not('desc_hit_list') in results[CAT_DEBUG]:
-        results[CAT_DEBUG]['desc_hit_list']={}
-        
-    if uri in results[CAT_DEBUG]['desc_hit_list']:
-        return results[CAT_DEBUG]['desc_hit_list'][uri]
+    if uri in results[CAT_DEBUG][CAT_DEBUG_DESC_HIT_LIST]:
+        return
     
-    ret = nh.describe(client['session'], client['neptune_conn'], uri, DESCRIBE_LIMIT)
+    ret = nh.describe(client[CONN_SESSION], client[CONN_NEPTUNE], uri, DESCRIBE_LIMIT)
     tbl=nh.make_select_table(ret)
-    
     if len(tbl) == 0:
         return None
 
     cat=None
     rec={
         'uri': None,
-        'cat': None,
-        'types': None,
-        'typeLabels': None,
-        'typeSuperClasses': None,
-        'labels': None,
-        'uriSuperClasses': None, 
-        'uriSuperProperties': None
+        'cat': None
     }
     
     for row in tbl:
@@ -110,17 +113,14 @@ def _describe(client, results, uri, meta):
             else:
                 cat = row['cat']['value']
                 
-            results[CAT_DEBUG]['desc_hit_list'][uri]=cat   
-            if not(uri in results[cat]):
+            results[CAT_DEBUG][CAT_DEBUG_DESC_HIT_LIST][uri]=cat   
+            if not(uri in results[CAT_MAIN][cat]):
                 rec['uri'] = row['uri']['value']
                 rec['cat'] = cat
-                rec['types'] = row['types']['value'] if 'types' in row else ""
-                rec['typeLabels'] = row['typeLabels']['value'] if 'typeLabels' in row else ""
-                rec['typeSuperClasses'] = row['typeSuperClasses']['value'] if 'typeSuperClasses' in row else ""
-                rec['labels'] = row['labels']['value'] if 'labels' in row else ""
-                rec['uriSuperClasses'] = row['uriSuperClasses']['value'] if 'uriSuperClasses' in row else ""
-                rec['uriSuperProperties'] = row['uriSuperProperties']['value'] if 'uriSuperProperties' in row else ""
-                results[cat][uri] = {
+                for u in URI_ATTRIBS:
+                    rec[u] = row[u]['value'] if u in row else ""
+
+                results[CAT_MAIN][cat][uri] = {
                     'meta': meta,
                     'record': rec
                 }
@@ -130,19 +130,9 @@ def _describe(client, results, uri, meta):
         pl=row['pLabels']['value'] if 'pLabels' in row else ""
         o=row['o']['value']
         is_uri=row['o']['type']=='uri'
-        direction=row['direction']['value']
-        if not(p in rec):
-            rec[p] = []
-        rec[p].append({'p': p, 'relLabels': pl, 'value': o, 'direction': direction}) 
-        
-        # also make paths of direct connections
         if is_uri:
-            path=[uri, p, o] if dir=="out" else [o, p, uri]
-            if not("distinct_paths") in results[CAT_DEBUG]:
-                results[CAT_DEBUG]["distinct_paths"]={}
-            if not(str(path) in results[CAT_DEBUG]["distinct_paths"]):
-                results[CAT_DEBUG]["distinct_paths"][str(path)]='Y'
-                results[CAT_PATHS].append(path)
+            direction=row['direction']['value']
+            _add_path(results, rec, uri, p, pl, o, direction)
                        
     return cat
 
@@ -154,10 +144,10 @@ Store in results
 CHUNK_CUTOFF=0.66
 def find_chunks(client, results, question):
     # use ai helper to make embedding of question
-    search_vector=aih.make_embedding(client['bedrock_client'], question)
+    search_vector=aih.make_embedding(client[CONN_BEDROCK], question)
     
     # use aos helper to find chunks like the embedding
-    ret=aosh.find_chunks(client['aos_client'], search_vector)
+    ret=aosh.find_chunks(client[CONN_AOS], search_vector)
     
     # organize AOS result and add to our query results    
     distinct_docs={}
@@ -166,7 +156,7 @@ def find_chunks(client, results, question):
         if h['_score'] >= CHUNK_CUTOFF:
             doc_uri = h['_source']['graph_doc_uri']
 
-            if not (doc_uri in results[CAT_DOC]):
+            if not (doc_uri in results[CAT_MAIN][CAT_DOC]):
                 doc_meta = {
                     'find_order': 1,
                     'doc_uri': doc_uri, 
@@ -183,10 +173,10 @@ Extract entities from question using comprehend and an LLM.
 The results are saved to the results dictionary.
 '''
 def extract_from_question(client, results, question):
-    comp_ents=aih.extract_comprehend_entities_from_q(client['comprehend_client'], question) 
-    llm_ents=aih.analyze_question(client['bedrock_client'], question)
-    results[CAT_DEBUG]['comp_ents']=comp_ents
-    results[CAT_DEBUG]['llm_ents']=llm_ents
+    comp_ents=aih.extract_comprehend_entities_from_q(client[CONN_COMPREHEND], question) 
+    llm_ents=aih.analyze_question(client[CONN_BEDROCK], question)
+    results[CAT_DEBUG][CAT_DEBUG_COMP_ENTS]=comp_ents
+    results[CAT_DEBUG][CAT_DEBUG_LLM_ENTS]=llm_ents
     
     # a bit of validation and repair of LLM response
     if not('entities' in llm_ents):
@@ -198,7 +188,6 @@ def extract_from_question(client, results, question):
     if not('intent' in llm_ents):
         llm_ents['intent']=[]
            
-
 '''
 Private utility to call AOS helper to get resources in Neptune index with similar labels.
 An additional filter on type.
@@ -213,7 +202,7 @@ FILTER_ALL=None
 SCORE_PER_MAX_CUTOFF=0.9
 def _find_entities_by_label(client, labels, additional_filter=None):   
     matches=[]
-    ret=aosh.find_entities_by_label(client['aos_client'], labels, additional_filter)
+    ret=aosh.find_entities_by_label(client[CONN_AOS], labels, additional_filter)
     max_score=ret['hits']['max_score']
     for r in ret['hits']['hits']:
         score=r['_score']
@@ -240,8 +229,8 @@ But for an example of how to do this in Neptune, look at neptune_helpers.find_re
 '''
 def resolve_entity_extraction_results(client, results):
     
-    llm_ents=results[CAT_DEBUG]['llm_ents']
-    comp_ents=results[CAT_DEBUG]['comp_ents']
+    llm_ents=results[CAT_DEBUG][CAT_DEBUG_LLM_ENTS]
+    comp_ents=results[CAT_DEBUG][CAT_DEBUG_COMP_ENTS]
     
     #
     # 1 - combine Comprehend and LLM results: entities, types, predicates
@@ -336,7 +325,7 @@ def resolve_entity_extraction_results(client, results):
     resolve_each('types', [FILTER_BY_CLASS, FILTER_BY_REL, FILTER_ALL])
     resolve_each('entities', [FILTER_BY_NON_EXTRACTED], 'blue')
     resolve_each('entities', [FILTER_BY_EXTRACTED_ENTITY, FILTER_BY_EXTRACTED_EVENT, FILTER_ALL], 'yellow')
-    results[CAT_DEBUG]['xterms']=xterms
+    results[CAT_DEBUG][CAT_DEBUG_XTERMS]=xterms
 
 '''
 Function check resolved entities exist in Neptune. 
@@ -347,7 +336,7 @@ It does not attempt to connect anything. That comes later.
 '''
 def describe_resolved_graph_entities(client, results):
     
-    xterms=results[CAT_DEBUG]['xterms']
+    xterms=results[CAT_DEBUG][CAT_DEBUG_XTERMS]
     for e in xterms['entities']:
         uris=xterms['entities'][e]['uris']
         blue=xterms['entities'][e]['blue'] if 'blue' in xterms['entities'][e] else []
@@ -355,8 +344,7 @@ def describe_resolved_graph_entities(client, results):
         for u in list(set(uris+blue+yellow)):
             cat=_describe(client, results, u, {'source': 'extract', 'find_order': 1, 'entities': [], 'predicates': []})
             if not(cat is None):
-                print(f"{u}*{cat}*")
-                results[cat][u]['meta']['entities'].append(e)
+                results[CAT_MAIN][cat][u]['meta']['entities'].append(e)
                                       
     # predicates
     for e in xterms['predicates']:
@@ -364,26 +352,26 @@ def describe_resolved_graph_entities(client, results):
         for u in list(set(uris)):
             cat=_describe(client, results, u, {'source': 'extract', 'find_order': 1, 'entities': [], 'predicates': []})
             if not(cat is None):
-                print(f"{u}*{cat}*")
-                results[cat][u]['meta']['predicates'].append(e)
-
-'''
-Take to/from each resource collected to far, unless we have already visited it.
-One hop is sufficient.
-We'll handle the yellow event->entity specially.
-
-Then try to build the connect paths asked for.
-'''
+                results[CAT_MAIN][cat][u]['meta']['predicates'].append(e)
+            
 def connect(client, results):
-    pass 
-
+    xterms=results[CAT_DEBUG][CAT_DEBUG_XTERMS]
+    for e in xterms['entities']:
+        uris1=xterms['entities'][e]['uris']+xterms['entities'][e]['blue']+xterms['entities'][e]['yellow']
+        for c in xterms['entities'][e]['connects_op']:
+            othere=c[0]
+            pred=c[1] # dont care; dont use
+            uris2=xterms['entities'][othere]['uris']+xterms['entities'][othere]['blue']+xterms['entities'][othere]['yellow']            
+            connect_ret=nh.connect_resources(client[CONN_NA], client[CONN_NEPTUNE], uris1, uris2)
+            results[CAT_MAIN][CAT_PATHS].append(connect_ret)
+            
 '''
 One function that brings everything togther.
-It requires you to make the client first: make_client
+It requires you to make the client first
 When it completes, you can use the render() functions to render the results
 '''
-def answer_question(client, question):
-    results=create_results()
+def answer_question(client, question, answer_level=1):
+    results=create_results(question)
     print("Chunking")
     find_chunks(client, results, question)
     print("Extracting")
@@ -392,7 +380,9 @@ def answer_question(client, question):
     resolve_entity_extraction_results(client, results)
     print("Describing")
     describe_resolved_graph_entities(client, results)
-    print("Connecting")
-    connect(client, results)
+    if answer_level > 0:
+        print("Connecting")
+        connect(client, results)
     print("Done. Use render() functions to render result")
     return results
+    
