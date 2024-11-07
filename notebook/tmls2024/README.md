@@ -18,7 +18,7 @@ In your AWS console, open the Bedrock console and request model access for the _
 
 Check back until both models show as _Access granted_.
 
-![Bedrock model access](../kg_ai_alg/images/bedrock_model_access.png "Bedrock model access"). TODO image
+![Bedrock model access](images/bedrock_model_access.png "Bedrock model access"). 
 
 ### Create Amazon Simple Storage Service (S3) Bucket
 Create an Amazon Simple Storage Service (S3) bucket in the same account and region in which you deploy the other resources. This bucket is used to store embeddings produced by Neptune ML model training.
@@ -30,7 +30,7 @@ Create a Neptune cluster and a notebook instance. One way to setup these resourc
 
 When the CloudFormation stack completes, locate the Neptune cluster and *make note of its VPC and subnets*. You will need these when creating the OpenSearch Service domain to ensure you create resources that can connect to eachother.
 
-![Neptune Connection Items](images/movie_search_neptune_strings.png) TODO image
+![Neptune Connection Items](images/neptune_strings.png) TODO borrow from movie search
 
 ### Setup Amazon OpenSearch Service Domain
 In the Opensearch Service console, create a new domain as follows;
@@ -54,7 +54,7 @@ TODO
 
 In the SageMaker console, locate the notebook instance that was created by the Neptune cluster CloudFormation stack. Find its IAM role under `Permissions and encryption` on the details page for the notebook. Select that role and add IAM policies as follows:
 
-![Neptune Notebook Role ARN](images/movie_search_notebook_arn.png) TODO image
+![Neptune Notebook Role ARN](images/notebook_arn.png) TODO image from movie search
 
 - The notebook should already have read access to all S3 buckets. Add write access to the S3 bucket you created above. One way to accomplish this is to add the `AmazonS3FullAccess` managed policy.
 - The notebook should be able to read from and write to your Amazon OpenSearch Service Domain. One way to accomplish this is to add the `AmazonOpenSearchServiceFullAccess` managed policy.
@@ -92,7 +92,6 @@ From this repository, download the four notebooks and supporting Python source f
 - neptune_helpers.py
 - rdf_helpers.py
 - query_helpers.py
-
 
 Back in the SageMaker console, open the Jupyter notebook folder view
 
