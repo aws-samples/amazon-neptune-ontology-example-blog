@@ -148,15 +148,6 @@ It will take a few minutes to create. Wait for the status of the graph to become
 <details><summary>Click to view/hide this section</summary>
 <p>
 
-We draw structured data from CSV files that are sourced from DBPedia. In notebook [0-PrepStructured.ipynb](0-PrepStructured.ipynb), we show how to build from this source RDF data whose structure follows the graph model. 
-
-Unstructured text sources require more elaborate processing. In [1-PrepUnstructured.ipynb](1-PrepUnstructured.ipynb), we demonstrate to to chunk the press releases and create their embeddings, how to perform the entity extraction, and how to perform the entity resolution. 
-
-Additionally, a knowledge graph modeling specialist prepares an ontology and taxonomy (key modeling artifacts whose importance we discuss later). We bulk load them into the Neptune database in [2-IngestData.ipynb](2-IngestData.ipynb).
-
-We stage the RDF data in an Amazon Simple Storage Service (Amazon S3) bucket. In notebook 2-IngestData.ipynb, we bulk load it into the Neptune database. In Neptune, we enable the full-text search feature, which graphs data to the OpenSearch Service domain, allowing us to find graph data there using lexical search.
-
-
 From this repository, download the four notebooks and supporting Python source files:
 
 - 0-PrepStructured.ipynb
@@ -168,14 +159,8 @@ From this repository, download the four notebooks and supporting Python source f
 - neptune_helpers.py
 - rdf_helpers.py
 - query_helpers.py
-
-Back in the SageMaker console, open the Jupyter notebook folder view
-
-![jupyter](images/jupyter.png "jupyter"). TODO image
-
-In Jupyter, upload the above files from your local copy:
-
-![jupyter notebooks upload](images/jupyter_upload.png "jupyter notebooks upload"). TODO image
+  
+Navigate to the SageMaker console, locate the notebook instance that was created, and select *Open Jupyter Labs* or *Open Jupyter*. Jupyter opens in a new browser tab. In the Jupyter folder view, upload the above files 
 
 In the same folder on the notebook instance, create a file called ```.env``` with the following contents:
 
@@ -185,8 +170,7 @@ S3_BUCKET_NOSLASH=<your S3 bucket and folder (if any). Do NOT end with a slash>
 GRAPH_IDENTIFIER=<your Neptune Analytics graph identifier (OPTIONAL)>
 ```
 
-Now run through the notebooks! *0-PrepStructured.ipynb* and *1-PrepUnsructured.ipynb* are optional, meant mostly to show how we prepared the data. You may skip these as the prepared data is already available publicly.
-
+Now run through the notebooks! ```0-PrepStructured.ipynb``` and ```1-PrepUnsructured.ipynb``` are optional, meant mostly to show how we prepared the data. You may skip these as the prepared data is already available publicly. Run through ```2-IngestData.ipynb``` and ```3-Query.ipynb```, following instruction in the notebook.
 
 </p>
 </details>
@@ -197,7 +181,7 @@ Now run through the notebooks! *0-PrepStructured.ipynb* and *1-PrepUnsructured.i
 
 
 
-This demo incurs cost. If you are done and wish to avoid further charges:
+If you are done and wish to avoid further charges, remove the solution as follows:
 
 - Delete the CloudFormation stack you created for the Neptune cluster and notebook instance. See <https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-delete-stack.html> for instructions how to delete a stack.
 - Delete the Neptune Analytics graphs. The Neptune console provides an action to delete a graph. Or see <https://docs.aws.amazon.com/neptune-analytics/latest/apiref/API_DeleteGraph.html>. 
