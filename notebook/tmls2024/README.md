@@ -2,39 +2,69 @@
 
 ## Introduction
 
-This folder contains the demo accompanying the presentation _Ask the Graph: How Knowledge Graphs Helps Generative AI Models Answer Questions_ presented at the Toronto Machine Learning Summit 2024 (<https://www.torontomachinelearning.com/speakers/#agenda>). It also provides the code sample for a blog post on modeling a knowledge graph in Amazon Neptune (https://aws.amazon.com/neptune/) for generative AI-driven question-and-answer (Q&A). 
+This folder contains the demo accompanying the presentation _Ask the Graph: How Knowledge Graphs Helps Generative AI Models Answer Questions_ presented at the Toronto Machine Learning Summit 2024 (<https://www.torontomachinelearning.com/speakers/#agenda>). 
 
-Neptune supports the two leading graph representations: [Resource Description Framework (RDF)](https://www.w3.org/RDF/) and [Labeled Property Graph](https://tinkerpop.apache.org/). This code sample focuses on RDF. We show how to build an RDF knowledge graph in Neptune that can answer natural language questions about organizations. Additionally, we demonstrate the *extreme searchability* of the graph. We design the graph so that we can find resources and discover their relationships with simple templated queries that allow fuzzy match and the use of alternative names. That extreme searchability is a necessary ingredient for answering natural language questions. Putting aside Q&A, extreme searchability is beneficial in its own right.
+It also provides the code sample for upcoming post in the AWS Database Blog *Modeling a knowledge graph in Amazon Neptune for generative AI-driven question-and-answer (Q&A)*. 
+
+Neptune supports the two leading graph representations: [Resource Description Framework (RDF)](https://www.w3.org/RDF/) and [Labeled Property Graph](https://tinkerpop.apache.org/). This code sample focuses on RDF. We show how to build an RDF knowledge graph in Amazon Neptune ((https://aws.amazon.com/neptune/) that, with help from a Large Language Model (LLM), can answer natural language questions about organizations. Additionally, we demonstrate the *extreme searchability* of the graph. We design the graph so that we can find resources and discover their relationships with simple templated queries that allow fuzzy match and the use of alternative names. That extreme searchability is a necessary ingredient for answering natural language questions. Putting aside Q&A, extreme searchability is beneficial in its own right.
 
 ## The solution in three diagrams
+<details><summary>Click to view/hide this section</summary>
+<p>
+
+
 In this section, we depict the solution you will build from this repo. The first shows how a user asks a question that is answered by the knowledge graph. 
 
-![XSKG solution](images/xskg_overall.png "Overall solution"). 
+![Overall solution](images/xskg_overall.png "Overall solution"). 
 
 The solution uses the following AWS services:
 
-- Amazon Neptune to host the RDF knowledge graph
-- Optionally, a Neptune Analytics graph, enabling you to run analytical queries and graph algorithms on the data to further research the question.
-- An Amazon OpenSearch Service domain as a search index. It allows you to find press releases using semantic search based on vector embedding similarity. It also provides powerful lexical search of the graph data in Neptune. Both capabilities are critical to answering natural language questions.
-- Amazon Bedrock to invoke LLMs to perform entity extraction and embedding creation.
-- An Amazon SageMaker notebook instance, which acts as a test client to prepare and load the graph data, as well as to ask questions and make follow-up queries to further research the question.
-- Neptune Graph Explorer, a low-code visualization UI to explore the graph. You can find resources related to the question and discover additional relationships.
+- Amazon Neptune as the RDF knowledge graph database.
+- Optionally, a [Neptune Analytics](https://docs.aws.amazon.com/neptune-analytics/latest/userguide/what-is-neptune-analytics.html) graph, enabling you to run analytical queries and graph algorithms on the data to further research the question.
+- An [Amazon OpenSearch Service](https://aws.amazon.com/opensearch-service/) domain as a search index. It allows you to find unstructured data (in our case, press releases) using semantic search based on vector embedding similarity. It also provides powerful lexical search of the graph data in the Neptune knowledge graph. Both capabilities are critical to answering natural language questions.
+- [Amazon Bedrock](https://aws.amazon.com/bedrock/) to invoke LLMs to perform entity extraction and embedding creation.
+- An [Amazon SageMaker](https://aws.amazon.com/sagemaker/) notebook instance, which acts as a test client to prepare and load the graph data, as well as to ask questions and make follow-up queries to further research the question.
+- [Neptune Graph Explorer](https://docs.aws.amazon.com/neptune/latest/userguide/visualization-graph-explorer.html), a low-code visualization UI to explore the graph. You can find resources related to the question and discover additional relationships.
+
+Here is our graph data model. 
+
+![Data model](images/xskg_datamodel.png "Data model"). 
+
+Overall the model describes organizations and their relationships. It incorporates both structured and unstructured data. Unstructured data is a set press releases that discuss noteworthy events (e.g., acqusitions) about organizations.
+
+Resources are shown in three colors: red, yellow, and blue. 
+
+- Red boxes are unstructured data. A ```Document``` is a press release. It has provenance (who did what and when to produce the document) associated with it. We do not keep the text of the document in the graph. Rather, in the OpenSearch Service we maintain a vector embedding index allowing the user to find documents using semantic similarity based on vector distance. In that index, we break the document into chunks. We link those chunks to the URI of the document in the graph.
+- Blue boxes are structured data. We represent an organization and its relationships to products, services, people, locations, industries, and to other organizations. This part of the graph carefully follows an ontology and is built from structured sources like [DBPedia](https://www.dbpedia.org/). Significantly, the part is NOT built from unstructured data and can live without such data. (This is an important point; many discussions of knowledge graph paired with generative AI emphasize unstructured data and underplay the importance of structured data.) Resources here have *rich naming*. Each resource has preferred and alternate names and URIs; this gives us many terms to search a resource. (We also maintain a lexical index of this data in OpenSearch service, making it even more searchable.) The blue part also has an industry taxonomy: a hierarchy of industries that we can link organizations to.
+- Yellow boxes bridge the gap between red and blue. If an organization is mentioned in a press release, how can we link it to the organizational resource in the blue part of the graph? From each press release we extract (using AI-powered entity extraction) entities and events that are mentioned. We link the document (red box) to an extracted event (yellow box). We link the extracted event (e.g., a corporate acquisition) to the extracted entities (e.g., an organization) who play a role (e.g., an investee) in the event. Finally, for each extracted entity (yellow), we attempt to resolve that entity (using a ```resolvesTo``` relationship) to a blue resource. We'll get help from the LLM for that resolution.
+
+If you would like to read more about the model, refer to the above-mentioned talk and blog post.
+
+The last diagram in this section shows how we ingest source data. 
+
+![Data ingest](images/xskg_ingest.png "Data ingest"). 
+
+The three sources of data are structured, unstructured text sources (the press releases), and an ontology and taxonomy designed by a knowledge graph data specialist.
+
+We draw structured data from CSV files that are sourced from DBPedia. In notebook 0-PrepStructured.ipynb, we show how to build from this source RDF data whose structure follows the graph model. 
+
+Unstructured text sources require more elaborate processing. In 1-PrepUnstructured.ipynb, we demonstrate to to chunk the press releases and create their embeddings, how to perform the entity extraction, and how to perform the entity resolution. 
+
+Additionally, a knowledge graph modeling specialist prepares an ontology and taxonomy (key modeling artifacts whose importance we discuss later). We bulk load them into the Neptune database in 2-IngestData.ipynb.
+
+We stage the RDF data in an Amazon Simple Storage Service (Amazon S3) bucket. In notebook 2-IngestData.ipynb, we bulk load it into the Neptune database. In Neptune, we enable the full-text search feature, which graphs data to the OpenSearch Service domain, allowing us to find graph data there using lexical search.
+
+Optionally, we load the same graph data into a Neptune Analytics graph, enabling us to discover paths and perform further analytics of the data as part of our research of the question.
 
 
-<img width="301" alt="image" src="https://github.com/user-attachments/assets/e2a5fb75-126a-40e1-9c60-5a14b09c4c42">
-
-This folder contains the demo accompanying the presentation _Ask the Graph: How Knowledge Graphs Helps Generative AI Models Answer 
-
-We can find resources with generic queries ... in it easily, without having We can find resources in the graph through simple queries various ways to query the graph directly to find content in it. 
-
-
-We support natural language questions of an RDF graph using the following solution: TODO image and wording.
-
-Here is the data model: TODO image and wording
-
-Here is how we ingest data into the model: TODO image and wording
+</p>
+</details>
 
 ## Setup
+<details><summary>Click to view/hide this section</summary>
+<p>
+
+
 To setup this solution, you need an AWS account with permission to create resources such as a Neptune cluster, and OpenSearch Service cluster, S3 bucket, and SageMaker resources. Also select a single region in which to deploy your resources, ensure that Amazon Neptune, Amazon OpenSearch Service, Amazon Sagemaker, and S3 are all available for deployment in said region.
 
 ### Allow Bedrock models
@@ -103,7 +133,14 @@ It will take a few minutes to create. Wait for the status of the graph to become
 
 TODO - find the graph endpoint ...
 
-### Use the notebooks
+</p>
+</details>
+
+## Run the solution
+<details><summary>Click to view/hide this section</summary>
+<p>
+
+
 
 From this repository, download the four notebooks and supporting Python source files:
 
@@ -135,7 +172,15 @@ GRAPH_IDENTIFIER=<your Neptune Analytics graph identifier (OPTIONAL)>
 
 Now run through the notebooks! *0-PrepStructured.ipynb* and *1-PrepUnsructured.ipynb* are optional, meant mostly to show how we prepared the data. You may skip these as the prepared data is already available publicly.
 
+
+</p>
+</details>
+
 ## Cleanup
+<details><summary>Click to view/hide this section</summary>
+<p>
+
+
 
 This demo incurs cost. If you are done and wish to avoid further charges:
 
@@ -144,5 +189,17 @@ This demo incurs cost. If you are done and wish to avoid further charges:
 - Remove the S3 bucket. See <https://docs.aws.amazon.com/AmazonS3/latest/userguide/delete-bucket.html>.
 - Delete the OpenSearch Service domain you created. You may do this from the Opensearch Service console. Or see [https://awscli.amazonaws.com/v2/documentation/api/2.7.12/reference/opensearch/delete-domain.html](https://awscli.amazonaws.com/v2/documentation/api/2.7.12/reference/opensearch/delete-domain.html). 
 
+
+</p>
+</details>
+
 ## Cost
+<details><summary>Click to view/hide this section</summary>
+<p>
+
+
 This solution incurs cost. Refer to pricing guides for [Neptune](https://aws.amazon.com/neptune/pricing/), [S3](https://aws.amazon.com/s3/pricing/), [OpenSearch Service](https://aws.amazon.com/opensearch-service/pricing/), and [SageMaker](https://aws.amazon.com/sagemaker/pricing/).
+
+
+</p>
+</details>
