@@ -137,9 +137,9 @@ Use the following settings:
 - Setup private endpoint: uncheck
 - Vector search settings: Enable these settings and set dimension to *1536*.
 
-It will take a few minutes to create. Wait for the status of the graph to become *Available*. 
+It will take a few minutes to create. Wait for the status of the graph to become *Available*. Make a note of its graph identifier and endpoint.
 
-TODO - find the graph endpoint ...
+![Neptune Analytics graph](images/na_graph.png) 
 
 </p>
 </details>
