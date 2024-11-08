@@ -2,7 +2,31 @@
 
 ## Introduction
 
-This folder contains the demo accompanying the presentation _Ask the Graph: How Knowledge Graphs Helps Generative AI Models Answer Questions_ presented at the Toronto Machine Learning Summit 2024 (<https://www.torontomachinelearning.com/speakers/#agenda>). It also provides the code sample for a blog post on the red-yellow-green pattern for combining unstructured and structured data for generative AI QA.
+This folder contains the demo accompanying the presentation _Ask the Graph: How Knowledge Graphs Helps Generative AI Models Answer Questions_ presented at the Toronto Machine Learning Summit 2024 (<https://www.torontomachinelearning.com/speakers/#agenda>). It also provides the code sample for a blog post on modeling a knowledge graph in Amazon Neptune (https://aws.amazon.com/neptune/) for generative AI-driven question-and-answer (Q&A). 
+
+Neptune supports the two leading graph representations: [Resource Description Framework (RDF)](https://www.w3.org/RDF/) and [Labeled Property Graph](https://tinkerpop.apache.org/). This code sample focuses on RDF. We show how to build an RDF knowledge graph in Neptune that can answer natural language questions about organizations. Additionally, we demonstrate the *extreme searchability* of the graph. We design the graph so that we can find resources and discover their relationships with simple templated queries that allow fuzzy match and the use of alternative names. That extreme searchability is a necessary ingredient for answering natural language questions. Putting aside Q&A, extreme searchability is beneficial in its own right.
+
+## The solution in three diagrams
+In this section, we depict the solution you will build from this repo. The first shows how a user asks a question that is answered by the knowledge graph. 
+
+![XSKG solution](images/xskg_overall.png "Overall solution"). 
+
+The solution uses the following AWS services:
+
+- Amazon Neptune to host the RDF knowledge graph
+- Optionally, a Neptune Analytics graph, enabling you to run analytical queries and graph algorithms on the data to further research the question.
+- An Amazon OpenSearch Service domain as a search index. It allows you to find press releases using semantic search based on vector embedding similarity. It also provides powerful lexical search of the graph data in Neptune. Both capabilities are critical to answering natural language questions.
+- Amazon Bedrock to invoke LLMs to perform entity extraction and embedding creation.
+- An Amazon SageMaker notebook instance, which acts as a test client to prepare and load the graph data, as well as to ask questions and make follow-up queries to further research the question.
+- Neptune Graph Explorer, a low-code visualization UI to explore the graph. You can find resources related to the question and discover additional relationships.
+
+
+<img width="301" alt="image" src="https://github.com/user-attachments/assets/e2a5fb75-126a-40e1-9c60-5a14b09c4c42">
+
+This folder contains the demo accompanying the presentation _Ask the Graph: How Knowledge Graphs Helps Generative AI Models Answer 
+
+We can find resources with generic queries ... in it easily, without having We can find resources in the graph through simple queries various ways to query the graph directly to find content in it. 
+
 
 We support natural language questions of an RDF graph using the following solution: TODO image and wording.
 
