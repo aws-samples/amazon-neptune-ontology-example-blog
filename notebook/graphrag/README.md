@@ -40,4 +40,3 @@ Here is the RAG process to receive a natural language question and add context t
 - Perform a vector search on chunks of the question. For close-matching chunks, bring in the neighborhood too, including yellow and blue boxes. Also bring back provenance.
 
 Watch this page for a link to a demo of the approach.
-

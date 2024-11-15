@@ -1,0 +1,50 @@
+@prefix : <http://example.org/orgdemo/> .
+#
+# Link industries to SKOS concepts in industry taxonmy
+#
+
+<http://dbpedia.org/resource/Aerospace> :hasConcept <http://example.org/industry/Aerospace> .
+
+<http://dbpedia.org/resource/Artificial_intelligence> :hasConcept <http://example.org/industry/ArtificialIntelligence> .
+
+<http://dbpedia.org/resource/Automotive_industry> :hasConcept <http://example.org/industry/AutomotiveIndustry> .
+
+<http://dbpedia.org/resource/Banking> :hasConcept <http://example.org/industry/Banking> .
+
+<http://dbpedia.org/resource/Cloud_Computing> :hasConcept <http://example.org/industry/CloudComputing> .
+
+<http://dbpedia.org/resource/Cloud_computing> :hasConcept <http://example.org/industry/CloudComputing> .
+
+<http://dbpedia.org/resource/Consulting> :hasConcept <http://example.org/industry/Consulting> .
+
+<http://dbpedia.org/resource/Consumer_electronics> :hasConcept <http://example.org/industry/ConsumerElectronics> .
+
+<http://dbpedia.org/resource/Digital_distribution> :hasConcept <http://example.org/industry/DigitalDistribution> .
+
+<http://dbpedia.org/resource/E-commerce> :hasConcept <http://example.org/industry/ECommerce> .
+
+<http://dbpedia.org/resource/Energy_storage> :hasConcept <http://example.org/industry/EnergyStorage> .
+
+<http://dbpedia.org/resource/Enterprise_software> :hasConcept <http://example.org/industry/EnterpriseSoftware> .
+
+<http://dbpedia.org/resource/Entertainment> :hasConcept <http://example.org/industry/Entertainment> .
+
+<http://dbpedia.org/resource/Grocery_store> :hasConcept <http://example.org/industry/GroceryStore> .
+
+<http://dbpedia.org/resource/Health_food_store> :hasConcept <http://example.org/industry/HealthFoodStore> .
+
+<http://dbpedia.org/resource/Internet> :hasConcept <http://example.org/industry/Internet> .
+
+<http://dbpedia.org/resource/Packaging> :hasConcept <http://example.org/industry/Packaging> .
+
+<http://dbpedia.org/resource/Retail> :hasConcept <http://example.org/industry/Retail> .
+
+<http://dbpedia.org/resource/Self-driving_cars> :hasConcept <http://example.org/industry/SelfDrivingCars> .
+
+<http://dbpedia.org/resource/Supermarket> :hasConcept <http://example.org/industry/Supermarket> .
+
+<http://dbpedia.org/resource/Video_game_industry> :hasConcept <http://example.org/industry/VideoGameIndustry> .
+
+# Link a company to taxonomy
+<http://dbpedia.org/resource/Amazon_(company)>  :hasConcept <http://example.org/industry/BigTech> .
+
