@@ -11,42 +11,32 @@ We demonstrate three Graph RAG patterns.
 
 3. The LLM builds the graph as a network of relationships extracted from unstructured data. To answer the user's question, we query that LLM-driven graph! To try this out, take a look at <https://github.com/aws-samples/amazon-neptune-ontology-example-blog/blob/main/notebook/kg_ai_alg>, particularly <https://github.com/aws-samples/amazon-neptune-ontology-example-blog/blob/main/notebook/kg_ai_alg/2-CreateLlamaIndex.ipynb>.
 
-## Variant: Extrenmely Searchable Graph
+## Variant: Extremely Searchable Graph
 
-In one talk we emphasized the benefit of arranging your knowledge graph to that it is extremely searchable in a generic way while not breaking your existing data. We proposed a model that allows unstructured data as documents, chunks, and extracted triples or facts. This data is linked to your structured data. The next figure shows a deal graph model that aligns with the approach. Red boxes are documents and chunks. Yellow boxes are extracted facts. Blue boxes are existing structured data: companies, persons, deals, etc.
+In a recent talk, we emphasized the benefit of arranging your knowledge graph so that it is extremely searchable in a generic way while not breaking your existing data. We propose a model that allows unstructured data as documents, chunks, and extracted triples or facts. This data is linked to your structured data. The next figure shows a deal graph model that aligns with the approach. Red boxes are documents and chunks. Yellow boxes are extracted facts. Blue boxes are existing structured data: companies, persons, deals, etc.
 
+![Deal model](images/xsmodel.png)
 
+Note the tips:
+- *Provenance*: Include provenance of the document. If a chunk or extracted facts are included in RAG context, it's important to attribute them to their source document. Who is the author, when was it published, what is its URL, which version.
+- *Taxonomy and rich naming*. Besides your own IDs, include alternate and related labels and well-known URIs (such as from DBPedia) for each resource. This makes resources easier to find.
+- *Entity resolution*: Use rich naming to help link extracted entities to resources in your graph. Ask the extraction service (e.g., an LLM model) to provide alternate names and well-known URIs for extracted entities. Compare these to the names and URIs of your resources.
+
+This model can be mapped to either labeled property graph (LPG) or RDF.
+
+Next, the following figure shows the main components used to help a chatbot answer questions.
+
+![Deal query](images/xsquery.png)
+
+- It uses LLM models via Amazon Bedrock for creating embeddings and extracting entities. As an alternative, Amazon Comprehend can be used for entity extraction.
+- The knowledge graph is built on Amazon Neptune. For LPG, you can use either Neptune Analytics of Neptune database. For RDF, you must use Neptune database.
+- We use a search index built on Amazon OpenSearch Service. It serves two purposes: A) Enable enhanced lexical (e.g, fuzzy) and semantic search of resources; B) Enable full-fledged vector similarity search of chunks and extracted facts for answering questions. For the LPG solution built using Neptune Analytics, this index can be used for purpose A; it is optional. For LPG or RDF solutions built on Neptune database, the search index fills the critical role of B and is therefore required. It can also optionally fill role A.
+
+Here is the RAG process to receive a natural language question and add context to the prompt for response:
+
+- Extract keywords from the question. Use an LLM. Ask the LLM for alternate names and well-known URIs of each keyword.
+- Via the search index and/or the graph directly, find resources for the extracted keywords. Rich naming helps. Enhanced search capability helps. Blue and yellow boxes can match.
+- For each resource, bring back its details as well as its neighborhood. This includes blue and yellow boxes. If the match is yellow, bring back the source document and chunk too (red boxes), as well as the document's provenance.
+- Perform a vector search on chunks of the question. For close-matching chunks, bring in the neighborhood too, including yellow and blue boxes. Also bring back provenance.
 
 Watch this page for a link to a demo of the approach.
-
-Expand as follows:
-- recommended architecture that works for both LPG and RDF
-- NA shortcoming: topKByEmbedding cannot filter to a specific node label. Chunks will take the top spots in search results, making it hard to find other nodes.
-- Extremely searchable graph capabilities:
-  > findEntity (input: lots of ways - exact name, fuzzy name, semantically similar name, alternate name (same combos), related name (same combos)). Output: found entities, their provenance, their neibhborhood, all the ways we can name them taxonomically
-  > findRelationship - e.g, find a hostile takeover (but maybe that's not the actual name; fuzzy, semantic, taxo
-  > searchSupportingDocs - search the docs ad hoc, return back entities, relationships, as well as where we found it. ALso return what other facts are mentioned.
-  >
-How to:
-- KG
-- Search index
-- LLM - Extract keywords from question
-- LLM - Suggest entity linkage for ER
-- LLM - Extract entities from documents
-- LLM - Summarize documents
-- LLM - Chunk and embed documents
-
-Walk me through an NLQ:
-- Extract keywords from question
-- Find the things in graph with those keywords. That could be structured or unstructured data.
-- Find unstructured documents via chunk vector search, and then link to extracted facts, and how do they link back to the structured graph
-
-- All this is put into context
-- What would a response look like?
-- 
-
-Case Study:
-Deal research:
-- structured graph already has banks, lawyers, customers, key people, etc.
-- unstructured has deals in SEC filings. We can put some structure aroudn this aliging with ontology; tracing structured back to where it was found in unstructured is key
-- but also have loose text. 
