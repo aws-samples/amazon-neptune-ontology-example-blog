@@ -106,7 +106,7 @@ tokenizers==0.15.2
 toml==0.10.2
 toolz==0.12.1
 tornado==6.4
-tqdm==4.66.2
+tqdm==4.66.3
 trio==0.25.0
 trio-websocket==0.11.1
 typing-inspect==0.9.0
